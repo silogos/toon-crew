@@ -18,7 +18,7 @@ Everything is made by code on your own computer. No video generator, no stock as
 
 - **A series, not a clip.** A persistent cast, one world with a map, and a fixed voice per character. Episode 5 looks and sounds like episode 1.
 - **You stay the Director.** Every episode goes brief → script → storyboard → production → final render, and the crew stops for your okay at each stage.
-- **Or just get the video.** Say *"fast track"* and the crew stops only twice per episode: once with the whole plan, once with the finished picture.
+- **Two okays to a video.** Give the story and where you will post it. The crew comes back once with the whole plan and once with the finished picture. Say *"step by step"* to approve every stage instead.
 - **Landscape or vertical.** 16:9 for YouTube, or 9:16 for TikTok, Reels and Shorts, with speech balloons and captions sized for a phone.
 - **A crew, not a prompt.** Writer, Storyboard Artist, Character Designer, Art Director, Animator, Voice Director, Composer, Editor and Quality Control, each with a recipe to follow. Quality Control and the Voice Director run as separate subagents.
 - **It checks itself.** The crew renders stills of every scene and looks at them, and listens back to every recorded line, before showing you anything.
@@ -47,7 +47,7 @@ Toon Crew is a Claude Code plugin. In Claude Code:
 
 Then open an empty folder in Claude Code and type `/toon-crew:toon-crew`, or just say what you want:
 
-> *"Make me a 30-second cartoon for TikTok about two friends who get their ball stuck in a tree. Just make it."*
+> *"Make me a 30-second cartoon for TikTok about two friends who get their ball stuck in a tree."*
 
 A step-by-step walkthrough is in [docs/getting-started.md](docs/getting-started.md).
 

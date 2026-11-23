@@ -33,9 +33,15 @@ In Claude Code:
 
 Open an **empty folder** in Claude Code and type `/toon-crew:toon-crew`, or say *"start a new animated series"*.
 
-**In a hurry?** Say the idea and add *"just make it"* or *"fast track"*. The crew then fills in the answers below itself, shows them to you as one proposal, and from there stops only twice per episode: once with the whole plan (story, shots, characters, places, voices), once with the finished picture. You can say *"step by step"* at any time to approve every stage instead.
+Write what you want in your first message, in your own language:
 
-Otherwise the crew holds a **first meeting**. It asks, in one round, with a recommendation for each question:
+> *"Make a 30-second cartoon for TikTok: Ucup is blamed for stealing the neighbour's mango, but the thief is a goat."*
+
+The crew needs two things before it makes anything: **the story** (who is in it and what happens) and **where you will post it** (TikTok, Reels and Shorts are vertical; YouTube is landscape). If your message leaves one out, it asks for it and waits. Length (about 30 seconds) and language (yours) have defaults.
+
+Then it works on the **fast track**: one proposal with the whole plan (story, characters, place, every line, voices) for you to okay, and one screening of the finished picture before the final video. It never invents the story for you.
+
+Prefer to approve every stage? Say *"step by step"*. The crew then holds a longer **first meeting** and asks, in one round, with a recommendation for each question:
 
 1. What the show is (a working title and one sentence)
 2. Who watches it

@@ -27,7 +27,7 @@ Changing your mind is cheapest early. A line changed at the script stage costs n
 
 ## In a hurry? The fast track
 
-If you would rather see a finished video than approve every stage, say *"fast track"* or *"just make it"*. The crew then stops only twice per episode: once with the whole plan (story, shots, characters, places, voices) in one message, and once with the finished picture before the final video is made. It will still ask before installing anything, spending money, or changing something you already approved. Say *"step by step"* to go back to approving every stage.
+A new series starts on the fast track unless you ask for step by step. All the crew needs from you first is the story (who is in it and what happens) and where you will post it; length and language have defaults you can change. The crew then stops only twice per episode: once with the whole plan (story, shots, characters, places, voices) in one message, and once with the finished picture before the final video is made. It will still ask before installing anything, spending money, or changing something you already approved. Say *"step by step"* to go back to approving every stage.
 
 ## Posting it
 

@@ -7,6 +7,8 @@ description: Start a new episode of the series and carry it through brief, scrip
 
 An episode passes through five stages. **Each stage ends by showing the Director the result and waiting for okay.** Do not start the next stage in the same turn. After each okay, update the **Status** line at the top of `series/story/epNN-<title>.md`.
 
+**The story comes from the Director.** Fast or step by step, do not write a plan for an episode nobody asked for: if the Director has not said what this episode is about, ask that one question first (stage 1 offers premises only when they ask for ideas).
+
 **Fast track.** If `npm run status` says the series is on the fast track, follow "Fast track" in `CLAUDE.md` instead of stopping after each stage: do stages 1 to 3 in one go and show them as one plan, wait for one okay, then do all of stage 4 including any new characters, places and voices, and wait at the screening. Each stage below is still done in full; only the stops change.
 
 If the episode already exists, run `npm run status`, read its Status line and resume from that stage.

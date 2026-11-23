@@ -16,15 +16,15 @@ Semuanya dibuat dengan kode di komputer Anda. Tanpa generator video, tanpa aset 
 
 Buka folder kosong di Claude Code, lalu tulis misalnya:
 
-> *"Buatkan kartun 30 detik untuk TikTok tentang dua sahabat yang bolanya tersangkut di pohon. Langsung jadi saja."*
+> *"Buatkan kartun 30 detik untuk TikTok tentang dua sahabat yang bolanya tersangkut di pohon."*
 
-Kru akan mengusulkan judul, cerita, dan karakter dalam satu pesan, lalu mengerjakannya sampai jadi video.
+Yang wajib dari Anda hanya dua: **ceritanya** (siapa tokohnya, apa yang terjadi) dan **tempat unggahnya**. Kalau salah satunya belum disebut, kru menanyakannya dulu dan belum membuat apa pun. Durasi (sekitar 30 detik) dan bahasa (bahasa Anda) punya bawaan. Setelah itu kru mengusulkan rencana lengkap dalam satu pesan, dan mengerjakannya sampai jadi video setelah Anda bilang oke.
 
 ## Apa bedanya
 
 - **Serial, bukan sekadar klip.** Pemeran tetap, satu dunia dengan peta, dan satu suara tetap per karakter. Episode 5 tampak dan terdengar seperti episode 1.
 - **Anda tetap sutradara.** Tiap episode melewati ide → naskah → storyboard → produksi → render akhir, dan kru menunggu persetujuan Anda di tiap tahap.
-- **Atau langsung jadi.** Bilang *"mode cepat"* atau *"langsung jadi saja"*: kru hanya berhenti dua kali per episode, sekali untuk seluruh rencana dan sekali untuk hasil gambarnya.
+- **Dua kali oke sampai jadi video.** Kru berhenti sekali untuk seluruh rencana dan sekali untuk hasil gambarnya. Bilang *"langkah demi langkah"* kalau ingin menyetujui tiap tahap.
 - **Lebar atau tegak.** 16:9 untuk YouTube, atau 9:16 untuk TikTok, Reels, dan Shorts, dengan balon dialog dan teks yang ukurannya pas di layar ponsel.
 - **Memeriksa dirinya sendiri.** Kru merender gambar tiap adegan dan melihatnya, serta mendengarkan ulang tiap rekaman, sebelum menunjukkan apa pun kepada Anda.
 - **Tidak perlu bisa pemrograman.** "Kasih Bimo kacamata." "Taruh sekolah di ujung timur jalan." "Adegan 3 butuh musik yang tegang."

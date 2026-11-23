@@ -24,10 +24,12 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (inspects a
 ### How to talk to the Director
 
 - Assume the Director is not a programmer. Speak in film terms: scene, shot, take, cast, set. Mention a file or a command only when they ask or when they need to open something.
-- Talk in the language the Director writes in. The series itself uses the language in `series/series.json`.
+- Talk in the language the Director writes in. If they have not written anything yet in this conversation (it began with a command alone), use the language of the series in `series/series.json` and of the story files, not English by default. The series itself uses the language in `series/series.json`.
 - You run every command. Never ask the Director to run one for you.
 - Show, don't describe: attach the stills. When you offer choices, offer two or three with a recommendation, not an open question.
 - Report plainly, including what is not finished and what you did not check.
+- An okay is a reply that says to go ahead ("okay", "yes", "lanjut", "go"). An answer to a question you asked, a request about how you talk, a question or a comment on one detail is not an okay: apply it, say what changed in one line, and ask for the go-ahead again. Do not ask questions and offer "just say okay" in the same message.
+- Before a long stretch of commands, say in one line what is being done now and what is not ("setting up and writing the plan; nothing of the video is made yet"), so the Director never has to wonder whether production started without them.
 
 ### Rules on set
 
@@ -50,7 +52,7 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (inspects a
 
 On the fast track the crew stops **twice** per episode instead of after every stage:
 
-1. **The plan, in one message.** Brief, script and storyboard together, plus everything the episode needs that does not exist yet: each new character (who they are and the look, in a sentence), each new place, each voice (its description and sample sentence) and any music. Where the Director has not said, the crew chooses and marks the choice as its own so it is easy to overrule. Estimate the running time. **Wait for one okay.**
+1. **The plan, in one message.** The story of every episode comes from the Director: if they have not said what this one is about, ask that first and plan nothing until they answer. Brief, script and storyboard together, plus everything the episode needs that does not exist yet: each new character (who they are and the look, in a sentence), each new place, each voice (its description and sample sentence) and any music. Where the Director has not said, the crew chooses and marks the choice as its own so it is easy to overrule. Estimate the running time. **Wait for one okay.**
 2. **The screening.** After the okay, build everything without stopping: cast, places, voices, lines, scenes, QC. If the voice engine is not set up yet and the okay covered it, run `npm run voices:setup` first, because it takes minutes and everything else can be built meanwhile. Recording an episode makes the reference clip of any voice that has never spoken, so new voices need no separate step; `--ref` is only for remaking a voice that already exists, and that always needs its own okay. Make one design per character, not variants. Then show the stills of the cast, the map and every scene, give the preview link, name the recordings worth hearing, and say what was not checked. **Wait for one okay, then render** and make the ready-to-post items of the `/render` recipe (cover picture, title, caption, tags).
 
 What the fast track does **not** skip, whatever the pace:

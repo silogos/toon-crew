@@ -11,6 +11,14 @@ This skill is only the front door. Once a series folder is set up, its own `CLAU
 
 Assume the Director is not a programmer. Speak in film terms (scene, shot, cast, set, take), never in file names or code unless they ask. Talk to the Director in the language they write in. You run every command; never ask the Director to run one.
 
+**Which language, when the Director has not written anything yet.** This skill is often started by its command alone, with no message. These instructions being in English says nothing about the Director, so do not open in English by default. Before your first message, look for their language in this order and use the first that answers:
+
+1. Anything they have written in this conversation.
+2. The name of the folder and of files already in it (a folder called `ucup-lagi-ajah` is Indonesian).
+3. The computer's languages and region: `defaults read -g AppleLanguages` and `defaults read -g AppleLocale` on macOS, `$LANG` on Linux, `Get-Culture` on Windows. A second language in the list, or a region whose own language is not English (`en-ID`, `en_ID`: English interface in Indonesia), points to that language.
+
+If these point to a language other than English, open in that language. If they disagree or say nothing, open in English and add one short line in the other likely language offering to switch. A one- or two-word reply that only repeats an option you offered ("Fast track", "OK") is not evidence of the Director's language. When they ask for a language, switch at once, keep it for the rest of the series, and use it for the series itself unless they say otherwise.
+
 > **Build status:** the template ships with a sample series, "Ada & Ben" (one episode, voices recorded), and the 3D look. Not built yet: looks other than 3D, indoor sets, and an opening for the sample (so `opening` stills and renders say there is none). Recording new voices works on an Apple Silicon Mac (free, local) or on any computer with an ElevenLabs account (paid, lines are sent to ElevenLabs). Say these plainly when they come up.
 
 ## 1. Find out where you are
@@ -28,19 +36,53 @@ If the Director only wants to look around first, skip to section 3, show them th
 
 ## 2. First meeting
 
-First decide the **pace**, because it changes how much you ask:
+**What counts as an okay.** Only a reply that says to go ahead: "okay", "yes", "lanjut", "gas", "go", or the same in other words. These are not an okay, even when your message said "just say okay":
 
-- **Fast track** when the Director arrives with an idea and wants a video ("make me a cartoon about…", "just make it", "quick"), or says they are trying the studio out. Recommend it for a first video.
-- **Step by step** when they want to shape the show themselves, or say so.
-- If you cannot tell, ask once, in one line, recommending the fast track for a first video.
+- an answer to one of your questions ("Indonesian", "make it vertical"),
+- a request about how you talk ("pake bahasa indo", "shorter please"),
+- a question, or a comment on one detail.
 
-**On the fast track, do not ask the seven questions.** Fill them in yourself from what the Director already said and from the recommendations below, and show the result as one short proposal: title, one-sentence premise, audience, length (about 30 seconds for a first video), format, language (the one they write in), look (3D), voices (the recommended engine for this computer, with its cost and privacy consequence), house rules (still camera, one continuous place). Add what you will install and download (section 3, and the voice engine with its size). Ask only what you truly cannot guess, at most two questions, in the same message. **One okay** covers the proposal, the installs and the setup; then do sections 3 and 4 without stopping and go straight to the plan of the first episode ("Fast track" in the studio's `CLAUDE.md`). Paid services still need the Director's own explicit yes.
+When you get one of those, apply it, say in one line what you changed, and ask for the go-ahead again in a single short sentence. Do not start installing, setting up or building on it. Never ask two questions and offer "just say okay" in the same message: a reply to the questions then looks like the okay. Put your own choice on each open point and ask for the one okay.
 
-When the Director has already told the story they want and asked not to be questioned ("just make it", "don't ask me"), put the **plan of the first episode in the same message** as the proposal: the story in a few lines, the characters, the place, every line of dialogue, the voices. One okay then covers both, and the first video has two stops in all (this message, and the screening) instead of three. Write the plan into the story file once the studio exists.
+**Say what you are doing before a long stretch of work.** Setting up runs many commands and renders a test picture, which looks to the Director like the video being made. Before you start, say plainly what happens now and what does not: "I am setting up the studio and writing the plan. Nothing of your video is being made yet; I will show you the plan first."
+
+### The brief comes first
+
+Nothing is proposed, installed or built until the brief is complete. It has two things the Director must give and three that have a default:
+
+| | Needed | If the Director did not say |
+|---|---|---|
+| **Story:** who is in it and what happens, in a sentence | Yes, in their own words | Ask. Never fill it in yourself, and never build it from the folder's name |
+| **Where it will be posted** | Yes | Ask: TikTok / Reels / Shorts (vertical, 1080×1920) or YouTube (landscape, 1920×1080) |
+| **Length** | No | About 30 seconds |
+| **Language the characters speak** | No | What the prompt asks for; otherwise the Director's own language, found as described above |
+| **Pace** | No | Fast track. Step by step only when the Director asks for it ("step by step", "I want to approve each stage") |
+
+How to collect it:
+
+- Read the Director's first message and take from it everything it already says. Ask only for what is still missing among the two needed items; never ask again for something they gave, and never ask about the three that have a default.
+- If something needed is missing, your whole message is the brief: say in one line that you need it before anything is made, then ask. Use the question tool with buttons for where it will be posted, when the session has one; the story is always typed by the Director. Give two or three one-line examples of a story, of different kinds, so they see how little is needed.
+- If the story and the place to post were both in the first message, there is no brief message at all: go straight to the proposal.
+- Only when the Director says "you choose" or "surprise me" do you offer stories, as three one-line options to pick from, never as a finished proposal.
+- The defaults you applied (length, language, pace) are shown in the proposal, marked as yours, so they are easy to overrule there.
+
+So a first video has two stops when the first message carries the story and the place to post (the proposal, then the screening), and three when the brief has to be asked for.
+
+### Pace
+
+The fast track is the default. Use step by step when the Director asks for it, and say in the proposal that it exists ("say *step by step* if you would rather approve each stage").
+
+**On the fast track, do not ask the seven questions.** With the brief complete, fill the rest in yourself and show it as **one proposal that already holds the plan of the first episode**:
+
+- the show: title, one-sentence premise, audience, length, format, language, look (3D), house rules (still camera, one continuous place);
+- the episode: the story in a few lines, each character (who they are and the look, in a sentence), the place, every line of dialogue, each voice;
+- what will be installed and downloaded: section 3, and the voice engine with its size, cost and privacy consequence (the recommended engine for this computer).
+
+Mark every choice of your own as yours. Ask no questions in this message: put your choice on each open point and end with the one request for an okay. **That okay** covers the proposal, the plan, the installs and the setup; the next stop is the screening. Paid services still need the Director's own explicit yes. Write the plan into the story file once the studio exists.
 
 On the fast track the order of work after the okay is: set up the studio (section 3; still run step 5, it proves the studio works, but do not show the sample picture, and in step 6 only say that the studio is ready), make it their series (section 4), set up the voice engine right away (`npm run voices:setup`, the okay covered it; it takes minutes, so start it before writing the cast and the map), then production.
 
-Step by step: ask these in one round, each with a recommendation the Director can simply accept. Do not ask about technology.
+Step by step (only when the Director asked for it): with the brief complete, ask the rest in one round, each with a recommendation the Director can simply accept; skip what the brief already answered. Do not ask about technology.
 
 1. **The show:** working title, and one sentence about what it is.
 2. **Audience:** who watches it, and their age range.
@@ -86,10 +128,10 @@ If the first meeting has not been held yet, hold it now (section 2).
 1. Ask how to begin, and recommend the first (on the fast track, start empty without asking, unless the Director asked for the sample's characters):
    - **Start empty.** The cast, the map and the episode list become blank: `npm run clear-sample -- --yes`. The crew can still look at the sample inside this skill's `template/` folder for how things are written.
    - **Start from the sample.** Keep Ada, Ben and their town and change them into the Director's show: `npm run clear-sample -- --keep`.
-2. Write the first-meeting answers into `series/series.json`: `title`, `language` (a two-letter code such as `en`, `id`, `es`; the voice check needs the code, not the name), the size (`width`, `height`), and the voice choice as `"voiceEngine"` (`"local"`, `"elevenlabs"` or `"edge"`; leave it out if voices come later), and `"pace": "fast"` if the Director chose the fast track.
-3. Write `series/story/00-bible.md` for this show: premise, audience, tone, look, house rules, cast as it grows. Like every story file it carries a Status line near the top, for example `**Status:** approved 2026-03-01`; so does `series/story/world.md` once the map exists (`**Status:** map approved …`). `npm run status` reads those lines.
+2. Write the first-meeting answers into `series/series.json`: `title`, `language` (a two-letter code such as `en`, `id`, `es`; the voice check needs the code, not the name), the size (`width`, `height`), and the voice choice as `"voiceEngine"` (`"local"`, `"elevenlabs"` or `"edge"`; leave it out if voices come later), and the pace: `"pace": "fast"` unless the Director asked for step by step (`"step"`).
+3. Write `series/story/00-bible.md` for this show: premise, audience, tone, look, house rules, cast as it grows. Like every story file it carries a Status line near the top, for example `**Status:** approved 2026-03-01` (write `approved` only for what the Director has actually seen and okayed; until then `proposed`); so does `series/story/world.md` once the map exists (`**Status:** map approved …`). `npm run status` reads those lines.
 4. Run `npm run check`, then `npm run status` to confirm the folder says what you intended.
-5. Move to the first stage in `CLAUDE.md`: the **brief** for the first episode, or on the fast track the whole **plan** of the first episode in one message. From here on, follow `CLAUDE.md`.
+5. On the fast track the plan was approved with the proposal: go on to production ("Fast track" in `CLAUDE.md`). Step by step: move to the first stage in `CLAUDE.md`, the **brief** for the first episode. From here on, follow `CLAUDE.md`.
 
 ## What not to do
 
