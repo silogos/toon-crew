@@ -47,7 +47,7 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (inspects a
 3. Small fixes to approved work (a bug, timing that drifted, clipped text) may be done straight away, but still show before and after.
 4. Update the **Status** line at the top of the story file whenever a stage is finished.
 5. QC is required before reporting: `npm run check`, stills of every changed scene, and look at the pictures yourself. Take a still of a spoken line at least 15 frames after the line starts: before that the balloon is still popping in and looks small or cut off when nothing is wrong. Delete stills that no longer match the scene, so an old picture is never shown as the current one.
-6. **Every request for a review of pictures, motion or sound carries the preview link.** Before you ask, run `npm run preview`: it makes sure the preview is running (starting it in the background if it is not) and prints the links. Put the link in the same message as the stills, with the scene number to pick. Never give a link you have not just got from that command, and never ask the Director to start the preview themselves.
+6. **Every request for a review of pictures, motion or sound carries the preview link.** Before you ask, make sure the preview is running and get its links. If your session can run a command as a background task, start it that way with `npm run preview -- --attached`: the preview is then listed among the session's background tasks, where the Director can see it and stop it. Otherwise run plain `npm run preview`, which starts it on its own. Then `npm run preview -- <ep>` prints the links (it reuses the one that is running). Either way the preview belongs to this session and stops by itself when the session ends; say so once, the first time you give a link. Put the link in the same message as the stills, with the scene number to pick. Never give a link you have not just got from that command, and never ask the Director to start the preview themselves.
 7. When you pick the work up again (a new conversation, or the Director asks where things stand), start from `npm run status` rather than from memory.
 
 ### Fast track
@@ -111,6 +111,7 @@ Commands that work on an episode take its **name** (`ep01`, `ep02`, …). Do not
 npm run preview                      # make sure the preview (Remotion Studio) is running in the background; prints its links
 npm run preview -- ep01              # the same, with only that episode's links
 npm run preview -- stop              # stop it
+npm run preview -- --attached        # run it inside this command and stay: use as a background task of the session, so it is listed and can be stopped there
 npm run studio                       # the same preview in the foreground, for a person at their own terminal
 npm run check                        # TypeScript check + series content check; the only automatic checks
 npm run status                       # where the production stands: Status lines, lines recorded, what is rendered

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 — 2026-11-24
+
+- **The preview belongs to the session.** It stops by itself when the agent session that started it ends, instead of running on after the app is closed. `npm run preview -- --attached` runs it inside the command, so a session can start it as a background task: it is then listed among the session's tasks and can be stopped there.
+
 ## 0.1.2 — 2026-11-24
 
 - **The crew asks before it proposes characters and setting.** After the story, the Director is asked who the characters are and what the setting is like, in one message. "You choose" is a full answer, for one or both, and only then does the crew propose them. Scenes and lines are still written by the crew for approval.

@@ -7,7 +7,7 @@ description: Show the Director the current state of the series - a scene, an epi
 
 A screening puts pictures in front of the Director and says exactly what to look at. It never changes the work.
 
-**Every screening ends with the preview link.** Run `npm run preview -- <ep>` (or `npm run preview` when it is not about one episode) just before you report. It makes sure the preview is running, starting it in the background if needed, and prints the links. Copy the link into your message as a clickable link, next to the stills. If the command fails, say so and show what it printed; do not send a link from memory.
+**Every screening ends with the preview link.** Just before you report, make sure the preview is running: as a background task of the session with `npm run preview -- --attached` when your session can run one (it is then listed there and can be stopped there), otherwise with plain `npm run preview`. Then `npm run preview -- <ep>` (or `npm run preview` when it is not about one episode) prints the links. The preview stops by itself when the session ends. Copy the link into your message as a clickable link, next to the stills. If the command fails, say so and show what it printed; do not send a link from memory.
 
 ## "Show me …"
 
