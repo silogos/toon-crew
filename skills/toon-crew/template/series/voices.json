@@ -1,0 +1,17 @@
+{
+  "N": {
+    "description": "A warm, calm woman storyteller in her thirties, clear and gentle voice, reading a story to children",
+    "sample": "Once upon a time, in a quiet little town, there lived two very good friends.",
+    "seed": 7
+  },
+  "A": {
+    "description": "A nine-year-old girl, bright, curious and confident child voice",
+    "sample": "Come on, I know a shortcut! It will be fun, I promise!",
+    "seed": 97
+  },
+  "B": {
+    "description": "A nine-year-old boy, gentle, a little shy, soft child voice",
+    "sample": "Um, are you sure about this? Okay, I am right behind you.",
+    "seed": 83
+  }
+}

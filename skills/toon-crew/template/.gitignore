@@ -1,0 +1,22 @@
+# dependencies and environments
+node_modules
+.venv*
+
+# renders and stills
+out
+*.mp4
+*.mov
+*.webm
+
+# raw voice takes
+.raw_voices
+
+# system
+.DS_Store
+.remotion
+*.log
+.env
+
+# 3D models are downloaded by whoever uses them, never committed
+public/models/*
+!public/models/LICENSES.md

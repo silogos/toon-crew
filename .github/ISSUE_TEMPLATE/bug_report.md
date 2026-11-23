@@ -1,0 +1,21 @@
+---
+name: Bug report
+about: Something in the studio, the crew or a render does not work
+labels: bug
+---
+
+**What happened**
+
+**What you expected**
+
+**How to reproduce** (what you asked the crew, or which command you ran)
+
+**Your machine**
+- OS and chip (e.g. macOS, Apple Silicon):
+- Node version (`node --version`):
+- ffmpeg installed (`ffmpeg -version`):
+
+**Error output**
+```
+paste here
+```

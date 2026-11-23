@@ -1,0 +1,27 @@
+# dependencies and environments
+node_modules
+.venv*
+
+# renders and stills
+out
+*.mp4
+*.mov
+*.webm
+
+# raw voice takes
+.raw_voices
+
+# system
+.DS_Store
+.remotion
+*.log
+.env
+
+# launch drafts are for the author, not the repository
+launch
+
+# the demo video in the README is kept
+!docs/media/*.mp4
+
+# local trial of the skill
+trial-series*

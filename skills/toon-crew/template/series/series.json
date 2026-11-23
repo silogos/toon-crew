@@ -1,0 +1,24 @@
+{
+  "sample": true,
+  "title": "Ada & Ben",
+  "language": "en",
+  "look": "3d",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "opening": null,
+  "music": {
+    "cheerful": {
+      "file": "music_cheerful",
+      "volume": 0.2
+    },
+    "calm": {
+      "file": "music_calm",
+      "volume": 0.3
+    },
+    "tense": {
+      "file": "music_tense",
+      "volume": 0.28
+    }
+  }
+}

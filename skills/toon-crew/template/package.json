@@ -1,0 +1,38 @@
+{
+  "name": "toon-crew-series",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "preview": "node scripts/preview.mjs",
+    "check": "tsc --noEmit && node scripts/check-series.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "status": "node scripts/status.mjs",
+    "test": "vitest run",
+    "still": "node scripts/still.mjs",
+    "render": "node scripts/render.mjs",
+    "voices": "node scripts/py.mjs voices.py",
+    "voices:check": "node scripts/py.mjs check_voices.py",
+    "voices:import": "node scripts/import-audio.mjs",
+    "voices:setup": "node scripts/setup-voices.mjs",
+    "music": "node scripts/music.mjs",
+    "clear-sample": "node scripts/clear-sample.mjs"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.8.2",
+    "@remotion/cli": "4.0.545",
+    "@remotion/three": "4.0.545",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.545",
+    "three": "0.187.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/three": "0.187.0",
+    "typescript": "5.9.3",
+    "vitest": "5.1.1"
+  }
+}

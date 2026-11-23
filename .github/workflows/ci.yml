@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  template:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/toon-crew/template
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: skills/toon-crew/template/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run status
+
+  setup:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up a studio in an empty folder
+        shell: bash
+        run: |
+          node skills/toon-crew/scripts/setup-studio.mjs "$RUNNER_TEMP/series"
+          cd "$RUNNER_TEMP/series"
+          test -f CLAUDE.md && test -f AGENTS.md && test -f TECH-STACK.md
+          test -f .claude/skills/new-episode/SKILL.md && test -f .claude/agents/quality-control.md
+          test ! -e node_modules && test ! -e out
+      - name: The studio works with the sample and when emptied
+        shell: bash
+        working-directory: ${{ runner.temp }}/series
+        run: |
+          npm ci
+          npm run check
+          npm run clear-sample -- --yes
+          npm run check
+          npm run status
+      - name: A second setup refuses to overwrite
+        shell: bash
+        run: |
+          if node skills/toon-crew/scripts/setup-studio.mjs "$RUNNER_TEMP/series"; then echo "setup overwrote an existing studio"; exit 1; fi
+
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate plugin manifests
+        run: |
+          node -e '
+            const fs = require("fs");
+            const plugin = JSON.parse(fs.readFileSync(".claude-plugin/plugin.json", "utf8"));
+            const market = JSON.parse(fs.readFileSync(".claude-plugin/marketplace.json", "utf8"));
+            if (!plugin.name || !plugin.version) throw new Error("plugin.json needs name and version");
+            if (!market.plugins.some((p) => p.name === plugin.name)) throw new Error("marketplace.json does not list " + plugin.name);
+            if (!fs.existsSync("skills/toon-crew/SKILL.md")) throw new Error("SKILL.md missing");
+            if (/OWNER/.test(fs.readFileSync("README.md", "utf8"))) throw new Error("README still has the OWNER placeholder");
+          '

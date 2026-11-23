@@ -1,0 +1,12 @@
+{
+  "name": "toon-crew",
+  "owner": {"name": "Amin Yusuf"},
+  "description": "Toon Crew: an animated-series studio for Claude Code.",
+  "plugins": [
+    {
+      "name": "toon-crew",
+      "source": "./",
+      "description": "You direct, an AI crew makes the show: script, storyboard, characters, world, voices, animation and QC, with your okay at every stage."
+    }
+  ]
+}

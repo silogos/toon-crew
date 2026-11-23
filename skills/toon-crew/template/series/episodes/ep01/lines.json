@@ -1,0 +1,15 @@
+[
+  {"id": "e1_s1_n", "voice": "N", "text": "One sunny morning, Ben had a problem."},
+  {"id": "e1_s1_b1", "voice": "B", "text": "Ada! My book is gone!"},
+  {"id": "e1_s1_a1", "voice": "A", "text": "Don't worry. I have a plan."},
+  {"id": "e1_s1_a2", "voice": "A", "text": "First the bench. Then the pond. Then everywhere!"},
+  {"id": "e1_s1_b2", "voice": "B", "text": "Everywhere?"},
+  {"id": "e1_s1_a3", "voice": "A", "text": "Everywhere!", "fx": "cheer"},
+  {"id": "e1_s2_n", "voice": "N", "text": "They looked all day."},
+  {"id": "e1_s2_a1", "voice": "A", "text": "Bench. Pond. Shop. Nothing."},
+  {"id": "e1_s2_b1", "voice": "B", "text": "It was my best one."},
+  {"id": "e1_s2_a2", "voice": "A", "text": "Ben. What are you holding?"},
+  {"id": "e1_s2_b2", "voice": "B", "text": "Oh."},
+  {"id": "e1_s2_a3", "voice": "A", "text": "Ha ha ha!", "fx": "laugh"},
+  {"id": "e1_s2_end_n", "voice": "N", "text": "Sometimes what you are looking for is right in your hands."}
+]
