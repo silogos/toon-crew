@@ -63,6 +63,24 @@ if (title && title.length > 3 && title !== 'Untitled Series') {
   scan('scripts');
 }
 
+// extra crew: every specialist listed for the series has its agent file, and names real stages
+const STAGES = ['brief', 'script', 'storyboard', 'production', 'render'];
+const crew = readJsonIf('series/crew.json', []);
+if (!Array.isArray(crew)) errors.push('series/crew.json must be a list');
+else {
+  for (const member of crew) {
+    const file = `agents/${member.agent}.md`;
+    if (!member.agent || !/^[a-z0-9-]+$/.test(member.agent)) errors.push(`series/crew.json: "agent" must be a name in lower case with hyphens (found ${JSON.stringify(member.agent)})`);
+    else if (!fs.existsSync(file)) errors.push(`series/crew.json lists ${member.agent}, but ${file} does not exist`);
+    else if (!new RegExp(`^name:\\s*${member.agent}\\s*$`, 'm').test(fs.readFileSync(file, 'utf8'))) errors.push(`${file}: its "name:" must be ${member.agent}`);
+    if (member.kind !== undefined && !['checks', 'advises', 'does'].includes(member.kind)) errors.push(`series/crew.json: ${member.agent} has the kind "${member.kind}"; use checks, advises or does`);
+    if (!member.job) errors.push(`series/crew.json: ${member.agent ?? 'an entry'} has no "job"`);
+    const stages = Array.isArray(member.stages) ? member.stages : [];
+    if (!stages.length) errors.push(`series/crew.json: ${member.agent ?? 'an entry'} has no "stages"`);
+    for (const stage of stages) if (!STAGES.includes(stage)) errors.push(`series/crew.json: ${member.agent} names the stage "${stage}"; use ${STAGES.join(', ')}`);
+  }
+}
+
 for (const w of warnings) console.log(`warning  ${w}`);
 for (const e of errors) console.error(`error    ${e}`);
 console.log(`series check: ${errors.length} error(s), ${warnings.length} warning(s)`);

@@ -52,6 +52,7 @@ rm('series/opening/lines.json');
 for (const ep of episodeNames()) rm(`series/episodes/${ep}`);
 
 write('series/voices.json', '{}\n');
+write('series/crew.json', '[]\n');
 write('series/cast/index.ts', `import {CastMember} from '../../src/styles/3d/look';\n\n/** The one list of cast members. */\nexport const CAST: CastMember[] = [];\n`);
 write(
   'series/world/map.tsx',

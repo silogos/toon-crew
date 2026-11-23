@@ -18,7 +18,7 @@ Buka folder kosong di Claude Code, lalu tulis misalnya:
 
 > *"Buatkan kartun 30 detik untuk TikTok tentang dua sahabat yang bolanya tersangkut di pohon."*
 
-Yang wajib dari Anda hanya dua: **ceritanya** (siapa tokohnya, apa yang terjadi) dan **tempat unggahnya**. Kalau salah satunya belum disebut, kru menanyakannya dulu dan belum membuat apa pun. Durasi (sekitar 30 detik) dan bahasa (bahasa Anda) punya bawaan. Setelah itu kru mengusulkan rencana lengkap dalam satu pesan, dan mengerjakannya sampai jadi video setelah Anda bilang oke.
+Sebelum membuat apa pun, kru menanyakan empat hal: **ceritanya** (siapa tokohnya, apa yang terjadi), **tempat unggahnya**, **tokohnya seperti apa**, dan **latarnya seperti apa**. Yang sudah Anda sebut di pesan pertama tidak ditanyakan lagi. Untuk tokoh dan latar, jawaban "terserah" sah: baru saat itu kru mengusulkannya. Adegan dan dialog selalu ditulis kru untuk Anda setujui; Anda tidak perlu menulis naskah. Durasi (sekitar 30 detik) dan bahasa (bahasa Anda) punya bawaan. Setelah itu kru mengirim satu usulan lengkap, dan mengerjakannya sampai jadi video setelah Anda bilang oke.
 
 ## Apa bedanya
 

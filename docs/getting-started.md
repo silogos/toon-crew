@@ -37,7 +37,7 @@ Write what you want in your first message, in your own language:
 
 > *"Make a 30-second cartoon for TikTok: Ucup is blamed for stealing the neighbour's mango, but the thief is a goat."*
 
-The crew needs two things before it makes anything: **the story** (who is in it and what happens) and **where you will post it** (TikTok, Reels and Shorts are vertical; YouTube is landscape). If your message leaves one out, it asks for it and waits. Length (about 30 seconds) and language (yours) have defaults.
+Before it makes anything, the crew asks about four things: **the story** (who is in it and what happens), **where you will post it** (TikTok, Reels and Shorts are vertical; YouTube is landscape), **what the characters are like**, and **what the setting is like**. Whatever your first message already says is not asked again. For characters and setting, "you choose" is a full answer, and only then does the crew propose them. Scenes and dialogue are always written by the crew for you to approve; you never have to write a script. Length (about 30 seconds) and language (yours) have defaults.
 
 Then it works on the **fast track**: one proposal with the whole plan (story, characters, place, every line, voices) for you to okay, and one screening of the finished picture before the final video. It never invents the story for you.
 
@@ -50,7 +50,7 @@ Prefer to approve every stage? Say *"step by step"*. The crew then holds a longe
 5. The look (only 3D is built today)
 6. The house rules of your show: does the camera stay still, is everything in one place
 
-Then it sets up the studio in the folder, checks that everything works, and shows you the sample series "Ada & Ben" so you can see what the crew makes. You then choose: **start empty**, or **start from the sample** and change Ada and Ben into your own cast.
+After your okay it sets up the studio in the folder and checks that everything works. The studio starts **empty**: no characters, no places, no episode. Everything in your series comes from you, or from proposals you approved. If you would like to see a finished example first, ask to see the sample series; the crew sets it up in a separate folder.
 
 ## 3. Make an episode
 
@@ -122,7 +122,7 @@ Open the same folder in Claude Code and say *"Where are we?"* The crew reads the
 | Something stopped working after it worked before | Say *"Check the studio."* The crew runs `npm run doctor`, which lists what the computer and the folder are missing and how to install it |
 | Setup says files are in the way | The studio never overwrites. Move those files, or ask the crew to set up in a new, empty subfolder |
 | `npm run check` reports an error | Show the crew the exact message; the check names the file and what is wrong |
-| *"The voice engine is not set up in this folder yet"* | Only needed for new dialogue. Ask the crew to set up voices; the sample plays without it |
+| *"The voice engine is not set up in this folder yet"* | Only needed for new dialogue. Ask the crew to set up voices |
 | ElevenLabs says the key was refused, or a plan is needed | Check `ELEVENLABS_API_KEY` in `.env`; voice design and the `eleven_v3` model may need a paid plan |
 | A line sounds wrong | Say which line: *"She mispronounces 'Ben' in scene 2."* The crew retakes it |
 | A picture looks wrong | Say what you see: *"Ben's balloon covers Ada's face in scene 2."* |

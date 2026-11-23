@@ -3,7 +3,7 @@
 Thanks for helping. Toon Crew has two parts, and most changes touch only one:
 
 - `skills/toon-crew/SKILL.md`, `scripts/setup-studio.mjs` and `references/`: the front door (first meeting, setup).
-- `skills/toon-crew/template/`: the studio copied into a user's series folder (engine, scripts, crew rules, recipes, sample series).
+- `skills/toon-crew/template/`: the studio copied into a user's series folder (engine, scripts, crew rules, recipes). It also carries the sample series, which keeps the engine testable and demonstrable; `setup-studio.mjs` empties it out of a new studio unless `--sample` is given.
 
 ## Working on the template
 

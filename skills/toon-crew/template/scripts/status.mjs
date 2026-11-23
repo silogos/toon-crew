@@ -60,6 +60,7 @@ const report = {
   voiceEngine: voiceEngine(series),
   pace: series.pace ?? 'step',
   preview: previewAlive ? previewState.url : null,
+  crew: fs.existsSync('series/crew.json') ? readJson('series/crew.json') : [],
   opening: series.opening,
   openingLines: linesOf.opening ?? null,
   moods: Object.keys(series.music ?? {}),
@@ -78,6 +79,7 @@ console.log(`${report.title}${report.sample ? '  — this is still the SAMPLE se
 console.log(`${report.look} · ${report.size} · language ${report.language} · voices: ${report.voiceEngine} · opening: ${report.opening ?? 'none'}`);
 console.log(`pace: ${report.pace === 'fast' ? 'fast track (one okay on the plan, one on the finished picture)' : 'step by step (an okay after every stage)'}`);
 console.log(`preview: ${report.preview ? `running at ${report.preview}` : 'not running (npm run preview starts it and prints the links)'}`);
+if (report.crew.length) console.log(`extra crew: ${report.crew.map((c) => `${c.job} (${c.agent}; ${c.kind ?? 'checks'} at ${(c.stages ?? []).join(', ')}${c.blocks ? '; can stop the work' : ''})`).join(' · ')}`);
 console.log(`music moods: ${report.moods.join(', ') || 'none'}`);
 
 console.log('\nEpisodes');

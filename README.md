@@ -51,7 +51,7 @@ Then open an empty folder in Claude Code and type `/toon-crew:toon-crew`, or jus
 
 A step-by-step walkthrough is in [docs/getting-started.md](docs/getting-started.md).
 
-The crew holds a first meeting (what the show is, who it is for, how it should look), sets up the studio in that folder, and shows you the sample series. From there you direct.
+The crew asks for what it needs first (the story, and where you will post it), shows you one proposal, and after your okay sets up an empty studio in that folder and makes your series. Nothing in it comes from a template: the characters, the places and the story are yours.
 
 <details>
 <summary>Install without the plugin system</summary>
@@ -68,7 +68,7 @@ Then type `/toon-crew` in an empty folder.
 
 </details>
 
-**Requirements:** Claude Code and an internet connection. Node.js 20+, Google Chrome and ffmpeg are installed by the crew for you, after asking once. The sample series plays without anything else.
+**Requirements:** Claude Code and an internet connection. Node.js 20+, Google Chrome and ffmpeg are installed by the crew for you, after asking once. No voice engine is needed until your first script is approved.
 
 **Recording new voices** works three ways, chosen per series:
 
@@ -106,7 +106,7 @@ New here? [Getting started](docs/getting-started.md). Want more detailed charact
 - [x] Crew: rules, subagents, recipes, Director's guide
 - [x] Engine: timeline, episode assembly, balloons and captions, voice and music scripts, stills and render
 - [x] 3D look: stage, camera, light, characters, building blocks, world map
-- [x] Sample series that plays out of the box ("Ada & Ben", episode 1)
+- [x] Sample series that shows what the studio makes ("Ada & Ben", episode 1); a new studio starts empty and gets it only on request
 - [x] Installs as a Claude Code plugin
 - [x] Fast track: one okay on the plan, one on the finished picture
 - [x] Vertical video (9:16): text sized and placed for phones

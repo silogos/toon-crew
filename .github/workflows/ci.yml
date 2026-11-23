@@ -41,15 +41,26 @@ jobs:
           test -f CLAUDE.md && test -f AGENTS.md && test -f TECH-STACK.md
           test -f .claude/skills/new-episode/SKILL.md && test -f .claude/agents/quality-control.md
           test ! -e node_modules && test ! -e out
-      - name: The studio works with the sample and when emptied
+      - name: A new studio is empty and works
         shell: bash
         working-directory: ${{ runner.temp }}/series
         run: |
+          test ! -e series/episodes/ep01
+          if grep -q '"sample"' series/series.json; then echo "a new studio still holds the sample"; exit 1; fi
+          npm ci
+          npm run check
+          npm test
+          npm run status
+      - name: The sample is there on request and can be emptied
+        shell: bash
+        run: |
+          node skills/toon-crew/scripts/setup-studio.mjs "$RUNNER_TEMP/sample" --sample
+          cd "$RUNNER_TEMP/sample"
+          test -d series/episodes/ep01
           npm ci
           npm run check
           npm run clear-sample -- --yes
           npm run check
-          npm run status
       - name: A second setup refuses to overwrite
         shell: bash
         run: |

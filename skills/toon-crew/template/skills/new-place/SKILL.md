@@ -16,7 +16,7 @@ First read the world rules in `series/story/00-bible.md`. A series with **one co
 Render and look at the current map (`npm run still -- map`) so your proposal is concrete. Then ask, in one round with suggestions:
 
 - What the place is and what happens there in the story.
-- Where it sits relative to places that already exist ("east end of the road, across from the shop").
+- Where it sits relative to places that already exist.
 - Outdoor only, or does the story go inside?
 - Times of day it will be seen at.
 
