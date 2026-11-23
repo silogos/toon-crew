@@ -88,6 +88,7 @@ def main():
         text = line.get("say", line["text"])  # "say" = how to pronounce it, when that differs from the balloon
         t = time.time()
         raw = RAW / f"{lid}.wav"
+        heard_as = RAW / f"{lid}.cleaned.wav"
         best = (-1.0, None, None, "")
         takes = 0
         for take in range(MAX_TAKES):
@@ -95,7 +96,14 @@ def main():
             mx.random.seed(zlib.crc32(f"{lid}:{take}".encode()) % 100_000)
             audio, rate = generate(model, text, ref_audio=str(REFS / f"{voice}.wav"), instruct=DELIVERY.get(fx))
             sf.write(raw, audio, rate)
-            score, heard = listen(raw, text, language)
+            # score the take as it will be heard in the video: trimming and levelling can clip a word
+            # that the raw take had, and `npm run voices:check` listens to the finished file too.
+            # (An echo is added on purpose and would only confuse the listener, so that one is scored raw.)
+            if fx == "echo":
+                score, heard = listen(raw, text, language)
+            else:
+                clean(raw, heard_as, [])
+                score, heard = listen(heard_as, text, language)
             if score > best[0]:
                 best = (score, audio, rate, heard)
             if score >= PASS_SCORE:
@@ -105,6 +113,7 @@ def main():
 
         dst = AUDIO / f"{lid}.wav"
         clean(raw, dst, ["lowpass=f=2200", "aecho=0.8:0.6:250|500:0.5|0.3", "volume=0.5"] if fx == "echo" else [])
+        heard_as.unlink(missing_ok=True)
         durations[lid] = seconds(dst)
         flag = "ok " if score >= PASS_SCORE else "!! "
         drifted += score < PASS_SCORE

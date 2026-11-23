@@ -25,6 +25,14 @@ Every new thing, whether an episode, a character or a place, goes through the sa
 
 Changing your mind is cheapest early. A line changed at the script stage costs nothing; the same line changed after production means recording it again and re-timing the scene.
 
+## In a hurry? The fast track
+
+If you would rather see a finished video than approve every stage, say *"fast track"* or *"just make it"*. The crew then stops only twice per episode: once with the whole plan (story, shots, characters, places, voices) in one message, and once with the finished picture before the final video is made. It will still ask before installing anything, spending money, or changing something you already approved. Say *"step by step"* to go back to approving every stage.
+
+## Posting it
+
+After the final video is made, the crew can prepare a cover picture, a title, a caption and tags for posting; just say yes when it offers. If the video is for TikTok, Reels or Shorts, tell the crew at the start so the series is made vertical: turning a finished landscape episode into a vertical one means framing every shot again.
+
 ## Things you can ask for
 
 You can use the short command or just say it in your own words.
@@ -44,7 +52,11 @@ You can use the short command or just say it in your own words.
 | Change the music | "Scene 3 needs something tense." "Make a short happy jingle for the title." | `/music` |
 | Make or change the opening | "I want a 15-second opening that introduces everyone." | `/opening` |
 | See the current state | "Show me scene 2." "Show me the whole cast." "Show me the map." | `/screening` |
+| See the whole episode at a glance | "Show me the whole episode in one picture." | `/screening` |
+| Watch it move, with sound | "Give me the preview link." | `/screening` |
 | Get the finished video | "Render episode 1." | `/render` |
+| Get it ready to post | "Make a cover, a title and a caption for episode 1." | `/render` |
+| Work faster or slower | "Fast track." "Step by step from here." | |
 
 ## Seeing your options
 

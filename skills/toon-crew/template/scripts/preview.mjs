@@ -5,8 +5,10 @@
 //   npm run preview -- stop    stop it
 //
 // Safe to run again and again: a preview that is already up is reused, never started twice.
+// Remotion Studio can quit while the crew works (it happened in a trial); a small keeper process
+// starts it again on the same address, so a link given to the Director stays good.
 // `npm run studio` still exists for a person who wants it in the foreground of their own terminal.
-import {spawn} from 'node:child_process';
+import {spawn, spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import net from 'node:net';
 import {episodeNames, readJsonIf, readSeries, writeJson} from './lib/series.mjs';
@@ -60,7 +62,8 @@ const start = async () => {
   const url = `http://localhost:${port}`;
   fs.mkdirSync('out', {recursive: true});
   const log = fs.openSync(LOG, 'w');
-  const child = spawn(process.execPath, [remotionCli(), 'studio', `--port=${port}`, '--no-open'], {
+  // the keeper is this same script; it runs the studio and starts it again whenever it quits
+  const child = spawn(process.execPath, [process.argv[1], '--keep', String(port)], {
     detached: true,
     stdio: ['ignore', log, log],
     windowsHide: true,
@@ -76,16 +79,52 @@ const start = async () => {
     await new Promise((r) => setTimeout(r, 500));
   }
   fs.rmSync(STATE, {force: true});
-  if (alive(child.pid)) process.kill(child.pid);
+  if (alive(child.pid)) end(child.pid);
   console.error(`The preview did not start. Its messages are in ${LOG}:\n`);
   console.error(fs.readFileSync(LOG, 'utf8').split('\n').slice(-15).join('\n'));
   process.exit(1);
 };
 
+/** End a process and whatever it started. */
+const end = (pid) => {
+  if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(pid), '/T', '/F'], {stdio: 'ignore'});
+  else process.kill(pid);
+};
+
+/** The keeper: run the studio on `port`, and again each time it quits, until told to stop. */
+const keep = (port) => {
+  let studio = null;
+  let stopping = false;
+  let quickExits = 0;
+  const run = () => {
+    const began = Date.now();
+    studio = spawn(process.execPath, [remotionCli(), 'studio', `--port=${port}`, '--no-open'], {stdio: 'inherit', windowsHide: true});
+    studio.on('exit', () => {
+      if (stopping) return;
+      // a studio that keeps dying at once has a real problem (a broken file, a taken port): give up and leave the log
+      quickExits = Date.now() - began < 15_000 ? quickExits + 1 : 0;
+      if (quickExits >= 4) {
+        console.error('The preview stopped four times in a row right after starting; not trying again.');
+        process.exit(1);
+      }
+      console.log('The preview quit; starting it again.');
+      setTimeout(run, 1000);
+    });
+  };
+  for (const signal of ['SIGTERM', 'SIGINT']) {
+    process.on(signal, () => {
+      stopping = true;
+      studio?.kill();
+      process.exit(0);
+    });
+  }
+  run();
+};
+
 const stop = async () => {
   const state = readJsonIf(STATE, null);
   if (state && alive(state.pid)) {
-    process.kill(state.pid);
+    end(state.pid);
     console.log('Preview stopped.');
   } else {
     console.log('The preview was not running.');
@@ -93,10 +132,12 @@ const stop = async () => {
   fs.rmSync(STATE, {force: true});
 };
 
-const [arg] = process.argv.slice(2);
+const [arg, keepPort] = process.argv.slice(2);
 readSeries();
 
-if (arg === 'stop') {
+if (arg === '--keep') {
+  keep(Number(keepPort));
+} else if (arg === 'stop') {
   await stop();
 } else {
   const episodes = episodeNames();

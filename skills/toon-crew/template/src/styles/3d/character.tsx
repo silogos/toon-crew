@@ -224,6 +224,8 @@ const POSE_ARMS: Record<Pose, {right: Arm; left: Arm}> = {
   down: {right: REST, left: REST},
   wave: {right: [0, 2.5, 0, 0.4], left: REST},
   point: {right: [1.45, 0.05, 0.05, 0], left: REST},
+  // at something overhead: a kite, a ball in a tree
+  pointUp: {right: [2.3, 0.55, 0.05, 0], left: REST},
   hips: {right: [-0.15, 0.85, 0, 1.75], left: [-0.15, 0.85, 0, 1.75]},
   cheer: {right: [0, 2.25, 0, -0.35], left: [0, 2.25, 0, -0.35]},
   think: {right: [0.75, 0.05, 2.3, 0.2], left: [0.2, 0.1, 1.5, 0.9]},

@@ -4,4 +4,4 @@
 
 Each entry: what happened, the cause, what to do next time. Newest at the bottom.
 
-*(No lessons yet.)*
+*(No lessons yet. Replace this line with the first entry.)*

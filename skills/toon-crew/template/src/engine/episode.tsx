@@ -1,7 +1,8 @@
 import React from 'react';
-import {AbsoluteFill, Html5Audio, Sequence, Series, interpolate, staticFile} from 'remotion';
+import {AbsoluteFill, Html5Audio, Sequence, Series, staticFile} from 'remotion';
 import {z} from 'zod';
 import {Line, LinesProvider, isNarration} from './lines';
+import {musicStretches, stretchFade} from './music';
 import {Caption} from './overlay';
 import {SceneDef} from './scene';
 import {SERIES} from './series';
@@ -25,14 +26,8 @@ export const assemble = (scenes: SceneDef[], lines: Line[]) => {
   const speech = scenes.flatMap((s, i) => s.cues.map((c) => [offsets[i] + c.start, offsets[i] + c.speechEnd] as const));
   const speaking = (f: number) => speech.some(([a, b]) => f >= a - 3 && f < b + 6);
 
-  // neighbouring scenes with the same mood share one stretch of music
-  const stretches: {mood: string; from: number; length: number}[] = [];
-  scenes.forEach((s, i) => {
-    if (!s.music || !SERIES.music[s.music]) return;
-    const last = stretches[stretches.length - 1];
-    if (last && last.mood === s.music && last.from + last.length === offsets[i]) last.length += s.duration;
-    else stretches.push({mood: s.music, from: offsets[i], length: s.duration});
-  });
+  // neighbouring pieces with the same mood share one stretch of music; a scene may change mood part-way
+  const stretches = musicStretches(scenes, (mood) => Boolean(SERIES.music[mood]));
 
   const Component: React.FC = () => (
     <LinesProvider lines={lines}>
@@ -58,10 +53,7 @@ export const assemble = (scenes: SceneDef[], lines: Line[]) => {
                 src={audio(file)}
                 loop
                 volume={(f) => {
-                  const fade = interpolate(f, [0, 20, m.length - 30, m.length], [0, 1, 1, 0], {
-                    extrapolateLeft: 'clamp',
-                    extrapolateRight: 'clamp',
-                  });
+                  const fade = stretchFade(f, m.length);
                   return volume * fade * (speaking(m.from + f) ? 0.45 : 1);
                 }}
               />

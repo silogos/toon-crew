@@ -1,5 +1,8 @@
 import {describe, expect, it} from 'vitest';
+import {placeBalloon, textWidth} from './layout';
 import {between, seeded} from './math';
+import {musicStretches, stretchFade} from './music';
+import {isVertical, textScale} from './series';
 import {Timeline, framesOf, hasRecording} from './timeline';
 
 // A sound effect is used because clear-sample keeps effects but removes spoken lines.
@@ -69,5 +72,96 @@ describe('math', () => {
       expect(v).toBeGreaterThanOrEqual(0);
       expect(v).toBeLessThan(1);
     }
+  });
+});
+
+describe('placeBalloon', () => {
+  const base = {k: 1, tailPct: 50, fontSize: 40, maxWidth: 700};
+
+  it('centres the balloon on the speaker when there is room', () => {
+    const p = placeBalloon({...base, x: 960, width: 1920, text: 'Hello there!'});
+    expect(p.left + p.bodyW / 2).toBeCloseTo(960);
+    expect(p.tailX).toBeCloseTo(p.bodyW / 2);
+  });
+
+  it('slides back inside the frame at either edge and keeps the tail on the balloon', () => {
+    for (const x of [-200, 0, 30, 1050, 1080, 1400]) {
+      const p = placeBalloon({...base, x, width: 1080, text: 'A line long enough to wrap onto two rows of text'});
+      expect(p.left).toBeGreaterThanOrEqual(40);
+      expect(p.left + p.bodyW).toBeLessThanOrEqual(1080 - 40 + 0.001);
+      expect(p.tailX).toBeGreaterThanOrEqual(40);
+      expect(p.tailX).toBeLessThanOrEqual(p.bodyW - 40);
+    }
+  });
+
+  it('spreads long text over even rows instead of filling the widest balloon', () => {
+    const long = 'Sudah! Kok belum tumbuh, Nek? Aku sudah menunggu lama sekali di sini.';
+    const p = placeBalloon({...base, x: 540, width: 1080, text: long});
+    expect(p.lines).toBeGreaterThan(1);
+    expect(p.bodyW).toBeLessThanOrEqual(p.maxW);
+    expect(placeBalloon({...base, x: 540, width: 1080, text: 'Hai!'}).lines).toBe(1);
+  });
+
+  it('stays finite in a frame too small for any balloon', () => {
+    const p = placeBalloon({...base, x: 40, width: 120, text: 'A line long enough to wrap onto two rows of text'});
+    expect(Number.isFinite(p.lines)).toBe(true);
+    expect(Number.isFinite(p.bodyW)).toBe(true);
+  });
+
+  it('is never wider than a narrow frame, however large the text', () => {
+    const p = placeBalloon({...base, k: 2, fontSize: 80, x: 300, width: 600, text: 'A line long enough to wrap onto two rows of text'});
+    expect(p.maxW).toBeLessThanOrEqual(600 - 2 * 80);
+    expect(p.bodyW).toBeLessThanOrEqual(p.maxW);
+  });
+});
+
+describe('textWidth', () => {
+  it('counts a square character as about twice a Latin letter', () => {
+    expect(textWidth('日本語', 40)).toBeGreaterThan(textWidth('abc', 40) * 1.6);
+  });
+});
+
+describe('textScale', () => {
+  it('follows the long side, so vertical text is as large as landscape text', () => {
+    expect(textScale(1920, 1080)).toBe(1);
+    expect(textScale(1080, 1920)).toBe(1);
+    expect(textScale(1280, 720)).toBeCloseTo(2 / 3);
+    expect(isVertical(1080, 1920)).toBe(true);
+    expect(isVertical(1920, 1080)).toBe(false);
+  });
+});
+
+describe('music', () => {
+  const known = (mood: string) => ['calm', 'cheerful'].includes(mood);
+
+  it('joins neighbouring scenes with the same mood into one stretch', () => {
+    const s = musicStretches([{duration: 100, music: 'calm'}, {duration: 50, music: 'calm'}, {duration: 30, music: 'cheerful'}], known);
+    expect(s).toEqual([{mood: 'calm', from: 0, length: 150}, {mood: 'cheerful', from: 150, length: 30}]);
+  });
+
+  it('changes mood part-way through a scene, and null means silence', () => {
+    const s = musicStretches([{duration: 200, music: 'cheerful', moods: [{at: 120, mood: 'calm'}, {at: 160, mood: null}]}], known);
+    expect(s).toEqual([{mood: 'cheerful', from: 0, length: 120}, {mood: 'calm', from: 120, length: 40}]);
+  });
+
+  it('a change at the very start replaces the starting mood; unknown moods stay silent', () => {
+    expect(musicStretches([{duration: 90, music: 'cheerful', moods: [{at: 0, mood: 'calm'}]}], known)).toEqual([{mood: 'calm', from: 0, length: 90}]);
+    expect(musicStretches([{duration: 90, music: 'spooky'}], known)).toEqual([]);
+  });
+
+  it('Timeline.mood records the change where the script stands', () => {
+    const t = new Timeline();
+    t.wait(40);
+    expect(t.mood('calm')).toBe(40);
+    expect(t.moods).toEqual([{at: 40, mood: 'calm'}]);
+  });
+
+  it('fades stay between 0 and 1 even for a very short stretch', () => {
+    for (const length of [6, 30, 300]) for (let f = 0; f <= length; f++) {
+      const v = stretchFade(f, length);
+      expect(v).toBeGreaterThanOrEqual(0);
+      expect(v).toBeLessThanOrEqual(1);
+    }
+    expect(stretchFade(150, 300)).toBe(1);
   });
 });

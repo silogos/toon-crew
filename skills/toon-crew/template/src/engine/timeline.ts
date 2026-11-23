@@ -32,6 +32,8 @@ export class Timeline {
   private cursor = 0;
   readonly cues: Cue[] = [];
   readonly sounds: Sound[] = [];
+  /** changes of music mood inside the scene, in the order they were written */
+  readonly moods: {at: number; mood: string | null}[] = [];
 
   /** Place a spoken line and get back when it starts and ends. */
   say(id: string, {gap = 8, hold = 15, at, overlap = false}: SayOptions = {}): Cue {
@@ -69,6 +71,15 @@ export class Timeline {
   cut(pause = 8): number {
     const at = this.until(this.cursor + pause);
     for (const c of this.cues) if (c.end > at) c.end = at;
+    return at;
+  }
+
+  /**
+   * Change the music mood from here on (or from `at`): a mood from series.json, or null for silence.
+   * The scene starts in the mood given to `defineScene`. Returns the frame of the change.
+   */
+  mood(mood: string | null, at: number = this.cursor): number {
+    this.moods.push({at, mood});
     return at;
   }
 

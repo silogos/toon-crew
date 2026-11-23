@@ -5,6 +5,7 @@ import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from
 import * as THREE from 'three';
 import {CAST} from '../../../series/cast';
 import {Balloon} from '../../engine/overlay';
+import {textScale} from '../../engine/series';
 import {Cue} from '../../engine/timeline';
 import {modelFilesOf} from './model-spec';
 import {useModelsReady} from './models';
@@ -174,8 +175,8 @@ export const Speech: React.FC<{cue: Cue; at: Vec3; tail?: 'center' | 'left' | 'r
 /** A text label pinned to a place in the world. Used by the map and the reference sheets. */
 export const Label: React.FC<{at: Vec3; children: React.ReactNode; size?: number; plain?: boolean}> = ({at, children, size = 30, plain = false}) => {
   const {project} = useStage();
-  const {width} = useVideoConfig();
-  const k = width / 1920;
+  const {width, height} = useVideoConfig();
+  const k = textScale(width, height);
   const p = project(at);
   if (!p.visible) return null;
   return (

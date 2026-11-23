@@ -4,7 +4,7 @@ import {z} from 'zod';
 import {CAST} from '../../../series/cast';
 import {MAP} from '../../../series/world/map';
 import {FONT} from '../../engine/overlay';
-import {SERIES} from '../../engine/series';
+import {SERIES, textScale} from '../../engine/series';
 import {Character, heightOfMember} from './character';
 import {CastMember, EXPRESSIONS, POSES} from './look';
 import {modelFilesOf} from './model-spec';
@@ -28,7 +28,8 @@ const frontOn = (centre: Vec3, w: number, h: number, aspect: number): Shot => {
 };
 
 const Title: React.FC<{children: React.ReactNode; bottom?: boolean}> = ({children, bottom = false}) => {
-  const k = useVideoConfig().width / 1920;
+  const {width, height} = useVideoConfig();
+  const k = textScale(width, height);
   return (
     <div style={{position: 'absolute', [bottom ? 'bottom' : 'top']: 28 * k, left: 0, right: 0, textAlign: 'center', fontFamily: FONT, fontSize: 40 * k, fontWeight: 800, color: '#222'}}>
       {children}

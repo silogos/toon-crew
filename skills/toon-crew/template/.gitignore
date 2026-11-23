@@ -20,3 +20,6 @@ out
 # 3D models are downloaded by whoever uses them, never committed
 public/models/*
 !public/models/LICENSES.md
+
+# Python bytecode
+__pycache__

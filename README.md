@@ -1,12 +1,14 @@
 # Toon Crew
 
+**English** · [Bahasa Indonesia](README.id.md)
+
 **You direct. An AI crew makes the show.**
 
 Toon Crew turns Claude Code into the production crew of your own animated series. You say what you want in plain words; the crew writes the script, draws the storyboard, designs the characters, builds the world, records the voices, animates the scenes, and checks its own work. Your characters, your world and every character's voice stay the same from episode to episode.
 
 Everything is made by code on your own computer. No video generator, no stock assets.
 
-> **Status: early.** The crew, the engine, the 3D look and a sample series ("Ada & Ben", one 39-second episode) work, and setting up from a clean copy has been tested on an Apple Silicon Mac. Installing through the plugin system from GitHub has not been tested yet. See [Roadmap](#roadmap).
+> **Status: early.** The crew, the engine, the 3D look and a sample series ("Ada & Ben", one 39-second episode) work, and setting up from a clean copy has been tested on an Apple Silicon Mac. The fast track and vertical video were each tried by fresh sessions working from a one-sentence idea (two 17 to 19 second videos, the second in about five minutes with two stops, on a computer where the tools and the voice model were already installed). Installing through the plugin system from GitHub has not been tested yet. See [Roadmap](#roadmap).
 
 ![Ada & Ben, episode 1: The Lost Book](docs/media/ep01-preview.gif)
 
@@ -16,6 +18,8 @@ Everything is made by code on your own computer. No video generator, no stock as
 
 - **A series, not a clip.** A persistent cast, one world with a map, and a fixed voice per character. Episode 5 looks and sounds like episode 1.
 - **You stay the Director.** Every episode goes brief → script → storyboard → production → final render, and the crew stops for your okay at each stage.
+- **Or just get the video.** Say *"fast track"* and the crew stops only twice per episode: once with the whole plan, once with the finished picture.
+- **Landscape or vertical.** 16:9 for YouTube, or 9:16 for TikTok, Reels and Shorts, with speech balloons and captions sized for a phone.
 - **A crew, not a prompt.** Writer, Storyboard Artist, Character Designer, Art Director, Animator, Voice Director, Composer, Editor and Quality Control, each with a recipe to follow. Quality Control and the Voice Director run as separate subagents.
 - **It checks itself.** The crew renders stills of every scene and looks at them, and listens back to every recorded line, before showing you anything.
 - **No programming needed.** "Give Tobi glasses." "Put a school at the east end of the road." "Scene 3 needs something tense."
@@ -41,7 +45,9 @@ Toon Crew is a Claude Code plugin. In Claude Code:
 /plugin install toon-crew@toon-crew
 ```
 
-Then open an empty folder in Claude Code and type `/toon-crew:toon-crew`, or just say *"start a new animated series"*.
+Then open an empty folder in Claude Code and type `/toon-crew:toon-crew`, or just say what you want:
+
+> *"Make me a 30-second cartoon for TikTok about two friends who get their ball stuck in a tree. Just make it."*
 
 A step-by-step walkthrough is in [docs/getting-started.md](docs/getting-started.md).
 
@@ -83,7 +89,7 @@ The crew asks which you prefer at the first meeting and sets it up. Recordings m
 | `…/template/CLAUDE.md` | The crew's standing rules |
 | `…/template/DIRECTOR-GUIDE.md` | What you can ask for, in plain words |
 | `…/template/agents/` | Subagents: `quality-control`, `voice-director` |
-| `…/template/scripts/` | What the crew runs: stills, render, voices, music, the content check, `status` (where the production stands) and `doctor` (what the computer is missing) |
+| `…/template/scripts/` | What the crew runs: stills, render, preview, voices, music, the content check, `status` (where the production stands) and `doctor` (what the computer is missing) |
 | `…/template/skills/` | One recipe per job: `/new-character` (from code, or from a 3D model file), `/new-place`, `/new-episode`, `/opening`, `/voices`, `/music`, `/screening`, `/render` |
 
 ## Gallery
@@ -102,6 +108,8 @@ New here? [Getting started](docs/getting-started.md). Want more detailed charact
 - [x] 3D look: stage, camera, light, characters, building blocks, world map
 - [x] Sample series that plays out of the box ("Ada & Ben", episode 1)
 - [x] Installs as a Claude Code plugin
+- [x] Fast track: one okay on the plan, one on the finished picture
+- [x] Vertical video (9:16): text sized and placed for phones
 - [x] Voices on Windows and Linux through ElevenLabs (not yet tested against the live service)
 - [ ] Free local voices on Windows and Linux
 - [ ] 2D and 2.5D looks

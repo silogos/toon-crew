@@ -33,11 +33,13 @@ In Claude Code:
 
 Open an **empty folder** in Claude Code and type `/toon-crew:toon-crew`, or say *"start a new animated series"*.
 
-The crew holds a **first meeting**. It asks, in one round, with a recommendation for each question:
+**In a hurry?** Say the idea and add *"just make it"* or *"fast track"*. The crew then fills in the answers below itself, shows them to you as one proposal, and from there stops only twice per episode: once with the whole plan (story, shots, characters, places, voices), once with the finished picture. You can say *"step by step"* at any time to approve every stage instead.
+
+Otherwise the crew holds a **first meeting**. It asks, in one round, with a recommendation for each question:
 
 1. What the show is (a working title and one sentence)
 2. Who watches it
-3. How long each episode is, and landscape or vertical
+3. How long each episode is, and landscape (YouTube) or vertical (TikTok, Reels, Shorts)
 4. The language the characters speak
 5. The look (only 3D is built today)
 6. The house rules of your show: does the camera stay still, is everything in one place
@@ -50,7 +52,7 @@ Say what you want. For example:
 
 > *"New episode: Ada loses her kite and Ben helps her find it. About 40 seconds."*
 
-Every episode goes through five stages, and the crew **stops and waits for your okay** after each:
+Every episode goes through five stages, and the crew **stops and waits for your okay** after each (on the fast track the first three arrive together):
 
 | Stage | You see | You decide |
 |---|---|---|
@@ -62,7 +64,9 @@ Every episode goes through five stages, and the crew **stops and waits for your 
 
 Changing your mind is cheapest early: a line changed in the script costs nothing, the same line changed after production means re-recording it.
 
-To watch a scene move, say *"Open the studio."* A preview opens in your browser.
+Whenever the crew asks you to review something, it gives you a **preview link** along with the pictures. Open it to watch the scene move with its voices and music; changes appear there as the crew makes them. You never have to start the preview yourself.
+
+When the video is finished, the crew offers a cover picture, a title, a caption and tags for posting it.
 
 ## What you can ask for
 

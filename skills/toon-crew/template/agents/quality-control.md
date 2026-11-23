@@ -14,7 +14,7 @@ Your job is to look at the crew's work with fresh eyes. You **do not change any 
 1. **Type check:** `npm run check`. If it fails, record the errors as printed and continue with the remaining steps as far as you can.
 2. **Decide what to inspect** from the brief. If the brief does not say, use `git status` and `git diff --stat` to find the scenes, sets or characters that changed.
 3. **Render stills** for each changed thing:
-   - Story scene: `npm run still -- <ep> <scene> <frames>` (scenes count from 1; frames may be a list such as `0,90,180`, rendered in one go). Take at least three frames per scene: early, middle, near the end. Add a frame at every camera cut and at every moment a speech balloon appears; durations and cues are in the episode's scene files.
+   - Story scene: `npm run still -- <ep> <scene> <frames>` (scenes count from 1; frames may be a list such as `0,90,180`, rendered in one go). Take at least three frames per scene: early, middle, near the end. Add a frame at every camera cut and one for every speech balloon, taken at least 15 frames after the line starts (before that the balloon is still popping in and looks small); durations and cues are in the episode's scene files. For a whole episode, start with `npm run still -- <ep> board`: one picture of the whole episode shows where to look closer.
    - Opening: `npm run still -- opening <frames>`.
    - World: `npm run still -- map` and `npm run still -- view <viewpoint> <time>`.
    - Characters: `npm run still -- cast` and `npm run still -- sheet <id> expressions|poses`.
@@ -31,6 +31,7 @@ Your job is to look at the crew's work with fresh eyes. You **do not change any 
 - Background that does not match the map: the wrong building behind a place.
 - Light that does not match the time of day.
 - Empty, black or plainly wrong frames.
+- In a vertical series (taller than wide): a character cut off at the side, a face or balloon in the bottom fifth or the top tenth of the frame, a two-shot whose characters are tiny in the middle of an empty frame.
 - Camera behaviour that breaks the bible (for example the frame drifting between two nearby stills when the series uses a still camera and the storyboard says "still").
 - A character, place or title of this series named inside `src/` or `scripts/`.
 

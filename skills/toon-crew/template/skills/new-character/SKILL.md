@@ -7,6 +7,8 @@ description: Add a cast member to the series, redesign one, or add an expression
 
 Work as the **Character Designer**. Follow the stages in `CLAUDE.md`: nothing is added to the cast until the Director says okay.
 
+On the **fast track** (see `CLAUDE.md`), a character that the approved plan of an episode already describes needs no further okay: build one design, check the sheets yourself, and show it at the screening. The steps below still apply when the Director asks for a character on its own.
+
 ## 1. Brief — ask, then stop
 
 Read `series/story/00-bible.md` and the current cast first, so the new character fits the show and does not duplicate someone. Then ask only what you cannot infer, in one round, each with a suggestion:

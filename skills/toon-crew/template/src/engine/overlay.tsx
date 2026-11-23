@@ -1,14 +1,18 @@
 import React from 'react';
 import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {placeBalloon} from './layout';
 import {useLine} from './lines';
-import {DESIGN_WIDTH} from './series';
+import {isVertical, textScale} from './series';
 import {Cue} from './timeline';
 
 export const FONT = "'Arial Rounded MT Bold', 'Trebuchet MS', 'Helvetica Neue', sans-serif";
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 
-/** On-screen text is designed at 1920 wide and scaled to the real frame. */
-const useScale = () => useVideoConfig().width / DESIGN_WIDTH;
+/** On-screen text is designed at 1920 on the long side and scaled to the real frame. */
+const useScale = () => {
+  const {width, height} = useVideoConfig();
+  return textScale(width, height);
+};
 
 /**
  * Speech balloon for one line. (x, y) is where the tail points, in screen pixels:
@@ -31,22 +35,25 @@ export const Balloon: React.FC<{
   if (f < cue.start || f >= cue.end) return null;
 
   const shout = line.fx === 'shout';
-  const pop = spring({frame: f - cue.start, fps, config: {damping: 11, stiffness: 170}});
+  // the pop-in may overshoot a little, but never so far that a balloon near an edge leaves the frame
+  const pop = Math.min(1.05, spring({frame: f - cue.start, fps, config: {damping: 11, stiffness: 170}}));
   const fade = interpolate(f, [cue.end - 8, cue.end], [1, 0], clamp);
   const tailPct = tail === 'center' ? 50 : tail === 'left' ? 12 : 88;
   const ink = shout ? '#c62828' : '#222';
   const jitter = shout ? Math.sin(f * 1.3) * 2 * k : 0;
-  // keep the tail point inside the frame so a balloon never leaves the screen sideways
-  const px = Math.min(Math.max(x, 40 * k), width - 40 * k);
+  const fontSize = (shout ? 50 : 40) * k;
+  // never wider than the frame, never over an edge; the tail stays on the speaker
+  const {left, bodyW, maxW, tailX, lines} = placeBalloon({x, width, k, tailPct, text: line.text, fontSize, maxWidth});
 
   return (
     <div
       style={{
         position: 'absolute',
-        left: px,
+        left,
         top: y,
-        transform: `translate(-${tailPct}%, -100%) translate(${jitter}px, ${-30 * k}px) scale(${pop})`,
-        transformOrigin: `${tailPct}% 100%`,
+        minWidth: bodyW,
+        transform: `translate(0, -100%) translate(${jitter}px, ${-30 * k}px) scale(${pop})`,
+        transformOrigin: `${tailX}px 100%`,
         opacity: fade,
       }}
     >
@@ -56,12 +63,17 @@ export const Balloon: React.FC<{
           border: `${6 * k}px solid ${ink}`,
           borderRadius: 36 * k,
           padding: `${22 * k}px ${34 * k}px`,
-          fontSize: (shout ? 50 : 40) * k,
+          fontSize,
           lineHeight: 1.25,
           fontWeight: 800,
           color: ink,
-          width: 'max-content',
-          maxWidth: maxWidth * k,
+          boxSizing: 'border-box',
+          // one row grows with its text; several rows share a fixed width so they come out even
+          width: lines === 1 ? 'max-content' : bodyW,
+          minWidth: bodyW,
+          maxWidth: maxW,
+          textWrap: 'balance',
+          overflowWrap: 'anywhere',
           textAlign: 'center',
           fontFamily: FONT,
           boxShadow: `0 ${8 * k}px 0 rgba(0,0,0,0.18)`,
@@ -73,7 +85,7 @@ export const Balloon: React.FC<{
         style={{
           position: 'absolute',
           bottom: -30 * k,
-          left: `${tailPct}%`,
+          left: tailX,
           transform: 'translateX(-50%)',
           width: 0,
           height: 0,
@@ -90,14 +102,17 @@ export const Balloon: React.FC<{
 export const Caption: React.FC<{cue: Cue}> = ({cue}) => {
   const f = useCurrentFrame();
   const k = useScale();
+  const {width, height} = useVideoConfig();
   const line = useLine(cue.id);
   if (f < cue.start || f >= cue.end) return null;
+  // on a vertical video the bottom fifth is under the phone app's own buttons and captions
+  const bottom = isVertical(width, height) ? height * 0.2 : 40 * k;
   const o = interpolate(f, [cue.start, cue.start + 10, cue.end - 10, cue.end], [0, 1, 1, 0], clamp);
   return (
     <div
       style={{
         position: 'absolute',
-        bottom: 40 * k,
+        bottom,
         left: '50%',
         transform: `translateX(-50%) translateY(${(1 - o) * 20 * k}px)`,
         opacity: o,

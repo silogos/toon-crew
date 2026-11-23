@@ -15,7 +15,7 @@ export const HAIRS = ['none', 'short', 'spiky', 'bob', 'long', 'bun', 'curly'] a
 export const TOPS = ['plain', 'stripe', 'collar', 'dress'] as const;
 export const BOTTOMS = ['shorts', 'pants', 'skirt'] as const;
 export const EXPRESSIONS = ['neutral', 'happy', 'laugh', 'smirk', 'shy', 'thinking', 'surprised', 'scared', 'worried', 'sad', 'cry', 'angry'] as const;
-export const POSES = ['down', 'wave', 'point', 'hips', 'cheer', 'think', 'shrug', 'cover', 'hold', 'reach'] as const;
+export const POSES = ['down', 'wave', 'point', 'pointUp', 'hips', 'cheer', 'think', 'shrug', 'cover', 'hold', 'reach'] as const;
 export const PROPS = ['none', 'book', 'ball', 'stick', 'cup', 'basket', 'flower'] as const;
 
 export type Build = (typeof BUILDS)[number];

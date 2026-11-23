@@ -8,7 +8,7 @@ By default every character is built from code, with nothing downloaded. If you w
 |---|---|---|
 | Detail | Simple, toy-like | As detailed as the model |
 | Faces | 12 expressions, the mouth moves with the dialogue | A painted face: **no expressions, no mouth movement** |
-| Movement | 10 poses, walking, talking | The model's own animation clips |
+| Movement | 11 poses, walking, talking | The model's own animation clips |
 | Props and `accessories` | Yes | No |
 | Needs | Nothing | A model file with animations, and its licence |
 

@@ -29,4 +29,14 @@ Run it in the background; it can take many minutes. Do not start a second render
 3. Report the exact file path, duration and size, and that sound was **not** checked by ear.
 4. Set the story file's Status to final-rendered with the date.
 
+## Ready to post
+
+A finished video still needs a few things before it goes online. Offer them once, right after the report, and make them only if the Director says yes (on the fast track, make them without asking and include them in the report):
+
+1. **Cover picture.** Choose the frame that best sells the episode (a clear face, the moment of the story, no balloon cut off) and render it with `npm run still`, then copy it to `out/<ep>-<title>.cover.png` next to the video. Look at it before showing it.
+2. **Title, caption and tags**, in the language of the series, written to `out/<ep>-<title>.post.md`: a title under 60 characters, a caption of one or two sentences that opens with the hook rather than the name of the series, and five to eight tags. Write them from what happens in the episode; never promise something the video does not show.
+3. **Format check.** Say whether the video is landscape or vertical and which platforms that suits. A landscape video posted to a vertical feed plays small with black bars; if the Director wants a vertical version, that is new work (every shot is framed again), not a setting.
+
+The crew does not post anything. Uploading, and the account it goes to, are the Director's.
+
 If the render fails, report the error as printed and the frame it stopped at. Do not report a partial file as finished.

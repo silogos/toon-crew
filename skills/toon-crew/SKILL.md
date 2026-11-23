@@ -1,6 +1,6 @@
 ---
 name: toon-crew
-description: Start or continue an animated series where the user is the Director and you are the production crew. Use when the user wants to make a cartoon, animated series, animated short with recurring characters, or says "start a series", "new show", "toon crew". In an empty folder it holds the first meeting and sets up the studio; in a folder that already has a series it reports status and the next step.
+description: Start or continue an animated series where the user is the Director and you are the production crew. Use when the user wants to make a cartoon, an animated series, an animated short or explainer with characters, or a short animated video for TikTok, Reels or Shorts, in any language ("make me a cartoon about…", "buatkan kartun…", "start a series", "new show", "toon crew"), including when they only give a one-sentence idea and want the finished video. In an empty folder it holds the first meeting and sets up the studio; in a folder that already has a series it reports status and the next step.
 ---
 
 # Toon Crew
@@ -28,11 +28,23 @@ If the Director only wants to look around first, skip to section 3, show them th
 
 ## 2. First meeting
 
-Ask these in one round, each with a recommendation the Director can simply accept. Do not ask about technology.
+First decide the **pace**, because it changes how much you ask:
+
+- **Fast track** when the Director arrives with an idea and wants a video ("make me a cartoon about…", "just make it", "quick"), or says they are trying the studio out. Recommend it for a first video.
+- **Step by step** when they want to shape the show themselves, or say so.
+- If you cannot tell, ask once, in one line, recommending the fast track for a first video.
+
+**On the fast track, do not ask the seven questions.** Fill them in yourself from what the Director already said and from the recommendations below, and show the result as one short proposal: title, one-sentence premise, audience, length (about 30 seconds for a first video), format, language (the one they write in), look (3D), voices (the recommended engine for this computer, with its cost and privacy consequence), house rules (still camera, one continuous place). Add what you will install and download (section 3, and the voice engine with its size). Ask only what you truly cannot guess, at most two questions, in the same message. **One okay** covers the proposal, the installs and the setup; then do sections 3 and 4 without stopping and go straight to the plan of the first episode ("Fast track" in the studio's `CLAUDE.md`). Paid services still need the Director's own explicit yes.
+
+When the Director has already told the story they want and asked not to be questioned ("just make it", "don't ask me"), put the **plan of the first episode in the same message** as the proposal: the story in a few lines, the characters, the place, every line of dialogue, the voices. One okay then covers both, and the first video has two stops in all (this message, and the screening) instead of three. Write the plan into the story file once the studio exists.
+
+On the fast track the order of work after the okay is: set up the studio (section 3; still run step 5, it proves the studio works, but do not show the sample picture, and in step 6 only say that the studio is ready), make it their series (section 4), set up the voice engine right away (`npm run voices:setup`, the okay covered it; it takes minutes, so start it before writing the cast and the map), then production.
+
+Step by step: ask these in one round, each with a recommendation the Director can simply accept. Do not ask about technology.
 
 1. **The show:** working title, and one sentence about what it is.
 2. **Audience:** who watches it, and their age range.
-3. **Format:** length per episode. Landscape (16:9) is what the sample uses and is tested; vertical (9:16) is supported by the engine but untested, so say so if they choose it.
+3. **Format:** length per episode. Landscape (16:9, 1920×1080) is what the sample uses. Vertical (9:16, 1080×1920) is for phones (TikTok, Reels, Shorts): balloons and captions are sized and placed for it, but every shot has to be framed for a tall picture, and the sample's shots are not. Ask where the video will be posted and recommend the format that fits; on the fast track, choose vertical when the Director names a phone platform.
 4. **Language** the characters speak.
 5. **Look:** flat 2D, layered 2.5D, or 3D. Describe each in one plain sentence; see `${CLAUDE_SKILL_DIR}/references/tech-stack.md` for what each is good at. Only 3D is built today; if the Director picks another look, say so plainly and offer 3D or building the new style as its own piece of work.
 6. **Voices:** who speaks, and how they will be recorded (see "Voice choices" below).
@@ -71,18 +83,18 @@ If a step fails, report the exact error and what you tried. Do not continue as i
 
 If the first meeting has not been held yet, hold it now (section 2).
 
-1. Ask how to begin, and recommend the first:
+1. Ask how to begin, and recommend the first (on the fast track, start empty without asking, unless the Director asked for the sample's characters):
    - **Start empty.** The cast, the map and the episode list become blank: `npm run clear-sample -- --yes`. The crew can still look at the sample inside this skill's `template/` folder for how things are written.
    - **Start from the sample.** Keep Ada, Ben and their town and change them into the Director's show: `npm run clear-sample -- --keep`.
-2. Write the first-meeting answers into `series/series.json`: `title`, `language`, the size (`width`, `height`), and the voice choice as `"voiceEngine"` (`"local"`, `"elevenlabs"` or `"edge"`; leave it out if voices come later).
-3. Write `series/story/00-bible.md` for this show: premise, audience, tone, look, house rules, cast as it grows.
+2. Write the first-meeting answers into `series/series.json`: `title`, `language` (a two-letter code such as `en`, `id`, `es`; the voice check needs the code, not the name), the size (`width`, `height`), and the voice choice as `"voiceEngine"` (`"local"`, `"elevenlabs"` or `"edge"`; leave it out if voices come later), and `"pace": "fast"` if the Director chose the fast track.
+3. Write `series/story/00-bible.md` for this show: premise, audience, tone, look, house rules, cast as it grows. Like every story file it carries a Status line near the top, for example `**Status:** approved 2026-03-01`; so does `series/story/world.md` once the map exists (`**Status:** map approved …`). `npm run status` reads those lines.
 4. Run `npm run check`, then `npm run status` to confirm the folder says what you intended.
-5. Move to the first stage in `CLAUDE.md`: the **brief** for the first episode. From here on, follow `CLAUDE.md`.
+5. Move to the first stage in `CLAUDE.md`: the **brief** for the first episode, or on the fast track the whole **plan** of the first episode in one message. From here on, follow `CLAUDE.md`.
 
 ## What not to do
 
-- Do not start writing a script, designing a character, or building a set during setup. Each of those is a stage that needs the Director's okay.
-- Do not set up a voice engine until the Director has approved a script that needs voices. Then run `npm run voices:setup` (it makes the environment and installs the engine's packages); it needs the Director's okay first, because the local engine downloads a few gigabytes. For ElevenLabs, follow `scripts/VOICES-SETUP.md`: the Director pastes the API key into the `.env` file themselves.
+- Step by step: do not start writing a script, designing a character, or building a set during setup; each of those is a stage that needs the Director's okay. On the fast track the plan may be written before the studio exists, but nothing is built until its one okay.
+- Do not set up a voice engine until the Director has approved a script that needs voices, except on the fast track when the first okay already covered it. Then run `npm run voices:setup` (it makes the environment and installs the engine's packages); it needs the Director's okay first, because the local engine downloads a few gigabytes. For ElevenLabs, follow `scripts/VOICES-SETUP.md`: the Director pastes the API key into the `.env` file themselves.
 - Do not record over the sample's voices to try the engine out: `npm run voices` replaces recordings.
 - Do not hide that edge-tts is unofficial, and do not choose it for the Director.
 - Do not edit anything inside this skill's own folder; the copy in the working folder is the one that belongs to the series.

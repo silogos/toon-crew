@@ -16,6 +16,8 @@ brief ─▶ script ─▶ storyboard ─▶ production ─▶ final render
 
 Changing your mind is cheap early and expensive late, so the stages are ordered to put the cheap decisions first. A line of dialogue costs nothing to change in the script; after production it means a new recording and a re-timed scene.
 
+Not every Director wants five stops for a thirty-second video. On the **fast track** (`"pace": "fast"` in `series.json`) the first three stages arrive as one plan with one okay, and the second okay comes at the finished picture. The stages are all still done and written down; only the number of stops changes. Anything that installs software, costs money, sends the Director's words to an outside service, or changes work approved earlier still asks on its own.
+
 ## The crew
 
 The crew lives in three kinds of files.
@@ -101,4 +103,6 @@ Two more commands answer questions the crew would otherwise guess at. `npm run s
 - Free local voices need an Apple Silicon Mac. Other computers use ElevenLabs, which needs an API key and sends the dialogue to ElevenLabs.
 - Only the 3D look is built; 2D and 2.5D have a place in the structure but no code.
 - There are no indoor sets yet.
+- Vertical video adapts the text, not the camera: every shot is framed for the tall picture (`frameShot` does the arithmetic), and the map review picture is small in a tall frame.
+- A talking mouth replaces the mouth of the expression, so a sad or angry face reads weaker while the character speaks.
 - The crew cannot hear or watch motion. It checks pictures and transcripts; sound balance, delivery and timing feel still need the Director's eyes and ears.

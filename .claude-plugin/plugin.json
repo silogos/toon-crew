@@ -4,5 +4,5 @@
   "description": "You direct, an AI crew makes the show: an animated-series studio for Claude Code with a persistent cast, world and voices, and a Director's okay at every stage.",
   "author": {"name": "Amin Yusuf"},
   "license": "MIT",
-  "keywords": ["animation", "video", "remotion", "cartoon", "series", "three.js", "tts"]
+  "keywords": ["animation", "video", "remotion", "cartoon", "series", "three.js", "tts", "shorts", "vertical-video", "storytelling"]
 }

@@ -41,6 +41,16 @@ const episodes = names.map((name) => {
   };
 });
 
+// the preview the crew started with `npm run preview`, if its process is still there
+const previewState = fs.existsSync('out/.preview.json') ? readJson('out/.preview.json') : null;
+const previewAlive = (() => {
+  try {
+    return Boolean(previewState) && process.kill(previewState.pid, 0);
+  } catch {
+    return false;
+  }
+})();
+
 const report = {
   title: series.title,
   sample: Boolean(series.sample),
@@ -48,6 +58,8 @@ const report = {
   look: series.look,
   size: `${series.width}x${series.height} at ${series.fps} fps`,
   voiceEngine: voiceEngine(series),
+  pace: series.pace ?? 'step',
+  preview: previewAlive ? previewState.url : null,
   opening: series.opening,
   openingLines: linesOf.opening ?? null,
   moods: Object.keys(series.music ?? {}),
@@ -64,6 +76,8 @@ if (process.argv.includes('--json')) {
 const none = '(no Status line)';
 console.log(`${report.title}${report.sample ? '  — this is still the SAMPLE series' : ''}`);
 console.log(`${report.look} · ${report.size} · language ${report.language} · voices: ${report.voiceEngine} · opening: ${report.opening ?? 'none'}`);
+console.log(`pace: ${report.pace === 'fast' ? 'fast track (one okay on the plan, one on the finished picture)' : 'step by step (an okay after every stage)'}`);
+console.log(`preview: ${report.preview ? `running at ${report.preview}` : 'not running (npm run preview starts it and prints the links)'}`);
 console.log(`music moods: ${report.moods.join(', ') || 'none'}`);
 
 console.log('\nEpisodes');

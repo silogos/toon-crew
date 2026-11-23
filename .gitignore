@@ -25,3 +25,6 @@ launch
 
 # local trial of the skill
 trial-series*
+
+# Python bytecode
+__pycache__

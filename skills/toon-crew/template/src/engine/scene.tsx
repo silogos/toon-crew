@@ -8,8 +8,10 @@ export type SceneDef = {
   duration: number;
   cues: Cue[];
   sounds: Sound[];
-  /** a mood from series.json, or null when the scene is silent or brings its own music as a sound */
+  /** the mood the scene starts in: one from series.json, or null when it is silent or brings its own music as a sound */
   music: string | null;
+  /** changes of mood inside the scene (`t.mood`), by frame */
+  moods: {at: number; mood: string | null}[];
 };
 
 /**
@@ -43,5 +45,6 @@ export function defineScene<M>(def: {
     cues: t.cues,
     sounds: t.sounds,
     music: def.music ?? null,
+    moods: [...t.moods].sort((a, b) => a.at - b.at),
   };
 }

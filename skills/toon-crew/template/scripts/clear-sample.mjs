@@ -60,7 +60,7 @@ write(
 write('series/episodes/index.ts', `import {EpisodeDef} from '../../src/engine/episode';\n\n/** The one place episodes are registered. */\nexport const EPISODES: EpisodeDef[] = [];\n`);
 write('series/story/00-bible.md', '# Series bible\n\n**Status:** not written yet\n');
 write('series/story/world.md', '# The world\n\n**Status:** no places yet\n\nThe map is data in `series/world/map.tsx`; this page explains it in words. To see it: `npm run still -- map`.\n');
-write('series/story/lessons.md', '# Lessons\n\n**Status:** read before every stage; add an entry whenever something goes wrong in a way that could happen again.\n\nEach entry: what happened, the cause, what to do next time. Newest at the bottom.\n\n*(No lessons yet.)*\n');
+write('series/story/lessons.md', '# Lessons\n\n**Status:** read before every stage; add an entry whenever something goes wrong in a way that could happen again.\n\nEach entry: what happened, the cause, what to do next time. Newest at the bottom.\n\n*(No lessons yet. Replace this line with the first entry.)*\n');
 
 delete series.sample;
 series.title = 'Untitled Series';

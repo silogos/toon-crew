@@ -31,7 +31,7 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (inspects a
 
 ### Rules on set
 
-1. **Nothing new is made without the Director's okay.** Every new thing (series, episode, opening, scene, character, place, music) passes through these stages, and each stage **stops and waits for an okay** before the next:
+1. **Nothing new is made without the Director's okay.** Every new thing (series, episode, opening, scene, character, place, music) passes through these stages, and each stage **stops and waits for an okay** before the next (on the fast track, below, the first three stages share one okay):
    1. **Brief** — purpose, length, the point of the story, characters and places needed
    2. **Script** — scene by scene, dialogue per character, narration → written in `series/story/<name>.md`
    3. **Storyboard** — a shot table: time, place, camera, characters and action, music/sound/voice
@@ -40,9 +40,27 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (inspects a
 2. The crew may **propose** (creative options, notes for the Director) but does not decide. If the script has to change during production, go back and ask.
 3. Small fixes to approved work (a bug, timing that drifted, clipped text) may be done straight away, but still show before and after.
 4. Update the **Status** line at the top of the story file whenever a stage is finished.
-5. QC is required before reporting: `npm run check`, stills of every changed scene, and look at the pictures yourself.
+5. QC is required before reporting: `npm run check`, stills of every changed scene, and look at the pictures yourself. Take a still of a spoken line at least 15 frames after the line starts: before that the balloon is still popping in and looks small or cut off when nothing is wrong. Delete stills that no longer match the scene, so an old picture is never shown as the current one.
 6. **Every request for a review of pictures, motion or sound carries the preview link.** Before you ask, run `npm run preview`: it makes sure the preview is running (starting it in the background if it is not) and prints the links. Put the link in the same message as the stills, with the scene number to pick. Never give a link you have not just got from that command, and never ask the Director to start the preview themselves.
 7. When you pick the work up again (a new conversation, or the Director asks where things stand), start from `npm run status` rather than from memory.
+
+### Fast track
+
+`"pace": "fast"` in `series/series.json` means the Director chose the fast track: they want a finished video with as few stops as possible. `npm run status` says which pace the series is on. Without it, or with `"step"`, every stage stops as rule 1 says.
+
+On the fast track the crew stops **twice** per episode instead of after every stage:
+
+1. **The plan, in one message.** Brief, script and storyboard together, plus everything the episode needs that does not exist yet: each new character (who they are and the look, in a sentence), each new place, each voice (its description and sample sentence) and any music. Where the Director has not said, the crew chooses and marks the choice as its own so it is easy to overrule. Estimate the running time. **Wait for one okay.**
+2. **The screening.** After the okay, build everything without stopping: cast, places, voices, lines, scenes, QC. If the voice engine is not set up yet and the okay covered it, run `npm run voices:setup` first, because it takes minutes and everything else can be built meanwhile. Recording an episode makes the reference clip of any voice that has never spoken, so new voices need no separate step; `--ref` is only for remaking a voice that already exists, and that always needs its own okay. Make one design per character, not variants. Then show the stills of the cast, the map and every scene, give the preview link, name the recordings worth hearing, and say what was not checked. **Wait for one okay, then render** and make the ready-to-post items of the `/render` recipe (cover picture, title, caption, tags).
+
+What the fast track does **not** skip, whatever the pace:
+
+- Installing software or downloading anything large, anything that costs money, and anything that sends the Director's words to an outside service. Ask for these in the plan message when you can see them coming, so they do not become a third stop.
+- Changing something already approved in an earlier episode: a character's look or voice, a place on the map.
+- Rules 3 to 7, the lessons file and the bible. Status lines are still updated stage by stage, with the same words as step by step; add `(fast track)` when the stage was approved as part of the plan, for example `**Status:** storyboard approved (fast track) 2026-03-01`.
+- A change of plan. If production shows the approved plan cannot be built as written, stop and ask; do not quietly film something else.
+
+The Director can change pace at any time ("slow down, show me the script first", "just finish it"). Change `pace` in `series.json` and say that you did. If the Director asks to see one thing before it is built (only the script, only a character), show it and wait: asking is their okay to stop.
 
 ### Lessons belong to the series too
 
@@ -82,6 +100,7 @@ npm run doctor                       # what this computer and folder have, what 
 
 npm run still -- ep01 2 60           # scene 2, frame 60 → out/stills/ep01/s2-f60.png (scenes count from 1)
 npm run still -- ep01 2 0,60,120     # several frames of one scene in one go (the opening takes a list too)
+npm run still -- ep01 board          # the whole episode in ONE picture: 8 moments side by side (board 12 for more); the quickest first look
 npm run still -- opening 120         # the chosen opening (or: opening <name> 120 for another version)
 npm run still -- cast                # every cast member side by side → out/stills/cast.png
 npm run still -- sheet <id> expressions|poses   # one character's reference sheet
@@ -112,7 +131,7 @@ npm run render -- opening            # the opening alone → out/opening.mp4
 
 ```
 series/
-  series.json        title, language, look (only 3d is built so far), size, fps, chosen opening, music by mood
+  series.json        title, language, pace (step or fast), look (only 3d is built so far), size, fps, chosen opening, music by mood
   story/             00-bible.md (premise, tone, house rules), lessons.md (what went wrong and how to avoid it), world.md (map explained), epNN-<title>.md, and opening.md once there is an opening
   cast/index.ts      the cast: appearance, bio, signature pose, voice code
   voices.json        each voice: description, sample sentence, seed
@@ -143,11 +162,12 @@ The order matters, because **the length of each recorded line sets the timing of
 
 1. `series/story/<episode>.md` — script and storyboard for people to read. This is the creative source of truth.
 2. `series/episodes/<ep>/lines.json` — one entry per line: `{id, voice, text, say?, fx?}`.
-   - `id` follows `e<ep>_s<scene>_<voice><n>`. An id ending in `_n` is **narration**, shown as a caption.
+   - `id` follows `e<ep>_s<scene>_<voice><n>`, for example `e1_s2_a3`. An id whose very last characters are `_n` (`e1_s1_n`, `e1_s3_end_n`) is **narration**, shown as a caption instead of a balloon; `e1_s1_n1` is not.
    - `voice` is a code from `series/voices.json`. A cast member's `voice` field must name a code that exists there; the check fails otherwise.
-   - `text` is what the balloon shows; `say` is how to pronounce it when that differs; `fx` is a delivery: `shout`, `laugh`, `cheer`, `whisper`, `echo`.
+   - `text` is what the balloon shows; `say` is how to pronounce it when that differs; `fx` is a delivery: `shout`, `laugh`, `cheer`, `whisper`, `echo`. It changes how the line is spoken; only `shout` also changes the balloon (red, larger).
+   - `series/voices.json`: write each `description` in English whatever the series language (the voice engines understand it best) and the `sample` sentence in the series language.
 3. `npm run voices` records `public/audio/<id>.wav`, checks each take against the script, and writes its length to `src/audio-durations.json`. Both are committed.
-4. A scene is written with `defineScene({music, script, Component})` (`src/engine/scene.tsx`). `script` receives a timeline: `t.say(id)` places a line after the previous one using its recorded length and returns a cue (`start`, `speechEnd`, `end`); `t.play(id, frame)` places a sound effect; `t.wait` and `t.until` leave pauses; `t.cut()` marks a camera cut and makes sure no balloon from the old shot lingers into the new one. Whatever `script` returns is handed to `Component` as `m`, and the picture uses those cues to drive mouths, balloons and action (in the 3D look a balloon is `<Speech cue at />`, which places the engine's `<Balloon>` for you). The scene's length follows from its script. A line with no recording counts as one second, so **record first, then time the scene**. Changing a line's text means recording it again.
+4. A scene is written with `defineScene({music, script, Component})` (`src/engine/scene.tsx`). `script` receives a timeline: `t.say(id)` places a line after the previous one using its recorded length and returns a cue (`start`, `speechEnd`, `end`); `t.play(id, frame)` places a sound effect; `t.wait` and `t.until` leave pauses; `t.mood(name)` changes the music mood from that point on; `t.cut()` marks a camera cut and makes sure no balloon from the old shot lingers into the new one. Whatever `script` returns is handed to `Component` as `m`, and the picture uses those cues to drive mouths, balloons and action (in the 3D look a balloon is `<Speech cue at />`, which places the engine's `<Balloon>` for you). The scene's length follows from its script. A line with no recording counts as one second, so **record first, then time the scene**. Changing a line's text means recording it again.
 5. An episode is `defineEpisode({no, title, lines, scenes})` and is registered in `series/episodes/index.ts`. The engine puts the chosen opening in front, plays scenes in order, lays in each line's recording, shows narration as captions automatically, adds effects, and plays the music for each scene's mood (moods are listed in `series.json`), lowering it under speech.
 6. `npm run check` also checks the content: every line has a defined voice and a unique id, and it warns about lines not yet recorded and music not yet generated.
 
@@ -161,7 +181,18 @@ Outdoor scenes of a series that has one continuous world are all the **same worl
 
 A series whose bible says scenes can happen anywhere may use separate sets instead.
 
-What stands on the map does not move: a scene cannot shake a tree or open a door that the map draws. Anything that moves is drawn by the scene itself, on top of the world. And a scene plays one music mood from start to finish; a change of mood is a new scene.
+What stands on the map stays as the map draws it. When a scene needs a place to move or change (a tree that shakes, a door that opens), the scene draws its own version of that one place with `<World replace={{tree: …}} />`: it stands at the place's position and facing for that scene only, and the map is untouched. Small things that move (a ball, a kite) are simply drawn by the scene on top of the world. Music follows the scene's mood; when the mood should turn part-way (the joke lands, the trouble starts), the script says so with `t.mood('calm')` at that point, or `t.mood(null)` for silence.
+
+### Vertical video
+
+A series whose `height` is larger than its `width` (1080×1920) is watched on a phone held upright. The engine adapts the text: balloons and captions are as large as on a landscape video, a balloon never leaves the frame, and captions sit above the bottom fifth, which phone apps cover with their own buttons. Keep faces and anything that matters out of that bottom fifth and out of the top tenth too.
+
+The camera is not adapted; that is the storyboard's job. A `fov` is measured top to bottom, so a tall frame shows much less to the sides than the same shot in landscape:
+
+- Two characters fit side by side only when they stand close (about a metre apart) or the camera is far back. Prefer one speaker per shot and cut between them.
+- Use height: put the camera lower or further back, let a tree or a building fill the top, keep the speaker's head in the upper-middle of the frame.
+- Let the studio do the arithmetic: `frameShot([{position, height}, …])` (`src/styles/3d/framing.ts`) returns a shot that shows every subject whole in the series' frame, backing the camera away as far as the frame's shape needs. `toward` says which side the camera stands on, `margin` how tight it is, `headroom` how much space stays above the heads for the balloon, and `lift` raises the group in the frame (it does so a little by itself in a vertical series, so the bottom is not a third of empty ground).
+- Check every shot with a still before animating it. A shot copied from a landscape series will usually cut a character in half.
 
 ### Cast
 
@@ -171,12 +202,13 @@ What stands on the map does not move: a scene cannot shake a tree or open a door
 
 - **Units and directions.** One unit is one metre, the ground is y = 0, +x is east and +z is south. `facing` is in degrees: 0 faces south (toward a camera looking north), 90 east, 180 north, -90 west.
 - **`stage.tsx`** — `<Stage camera time overlay>` draws one picture. 3D things go in as children; balloons and labels go in `overlay`. The camera is a plan: a single shot `{from, to, fov}` or `still(shot)` holds still, `cuts([{at, shot}, …])` joins still shots with hard cuts, `move(a, b, [f0, f1])` travels between two shots. Which of these a series uses is a house rule in the bible. `time` is `day`, `dusk` or `night`; windows glow at dusk and night, lamps shine.
+- **`framing.ts`** — `frameShot(subjects, {toward, fov, margin, headroom, lift})` works out a shot that shows a group of characters whole, in landscape or vertical. Use it for two-shots and groups instead of guessing camera numbers; hand-written shots are still fine for a composed wide.
 - **Speech.** `<Speech cue={m.hello} at={aboveHead(position, build)} />` in the overlay puts the balloon over a character's head. The text comes from the cue's line.
-- **`look.ts` and `character.tsx`** — what a character can be and do. Builds `kid`, `adult`, `stout`; hair `none`, `short`, `spiky`, `bob`, `long`, `bun`, `curly`; tops `plain`, `stripe`, `collar`, `dress`; bottoms `shorts`, `pants`, `skirt`; any colours; `glasses`, `blush`. Twelve expressions, ten poses, core props (`book`, `ball`, `stick`, `cup`, `basket`, `flower`). `<Character look position facing expr pose prop talking walking lookX lookY />` draws one. Each list in `look.ts` has a table of drawings in `character.tsx` typed over the list, so a new name without a drawing fails `npm run check`.
+- **`look.ts` and `character.tsx`** — what a character can be and do. Builds `kid`, `adult`, `stout`; hair `none`, `short`, `spiky`, `bob`, `long`, `bun`, `curly`; tops `plain`, `stripe`, `collar`, `dress`; bottoms `shorts`, `pants`, `skirt`; any colours; `glasses`, `blush`. Twelve expressions, eleven poses (`point` is straight ahead, `pointUp` at something overhead), core props (`book`, `ball`, `stick`, `cup`, `basket`, `flower`). `<Character look position facing expr pose prop talking walking lookX lookY />` draws one. Each list in `look.ts` has a table of drawings in `character.tsx` typed over the list, so a new name without a drawing fails `npm run check`.
 - **Characters from `.glb` models (optional).** A cast member may carry `model: '<code>'`, a code from `series/models.json`: `{file, animationFiles?, height, clips: {idle, walk?, talk?, pose?}}`. The file lives under `public/` (by convention `public/models/`), is **never committed** and is downloaded by whoever uses it; `public/models/LICENSES.md` records where each model comes from and its licence. `<Character model=… />` then plays a clip by what the character does: `walking`, then a pose with its own clip, then `talking`, else `idle`. Models load in `Stage` before the picture is drawn, so draw characters inside a `Stage`. Not supported: expressions, mouth movement, props and `accessories` (a painted face has none); its review sheets are `poses` (the clip each pose plays) and `clips` (every clip the files have). Mixing code-built and model characters in one series usually looks uneven; make it a house rule either way. `npm run check` warns when a model file is missing or unlisted, and fails when a clip name does not exist in the files.
 - **Series-only clothing and objects** do not go into those lists. A cast member's look takes `accessories` (`{on: 'head' | 'body' | 'hand', node}`), and `prop` accepts the series' own 3D object as well as a core prop name. Keep such pieces in `series/cast/`.
 - **`blocks.tsx`** — building blocks for places: `Ground`, `Road`, `Patch`, `House`, `Shop`, `Tree`, `Bush`, `Rock`, `Fence`, `Lamp`, `Bench`, `Pond`. A block that only this series needs lives in `series/world/`.
-- **`world.tsx`** — `defineMap({size, ground, roads, places, scenery, viewpoints})` in `series/world/map.tsx` is the map: each place has a `label`, a position `at: [east, south]`, a `facing`, and a `build` function that puts blocks together. `<World map origin="shop" turn={…} time />` draws the whole world shifted so that place is at [0, 0, 0]. `inWorld(map, place, local)` gives a world position; never write a place's coordinates inside a scene.
+- **`world.tsx`** — `defineMap({size, ground, roads, places, scenery, viewpoints})` in `series/world/map.tsx` is the map: each place has a `label`, a position `at: [east, south]`, a `facing`, and a `build` function that puts blocks together. `<World map origin="shop" turn={…} time replace={…} />` draws the whole world shifted so that place is at [0, 0, 0]; `replace` lets one scene draw its own moving version of a place. `inWorld(map, place, local)` gives a world position; never write a place's coordinates inside a scene.
 - **`review.tsx`** — the `cast`, `sheet`, `map` and `view` pictures. They read the cast and the map, so new characters, places and viewpoints appear without editing it.
 
 ## Environment

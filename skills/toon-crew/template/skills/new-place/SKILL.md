@@ -7,6 +7,8 @@ description: Add a place to the series' world, move or change an existing place,
 
 Work as the **Art Director**. The map of the world is a creative decision: nothing is placed, moved or built until the Director says okay.
 
+On the **fast track** (see `CLAUDE.md`), a new place that the approved plan of an episode already describes needs no further okay: build it, check the stills yourself, and show it at the screening. Moving or changing a place that finished episodes use always needs its own okay.
+
 First read the world rules in `series/story/00-bible.md`. A series with **one continuous world** keeps every outdoor place on one map (`series/world/` data, explained in `series/story/world.md`). A series whose scenes can happen anywhere uses separate sets; for those, skip the map steps and build the set directly.
 
 ## 1. Brief — ask, then stop
