@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.5 — 2026-11-25
 
 - **The board shows every shot.** `npm run still -- <ep> board` used to show 8 evenly spaced moments, so a short shot could be missed entirely. It now shows the start of every scene and every spoken line once its balloon is up (16 pictures for the sample, about 15 seconds), so a character cut off or a balloon over a face is seen before the Director watches. `board 12` still gives evenly spaced moments.
 - **The first episode is reviewed too.** The proposal of a new series is written before the studio exists, so Quality Control never read the first episode. It now reads the draft proposal as a plain subagent before it is sent.
