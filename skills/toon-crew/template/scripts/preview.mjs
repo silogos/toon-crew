@@ -9,8 +9,9 @@
 // Safe to run again and again: a preview that is already up is reused, never started twice.
 // The preview belongs to the agent session that started it (Claude Code and the like): when that
 // session ends, the preview stops by itself. Started by a person in a terminal, it runs until stopped.
-// Remotion Studio can quit while the crew works (it happened in a trial); a small keeper process
-// starts it again on the same address, so a link given to the Director stays good.
+// Remotion Studio can quit by itself while the crew works (it happened in a trial); a small keeper process
+// starts it again on the same address, so a link given to the Director stays good. A studio that someone
+// stopped on purpose is NOT started again: killing the server stops the preview for good.
 // `npm run studio` still exists for a person who wants it in the foreground of their own terminal.
 import {spawn, spawnSync} from 'node:child_process';
 import fs from 'node:fs';
@@ -134,8 +135,11 @@ const keep = (port, owner = 0) => {
   const run = () => {
     const began = Date.now();
     studio = spawn(process.execPath, [remotionCli(), 'studio', `--port=${port}`, '--no-open'], {stdio: 'inherit', windowsHide: true});
-    studio.on('exit', () => {
+    studio.on('exit', (code, signal) => {
       if (stopping) return;
+      // Someone stopped the studio on purpose (a kill, a task manager, another session): respect that and
+      // stop too. Only a studio that quit by itself is started again.
+      if (signal) return finish(`The preview was stopped from outside (${signal}); not starting it again.`);
       // a studio that keeps dying at once has a real problem (a broken file, a taken port): give up and leave the log
       quickExits = Date.now() - began < 15_000 ? quickExits + 1 : 0;
       if (quickExits >= 4) {

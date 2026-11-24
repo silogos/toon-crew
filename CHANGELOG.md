@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 — 2026-11-24
+
+- **Killing the preview server stops it for good.** The keeper used to start Remotion Studio again whenever it ended, so a server stopped from outside came straight back. It now restarts only a studio that quit by itself; one stopped by a signal stays stopped, and the keeper ends with it.
+
 ## 0.1.3 — 2026-11-24
 
 - **The preview belongs to the session.** It stops by itself when the agent session that started it ends, instead of running on after the app is closed. `npm run preview -- --attached` runs it inside the command, so a session can start it as a background task: it is then listed among the session's tasks and can be stopped there.
