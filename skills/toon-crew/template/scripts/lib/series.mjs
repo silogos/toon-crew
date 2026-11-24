@@ -5,6 +5,8 @@ import path from 'node:path';
 
 export const AUDIO_DIR = 'public/audio';
 export const DURATIONS_FILE = 'src/audio-durations.json';
+/** When each word of a recorded line is heard (written by the voice scripts and voices:check). */
+export const WORDS_FILE = 'src/audio-words.json';
 
 export const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 

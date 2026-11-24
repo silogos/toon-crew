@@ -14,6 +14,7 @@ AUDIO = ROOT / "public" / "audio"
 REFS = SERIES / "voice-refs"          # one reference clip per voice; committed, it IS the character's voice
 RAW = ROOT / "scripts" / ".raw_voices"  # raw takes; not committed
 DURATIONS = ROOT / "src" / "audio-durations.json"
+WORDS = ROOT / "src" / "audio-words.json"        # when each word of a recorded line is heard, for highlighting
 
 TTS_MODEL = "mlx-community/VoxCPM2-8bit"
 LISTEN_MODEL = "mlx-community/whisper-large-v3-turbo"
@@ -83,27 +84,67 @@ def similarity(expected: str, heard: str) -> float:
 _portable_model = None
 
 
-def listen(path: Path, expected: str, language: str) -> tuple[float, str]:
-    """Listen back to a recording and score how close it is to the script (0..1).
+def hear(path: Path, language: str) -> tuple[str, list[dict] | None]:
+    """What a recording says, and when each word is heard: [{"w": word, "s": start, "e": end}, …] in seconds.
 
     The local engine uses mlx-whisper (Apple Silicon). Other setups use faster-whisper on the CPU.
-    If neither is installed the line is passed unchecked (score 1.0) and says so.
+    With neither installed the text is empty and the word times are None.
     """
     global _portable_model
     if engine() == "local":
         import mlx_whisper
 
-        heard = mlx_whisper.transcribe(str(path), path_or_hf_repo=LISTEN_MODEL, language=language)["text"].strip()
-        return similarity(expected, heard), heard
+        result = mlx_whisper.transcribe(str(path), path_or_hf_repo=LISTEN_MODEL, language=language, word_timestamps=True)
+        words = [(w["word"], w["start"], w["end"]) for seg in result.get("segments", []) for w in seg.get("words", [])]
+        return result["text"].strip(), _word_list(words)
     try:
         from faster_whisper import WhisperModel
     except ImportError:
-        return 1.0, "(not checked: faster-whisper is not installed)"
+        return "", None
     if _portable_model is None:
         _portable_model = WhisperModel("small", device="cpu", compute_type="int8")
-    segments, _ = _portable_model.transcribe(str(path), language=language[:2])
-    heard = " ".join(seg.text.strip() for seg in segments)
+    segments, _ = _portable_model.transcribe(str(path), language=language[:2], word_timestamps=True)
+    segments = list(segments)
+    words = [(w.word, w.start, w.end) for seg in segments for w in (seg.words or [])]
+    return " ".join(seg.text.strip() for seg in segments), _word_list(words)
+
+
+def _word_list(words: list[tuple[str, float, float]]) -> list[dict]:
+    return [{"w": w.strip(), "s": round(s, 3), "e": round(e, 3)} for w, s, e in words if w.strip()]
+
+
+def listen(path: Path, expected: str, language: str) -> tuple[float, str]:
+    """Listen back to a recording and score how close it is to the script (0..1).
+
+    If no listener is installed the line is passed unchecked (score 1.0) and says so.
+    """
+    heard, words = hear(path, language)
+    if words is None:
+        return 1.0, "(not checked: faster-whisper is not installed)"
     return similarity(expected, heard), heard
+
+
+def save_words(lid: str, words: list[dict] | None):
+    """Keep the word times of a finished recording (None forgets them: the picture then estimates them)."""
+    table = json.loads(WORDS.read_text()) if WORDS.exists() else {}
+    if words:
+        table[lid] = words
+    else:
+        table.pop(lid, None)
+    WORDS.write_text(json.dumps(dict(sorted(table.items())), ensure_ascii=False, separators=(",", ":")).replace('],"', '],\n"') + "\n")
+
+
+def record_words(lid: str, path: Path, language: str):
+    """Listen to the finished file of a line and keep when each word is heard.
+
+    If listening fails, the old times are forgotten (the picture then estimates them) and recording goes on.
+    """
+    try:
+        words = hear(path, language)[1]
+    except Exception as err:  # the recording is already saved; word times are a nicety
+        print(f"   (could not time the words of {lid}: {err}; they will be estimated)", flush=True)
+        words = None
+    save_words(lid, words)
 
 
 def clean(src: Path, dst: Path, extra: list[str]):

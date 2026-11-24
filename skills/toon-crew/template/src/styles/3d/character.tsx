@@ -3,6 +3,7 @@ import React from 'react';
 import {useCurrentFrame} from 'remotion';
 import * as THREE from 'three';
 import {Build, CastMember, CharacterAction, CharacterLook, Expression, Hair, ModelCode, Pose, PropKind} from './look';
+import {useMouth} from '../../engine/voice';
 import {MODELS} from './model-spec';
 import {GlbCharacter} from './models';
 import type {Vec3} from './stage';
@@ -309,6 +310,7 @@ const CodeCharacter: React.FC<CharacterProps> = ({
   lookY = 0,
 }) => {
   const f = useCurrentFrame();
+  const {speaking, open} = useMouth(talking);
   const d = DIMS[look.build];
   const s = d.headR / 0.25;
   const face = FACES[expr];
@@ -320,8 +322,7 @@ const CodeCharacter: React.FC<CharacterProps> = ({
   const topR = d.torsoR * 0.82;
 
   const stride = walking ? Math.sin(f * 0.36) : 0;
-  const bob = walking ? Math.abs(Math.cos(f * 0.36)) * 0.025 : talking ? Math.sin(f * 0.5) * 0.004 : 0;
-  const open = talking ? Math.abs(Math.sin(f * 0.85)) : null;
+  const bob = walking ? Math.abs(Math.cos(f * 0.36)) * 0.025 : speaking ? Math.sin(f * 0.5) * 0.004 : 0;
 
   // a point on the front of the head, with the shape turned to lie on the surface
   const onFace = (x: number, y: number, lift = 0.004) => {
@@ -500,8 +501,12 @@ const CodeCharacter: React.FC<CharacterProps> = ({
 
 /** One character: drawn from a .glb model when the cast member has one, otherwise built from code. */
 export const Character: React.FC<CharacterProps> = (props) =>
-  props.model ? (
-    <GlbCharacter model={props.model} position={props.position} facing={props.facing} scale={props.scale} pose={props.pose} talking={props.talking} walking={props.walking} clip={props.clip} clipPhase={props.clipPhase} />
-  ) : (
-    <CodeCharacter {...props} />
+  props.model ? <ModelCharacter {...props} /> : <CodeCharacter {...props} />;
+
+/** A model has no mouth to move: it plays its talk animation while a line plays. */
+const ModelCharacter: React.FC<CharacterProps> = (props) => {
+  const {speaking} = useMouth(props.talking);
+  return (
+    <GlbCharacter model={props.model!} position={props.position} facing={props.facing} scale={props.scale} pose={props.pose} talking={speaking} walking={props.walking} clip={props.clip} clipPhase={props.clipPhase} />
   );
+};

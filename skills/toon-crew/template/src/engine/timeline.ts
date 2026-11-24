@@ -8,7 +8,14 @@ export const framesOf = (id: string) => Math.ceil((DUR[id] ?? 1) * SERIES.fps);
 export const hasRecording = (id: string) => id in DUR;
 
 /** One spoken line placed in a scene. All values are frames from the start of the scene. */
-export type Cue = {id: string; start: number; speechEnd: number; end: number};
+export type Cue = {
+  id: string;
+  start: number;
+  speechEnd: number;
+  end: number;
+  /** false: a narration line the picture shows itself (a message card), so no caption is added */
+  caption?: boolean;
+};
 /** One sound effect placed in a scene. */
 export type Sound = {id: string; at: number; volume: number};
 
@@ -21,6 +28,8 @@ export type SayOptions = {
   at?: number;
   /** do not push later lines back: this line overlaps what follows */
   overlap?: boolean;
+  /** false for a narration line the picture shows itself, such as a `MessageCard`: no caption at the bottom */
+  caption?: boolean;
 };
 
 /**
@@ -36,10 +45,10 @@ export class Timeline {
   readonly moods: {at: number; mood: string | null}[] = [];
 
   /** Place a spoken line and get back when it starts and ends. */
-  say(id: string, {gap = 8, hold = 15, at, overlap = false}: SayOptions = {}): Cue {
+  say(id: string, {gap = 8, hold = 15, at, overlap = false, caption}: SayOptions = {}): Cue {
     const start = at ?? this.cursor + gap;
     const speechEnd = start + framesOf(id);
-    const cue = {id, start, speechEnd, end: speechEnd + hold};
+    const cue: Cue = {id, start, speechEnd, end: speechEnd + hold, ...(caption === false ? {caption} : {})};
     this.cues.push(cue);
     if (!overlap) this.cursor = Math.max(this.cursor, speechEnd);
     return cue;

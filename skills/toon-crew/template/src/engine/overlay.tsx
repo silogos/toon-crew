@@ -1,17 +1,47 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
-import {placeBalloon} from './layout';
+import heard from '../audio-words.json';
+import {FONT} from './font';
+import {placeBalloon, textDirection} from './layout';
 import {useLine} from './lines';
-import {isVertical, textScale} from './series';
-import {Cue} from './timeline';
+import {SERIES, isVertical, textScale} from './series';
+import {Cue, hasRecording} from './timeline';
+import {HeardWord, activeWord, wordTimes} from './words';
 
-export const FONT = "'Arial Rounded MT Bold', 'Trebuchet MS', 'Helvetica Neue', sans-serif";
+const HEARD = heard as Record<string, HeardWord[]>;
+
+export {FONT};
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 
 /** On-screen text is designed at 1920 on the long side and scaled to the real frame. */
 const useScale = () => {
   const {width, height} = useVideoConfig();
   return textScale(width, height);
+};
+
+/**
+ * The text of a line with the word being spoken lit up, like a marker pen over it.
+ * The mark changes no letter and no spacing, so the text wraps exactly as it would plain.
+ * A line not yet recorded, or a series with `"highlightWords": false`, shows plain text.
+ */
+export const Spoken: React.FC<{cue: Cue; text: string; mark: string; ink?: string}> = ({cue, text, mark, ink}) => {
+  const f = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const k = useScale();
+  const speech = (cue.speechEnd - cue.start) / fps;
+  const words = useMemo(() => wordTimes(text, speech, HEARD[cue.id]), [text, speech, cue.id]);
+  if (SERIES.highlightWords === false || !hasRecording(cue.id)) return <>{text}</>;
+  const i = activeWord(words, (f - cue.start) / fps, speech);
+  if (i < 0) return <>{text}</>;
+  const {from, to} = words[i];
+  const pad = 5 * k;
+  return (
+    <>
+      {text.slice(0, from)}
+      <span style={{background: mark, boxShadow: `0 0 0 ${pad}px ${mark}`, borderRadius: pad * 1.6, color: ink}}>{text.slice(from, to)}</span>
+      {text.slice(to)}
+    </>
+  );
 };
 
 /**
@@ -58,6 +88,7 @@ export const Balloon: React.FC<{
       }}
     >
       <div
+        dir={textDirection(line.text)}
         style={{
           background: 'white',
           border: `${6 * k}px solid ${ink}`,
@@ -79,7 +110,7 @@ export const Balloon: React.FC<{
           boxShadow: `0 ${8 * k}px 0 rgba(0,0,0,0.18)`,
         }}
       >
-        {line.text}
+        <Spoken cue={cue} text={line.text} mark="#ffe066" />
       </div>
       <div
         style={{
@@ -110,6 +141,7 @@ export const Caption: React.FC<{cue: Cue}> = ({cue}) => {
   const o = interpolate(f, [cue.start, cue.start + 10, cue.end - 10, cue.end], [0, 1, 1, 0], clamp);
   return (
     <div
+      dir={textDirection(line.text)}
       style={{
         position: 'absolute',
         bottom,
@@ -128,7 +160,7 @@ export const Caption: React.FC<{cue: Cue}> = ({cue}) => {
         textAlign: 'center',
       }}
     >
-      {line.text}
+      <Spoken cue={cue} text={line.text} mark="#ffd43b" ink="#2b1d0e" />
     </div>
   );
 };

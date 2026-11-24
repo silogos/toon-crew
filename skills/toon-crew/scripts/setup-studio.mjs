@@ -24,6 +24,8 @@ const SKIP_NAMES = new Set(['node_modules', 'out', '.remotion', '.raw_voices', '
 const skip = (rel) => {
   const name = path.basename(rel);
   if (SKIP_NAMES.has(name) || name.startsWith('.venv') || name.endsWith('.log')) return true;
+  // Remotion's guides are downloaded into each studio (npm run remotion-guides), never copied from here
+  if (path.dirname(rel) === 'skills' && (name.startsWith('remotion-') || name === '.remotion-guides')) return true;
   // 3D models are downloaded by whoever uses them; only the licence list travels
   return path.dirname(rel) === path.join('public', 'models') && name !== 'LICENSES.md';
 };

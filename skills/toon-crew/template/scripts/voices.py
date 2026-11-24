@@ -6,6 +6,7 @@ How it works:
   2. Every line that voice speaks imitates that clip, so the voice stays the same in every episode.
   3. Each take is listened back and compared with the script; the best of a few takes is kept.
   4. The result is cleaned with ffmpeg and its length is written to src/audio-durations.json.
+     When each word is heard goes to src/audio-words.json.
 
 Run from the series folder:
   npm run voices -- ep01                  every line in series/episodes/ep01/lines.json
@@ -23,7 +24,7 @@ import numpy as np
 import soundfile as sf
 from mlx_audio.tts import load_model
 
-from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, TTS_MODEL, clean, listen, load_lines, seconds, series, voices
+from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, TTS_MODEL, clean, listen, record_words, load_lines, seconds, series, voices
 
 # How a line is delivered when it has an "fx". "echo" is an audio effect, added after recording.
 DELIVERY = {
@@ -121,6 +122,8 @@ def main():
               + ("" if score >= PASS_SCORE else f"  heard: '{heard}'"), flush=True)
         # save after every line so an interrupted run loses nothing
         DURATIONS.write_text(json.dumps(durations, indent=2) + "\n")
+        # after the length is saved: if this is interrupted, the scene is still timed to the new take
+        record_words(lid, dst, language)  # when each word is heard, for the highlight in balloons and captions
 
     print(f"done in {time.time() - t0:.0f}s: {len(lines)} line(s), {drifted} below {PASS_SCORE}")
 

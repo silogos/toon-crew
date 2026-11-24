@@ -9,6 +9,7 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import {findChrome} from './lib/chrome.mjs';
+import {guidesInstalled} from './remotion-guides.mjs';
 import {readJsonIf, voiceEngine} from './lib/series.mjs';
 import {ENGINES, hasElevenLabsKey, venvPython} from './lib/voice-env.mjs';
 
@@ -49,6 +50,9 @@ add(
 const series = readJsonIf('series/series.json', null);
 if (series) {
   add('required', 'Studio packages', fs.existsSync('node_modules/remotion'), fs.existsSync('node_modules/remotion') ? 'installed' : 'not installed', 'npm install');
+
+  const guides = guidesInstalled();
+  add('recommended', 'Remotion guides', guides, guides ? 'installed in skills/' : 'not downloaded: the crew writes Remotion code without them', 'npm run remotion-guides');
 
   const engine = voiceEngine(series);
   const spec = ENGINES[engine];

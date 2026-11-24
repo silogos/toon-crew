@@ -89,7 +89,7 @@ Show the pictures and the clip choices, with the preview link of the sheet from 
 
 ### M5. In scenes
 
-A model character is used like any other, inside a `Stage`: `<Character look={m.look} model={m.model} position facing walking talking />`. It plays the walk clip while `walking`, then a pose's clip, then the talk clip while `talking`, else idle. The picture is the same on every render because the animation follows the frame number.
+A model character is used like any other, inside a `Stage`: `<Character look={m.look} model={m.model} position facing walking talking />`. It plays the walk clip while `walking`, then a pose's clip, then the talk clip while `talking` (true, or while one of the lines given to it plays), else idle. The picture is the same on every render because the animation follows the frame number.
 
 Face the way it walks: a character walking east faces 90. Check a scene with stills at the start of the walk, the middle and the end, and look at all three, not one.
 

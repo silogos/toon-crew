@@ -4,7 +4,7 @@ import React, {createContext, useContext} from 'react';
 import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import * as THREE from 'three';
 import {CAST} from '../../../series/cast';
-import {Balloon} from '../../engine/overlay';
+import {Balloon, FONT} from '../../engine/overlay';
 import {textScale} from '../../engine/series';
 import {Cue} from '../../engine/timeline';
 import {modelFilesOf} from './model-spec';
@@ -186,7 +186,7 @@ export const Label: React.FC<{at: Vec3; children: React.ReactNode; size?: number
         left: p.x,
         top: p.y,
         transform: 'translate(-50%, -50%)',
-        fontFamily: "'Arial Rounded MT Bold', 'Trebuchet MS', 'Helvetica Neue', sans-serif",
+        fontFamily: FONT,
         fontSize: size * k,
         fontWeight: 800,
         color: '#222',

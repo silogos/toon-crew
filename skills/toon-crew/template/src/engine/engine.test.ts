@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {placeBalloon, textWidth} from './layout';
+import {placeBalloon, textDirection, textWidth} from './layout';
 import {between, seeded} from './math';
 import {musicStretches, stretchFade} from './music';
 import {isVertical, textScale} from './series';
@@ -163,5 +163,22 @@ describe('music', () => {
       expect(v).toBeLessThanOrEqual(1);
     }
     expect(stretchFade(150, 300)).toBe(1);
+  });
+});
+
+describe('textDirection', () => {
+  it('reads Arabic right to left, even when it starts with a Latin name', () => {
+    expect(textDirection('مرحبا يا صديقي!')).toBe('rtl');
+    expect(textDirection('Ben، أين كتابك؟')).toBe('rtl');
+  });
+  it('reads a Latin line with one Arabic word left to right', () => {
+    expect(textDirection('Ucapkan بسم sebelum makan.')).toBe('ltr');
+    expect(textDirection("Don't worry. I have a plan.")).toBe('ltr');
+  });
+  it('gives vowel marks no width of their own', () => {
+    expect(textWidth('بِسْمِ', 40)).toBe(textWidth('بسم', 40));
+  });
+  it('still counts spacing vowel signs, which take room', () => {
+    expect(textWidth('का', 40)).toBeGreaterThan(textWidth('क', 40));
   });
 });

@@ -1,11 +1,11 @@
 # Episode 1 — The Lost Book
 
-**Status:** sample episode, all stages complete. Not rendered in this folder yet: `npm run render -- ep01` makes `out/ep01-the-lost-book.mp4` (38.8 s).
+**Status:** sample episode, all stages complete. Not rendered in this folder yet: `npm run render -- ep01` makes `out/ep01-the-lost-book.mp4` (42.0 s).
 
 ## Brief
 
 - **The point:** sometimes what you are looking for is already in your hands.
-- **Length:** about 40 seconds, two scenes.
+- **Length:** about 40 seconds, two scenes and a closing card.
 - **Cast:** Ada, Ben, the narrator.
 - **Place:** the square, in the morning and again at dusk.
 - **New things needed:** none. Ben's book already exists as a prop.
@@ -40,7 +40,14 @@ The lamp is on and the windows glow. Ada and Ben trudge back to where they start
 | `e1_s2_a2` | Ada | Ben. What are you holding? | turns to him, surprised |
 | `e1_s2_b2` | Ben | Oh. | looks down at the book, surprised, then shy |
 | `e1_s2_a3` | Ada | Ha ha ha! | laughing; Ben laughs with her |
-| `e1_s2_end_n` | Narrator | Sometimes what you are looking for is right in your hands. | |
+
+### Scene 3 — Closing card
+
+The moral, on a card of its own.
+
+| # | Who | Line | How |
+|---|---|---|---|
+| `e1_s3_end_n` | Narrator | Sometimes what you are looking for is right in your hands. | |
 
 **Running time:** about 70 spoken words; with pauses, roughly 40 seconds.
 
@@ -75,7 +82,13 @@ Three framings are used, and reused, so the two scenes echo each other:
 | 2C | Two-shot holds | Ada turns her head toward Ben and stops: `surprised`. | `e1_s2_a2` |
 | 2D | Cut to close on Ben | The book fills the lower part of the frame. He looks down at it: `surprised`, then `shy`. | `e1_s2_b2` |
 | 2E | Cut back to two-shot | Ada `laugh`, arms up. Ben `laugh`, hugging the book tighter. | `e1_s2_a3` · chime |
-| 2F | Cut to wide | The two of them small on the glowing square, still laughing. | `e1_s2_end_n` |
+| 2F | Cut to wide | The two of them small on the glowing square, still laughing. | |
+
+### Scene 3 — closing card, music `calm` continues
+
+| Shot | Camera | Who and what | Lines and sound |
+|---|---|---|---|
+| 3A | Full-frame card (2D) | Warm background, sparkles drifting up. The heading "Today's lesson" rises word by word; the moral appears under it, each word lit as it is spoken. | `e1_s3_end_n` (no caption: the card shows it) |
 
 ### Notes
 

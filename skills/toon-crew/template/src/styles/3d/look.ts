@@ -1,5 +1,6 @@
 import type React from 'react';
 import type models from '../../../series/models.json';
+import type {Talking} from '../../engine/voice';
 import type voices from '../../../series/voices.json';
 
 /**
@@ -76,8 +77,8 @@ export type CharacterAction = {
   pose?: Pose;
   /** a core prop by name, or a series' own object to hold */
   prop?: PropKind | React.ReactNode;
-  /** mouth moves */
-  talking?: boolean;
+  /** mouth moves: true flaps at a steady beat; a line's cue (or several) makes the mouth follow its recording while it plays */
+  talking?: Talking;
   /** legs and arms swing as in walking */
   walking?: boolean;
   /** head turn, -1 (their right) to 1 (their left) */

@@ -14,6 +14,7 @@ How it works:
   2. Every line is spoken with that voice.
   3. Each take is listened back and compared with the script; the best of a few takes is kept.
   4. The result is cleaned with ffmpeg and its length is written to src/audio-durations.json.
+     When each word is heard goes to src/audio-words.json.
 
   npm run voices -- --list                every voice for the series language (to choose from)
   npm run voices -- ep01                  every line in series/episodes/ep01/lines.json
@@ -25,7 +26,7 @@ import json
 import sys
 import time
 
-from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, clean, listen, load_lines, seconds, series, voices
+from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, clean, listen, record_words, load_lines, seconds, series, voices
 
 MAX_TAKES = 3
 
@@ -128,6 +129,8 @@ def main():
         print(f"{flag}{lid:16} {code:5} {durations[lid]:5.2f}s  score {score:.2f}  takes {takes}  ({time.time() - t:.0f}s)"
               + ("" if score >= PASS_SCORE else f"  heard: '{heard}'"), flush=True)
         DURATIONS.write_text(json.dumps(durations, indent=2) + "\n")  # save after every line
+        # after the length is saved: if this is interrupted, the scene is still timed to the new take
+        record_words(lid, dst, language)  # when each word is heard, for the highlight in balloons and captions
 
     print(f"done in {time.time() - t0:.0f}s: {len(lines)} line(s), {drifted} below {PASS_SCORE}")
 

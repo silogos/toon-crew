@@ -81,5 +81,6 @@ Every line of the sample episode should be listed as `ok`.
 | API key | `.env` | **never** |
 | Finished lines | `public/audio/<line-id>.wav` | yes |
 | Length of every sound | `src/audio-durations.json` | yes |
+| When each word of a line is heard (for the highlight in balloons and captions) | `src/audio-words.json` | yes |
 | Raw takes | `scripts/.raw_voices/` | no |
 | Python environment | `.venv-voices/` | no |

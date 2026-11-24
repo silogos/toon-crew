@@ -21,5 +21,9 @@ out
 public/models/*
 !public/models/LICENSES.md
 
+# Remotion's own guides for agents: downloaded into each studio by `npm run remotion-guides`, never committed
+skills/remotion-*
+skills/.remotion-guides
+
 # Python bytecode
 __pycache__

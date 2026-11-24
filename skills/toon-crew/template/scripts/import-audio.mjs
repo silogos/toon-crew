@@ -10,7 +10,7 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {AUDIO_DIR, DURATIONS_FILE, lineFiles, readDurations, readJson, writeJson} from './lib/series.mjs';
+import {AUDIO_DIR, DURATIONS_FILE, WORDS_FILE, lineFiles, readDurations, readJson, readJsonIf, writeJson} from './lib/series.mjs';
 
 const EXT = /\.(wav|mp3|m4a|ogg|flac|aac)$/i;
 const TRIM = 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
@@ -53,6 +53,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const pairs = plan(process.argv.slice(2), knownLines());
     fs.mkdirSync(AUDIO_DIR, {recursive: true});
     const durations = readDurations();
+    const words = readJsonIf(WORDS_FILE, {});
     for (const [id, src] of pairs) {
       const dst = path.join(AUDIO_DIR, `${id}.wav`);
       const r = spawnSync('ffmpeg', cleanArgs(src, dst), {stdio: 'inherit'});
@@ -60,8 +61,14 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
       durations[id] = seconds(dst);
       console.log(`ok  ${id.padEnd(16)} ${durations[id].toFixed(2)}s`);
       writeJson(DURATIONS_FILE, durations); // after every line, so an interrupted run loses nothing
+      // the word times of an earlier recording no longer fit; `npm run voices:check` hears the new ones
+      if (id in words) {
+        delete words[id];
+        writeJson(WORDS_FILE, words);
+      }
     }
     console.log(`${pairs.length} line(s) imported. Their lengths now drive the timing of their scenes.`);
+    console.log('Run `npm run voices:check -- <episode>` to check them and to time their words for the highlight.');
   } catch (e) {
     console.error(e.message);
     process.exit(1);

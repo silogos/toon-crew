@@ -11,5 +11,5 @@
   {"id": "e1_s2_a2", "voice": "A", "text": "Ben. What are you holding?"},
   {"id": "e1_s2_b2", "voice": "B", "text": "Oh."},
   {"id": "e1_s2_a3", "voice": "A", "text": "Ha ha ha!", "fx": "laugh"},
-  {"id": "e1_s2_end_n", "voice": "N", "text": "Sometimes what you are looking for is right in your hands."}
+  {"id": "e1_s3_end_n", "voice": "N", "text": "Sometimes what you are looking for is right in your hands."}
 ]

@@ -4,8 +4,26 @@
 export const textWidth = (text: string, fontSize: number) => {
   let em = 0;
   // Chinese, Japanese and Korean characters are a full square wide; Latin letters a little over half
-  for (const ch of text) em += /[\u1100-\u11ff\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef]/.test(ch) ? 1.02 : 0.58;
+  for (const ch of text) {
+    // marks that sit on a letter (Arabic vowel marks, accents) take no width; spacing marks such as the
+    // Devanagari vowel signs do, so they are counted
+    if (/[\p{Mn}\p{Me}]/u.test(ch)) continue;
+    em += /[\u1100-\u11ff\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef]/.test(ch) ? 1.02 : 0.58;
+  }
   return em * fontSize;
+};
+
+// Hebrew, Arabic, Syriac, Thaana, N'Ko and their presentation forms
+const RTL = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
+
+/**
+ * Which way a line reads. Decided by counting words, not by the first letter, because a line in Arabic
+ * often starts with a Latin name. Without it an Arabic line in a left-to-right box puts its full stop
+ * on the wrong side, and a mixed line reads in the wrong order.
+ */
+export const textDirection = (text: string): 'rtl' | 'ltr' => {
+  const words = text.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w));
+  return words.filter((w) => RTL.test(w)).length > words.length / 2 ? 'rtl' : 'ltr';
 };
 
 /**

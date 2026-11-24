@@ -1,5 +1,6 @@
 import React from 'react';
 import {Cue, Sound, Timeline} from './timeline';
+import {VoiceLevels} from './voice';
 
 /** A scene ready to be assembled into an episode. */
 export type SceneDef = {
@@ -40,7 +41,11 @@ export function defineScene<M>(def: {
   const m = def.script(t);
   const Picture = def.Component;
   return {
-    Component: () => <Picture m={m} />,
+    Component: () => (
+      <VoiceLevels cues={t.cues}>
+        <Picture m={m} />
+      </VoiceLevels>
+    ),
     duration: def.duration ?? t.end + (def.tail ?? 20),
     cues: t.cues,
     sounds: t.sounds,

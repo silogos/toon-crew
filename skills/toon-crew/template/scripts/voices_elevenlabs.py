@@ -7,6 +7,7 @@ It follows the same steps as the local engine:
   2. Every line is spoken with that voice id.
   3. Each take is listened back and compared with the script; the best of a few takes is kept.
   4. The result is cleaned with ffmpeg and its length is written to src/audio-durations.json.
+     When each word is heard goes to src/audio-words.json.
 
 Setup: put ELEVENLABS_API_KEY=... in the .env file of the series folder (see scripts/VOICES-SETUP.md).
 Optional in .env: ELEVENLABS_MODEL (default eleven_v3).
@@ -24,7 +25,7 @@ import time
 import urllib.error
 import urllib.request
 
-from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, SERIES, clean, listen, load_env, load_lines, seconds, series, voices
+from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, SERIES, clean, listen, record_words, load_env, load_lines, seconds, series, voices
 
 API = "https://api.elevenlabs.io/v1"
 IDS = SERIES / "voice-ids.json"  # committed: voice ids made for this series, in the account that designed them
@@ -170,6 +171,8 @@ def main():
         print(f"{flag}{lid:16} {voice:5} {durations[lid]:5.2f}s  score {score:.2f}  takes {takes}  ({time.time() - t:.0f}s)"
               + ("" if score >= PASS_SCORE else f"  heard: '{heard}'"), flush=True)
         DURATIONS.write_text(json.dumps(durations, indent=2) + "\n")  # save after every line
+        # after the length is saved: if this is interrupted, the scene is still timed to the new take
+        record_words(lid, dst, language)  # when each word is heard, for the highlight in balloons and captions
 
     print(f"done in {time.time() - t0:.0f}s: {len(lines)} line(s), {drifted} below {PASS_SCORE}")
 

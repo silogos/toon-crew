@@ -7,7 +7,7 @@ It type-checks against the studio as written, in a series that has at least two 
 ```tsx
 import React from 'react';
 import {useCurrentFrame} from 'remotion';
-import {between, ease} from '../../../src/engine/math';
+import {ease} from '../../../src/engine/math';
 import {SceneDef, defineScene} from '../../../src/engine/scene';
 import {Character, aboveHead} from '../../../src/styles/3d/character';
 import {frameShot} from '../../../src/styles/3d/framing';
@@ -65,8 +65,8 @@ const scene1 = defineScene({
       >
         {/* origin is a place id of the map, or a point [east, south] */}
         <World map={MAP} origin={[0, 0]} time="day" />
-        <Character look={FIRST.look} position={FIRST_SPOT} facing={20} expr="neutral" talking={between(f, m.lineB.start, m.lineB.speechEnd)} />
-        <Character look={SECOND.look} position={SECOND_SPOT} facing={-20} expr="neutral" talking={between(f, m.lineA.start, m.lineA.speechEnd)} />
+        <Character look={FIRST.look} position={FIRST_SPOT} facing={20} expr="neutral" talking={m.lineB} />
+        <Character look={SECOND.look} position={SECOND_SPOT} facing={-20} expr="neutral" talking={m.lineA} />
         {/* Something only this scene has is drawn here from plain shapes and moved by the frame number. */}
         <mesh position={[OBJECT_SPOT[0], 0.15 + 0.5 * progress, OBJECT_SPOT[2]]}>
           <boxGeometry args={[0.3, 0.3, 0.3]} />

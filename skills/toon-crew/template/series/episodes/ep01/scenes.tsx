@@ -1,6 +1,7 @@
 import React from 'react';
 import {useCurrentFrame} from 'remotion';
 import {between, ease} from '../../../src/engine/math';
+import {MessageCard} from '../../../src/engine/card';
 import {SceneDef, defineScene} from '../../../src/engine/scene';
 import {Character, aboveHead} from '../../../src/styles/3d/character';
 import {Shot, Speech, Stage, Vec3, cuts} from '../../../src/styles/3d/stage';
@@ -67,14 +68,14 @@ const scene1 = defineScene({
     const beat = f < m.list.start ? -1 : Math.min(2, Math.floor((f - m.list.start) / third));
     const listing = between(f, m.cutC, m.cutD);
     const cheering = f >= m.yes.start && f < m.adaOut[0];
-    const adaTalks = [m.plan, m.list, m.yes].some((c) => between(f, c.start, c.speechEnd));
+    const adaLines = [m.plan, m.list, m.yes];
 
     // Ben: looks around, tells her, follows her out
     const benLeaving = f >= m.benOut[0];
     const ben: Vec3 = [benLeaving ? ease(f, m.benOut, [BEN_SPOT[0], OFF_RIGHT]) : BEN_SPOT[0], 0, BEN_SPOT[2]];
     const benWalking = between(f, m.benOut[0], m.benOut[1]);
     const alone = f < m.adaIn[1];
-    const benTalks = [m.gone, m.ask].some((c) => between(f, c.start, c.speechEnd));
+    const benLines = [m.gone, m.ask];
 
     return (
       <Stage
@@ -105,7 +106,7 @@ const scene1 = defineScene({
           pose={adaWalking ? 'down' : listing ? (beat === 2 ? 'cheer' : 'point') : cheering ? 'cheer' : f >= m.plan.start ? 'hips' : 'down'}
           expr={cheering || (listing && beat === 2) ? 'laugh' : 'happy'}
           lookX={listing && beat === 1 ? -0.9 : 0}
-          talking={adaTalks}
+          talking={adaLines}
         />
         <Character
           look={BEN.look}
@@ -116,7 +117,7 @@ const scene1 = defineScene({
           prop="book"
           expr="worried"
           lookX={alone ? Math.sin(f * 0.12) * 0.9 : 0}
-          talking={benTalks}
+          talking={benLines}
         />
       </Stage>
     );
@@ -147,10 +148,10 @@ const scene2 = defineScene({
     const cutE = t.cut(22);
     const chime = t.play('sfx_chime', cutE + 2, 0.6);
     const laugh = t.say('e1_s2_a3', {gap: 6});
-    // 2F wide: the moral
+    // 2F wide: still laughing, small on the square
     const cutF = t.cut(12);
-    const moral = t.say('e1_s2_end_n', {gap: 12});
-    return {adaIn, benIn, looked, cutB, count, best, notice, what, cutD, oh, cutE, chime, laugh, cutF, moral};
+    t.wait(45);
+    return {adaIn, benIn, looked, cutB, count, best, notice, what, cutD, oh, cutE, chime, laugh, cutF};
   },
   Component: ({m}) => {
     const f = useCurrentFrame();
@@ -162,8 +163,8 @@ const scene2 = defineScene({
 
     const noticed = f >= m.notice;
     const found = f >= m.cutE;
-    const adaTalks = [m.count, m.what, m.laugh].some((c) => between(f, c.start, c.speechEnd));
-    const benTalks = [m.best, m.oh].some((c) => between(f, c.start, c.speechEnd));
+    const adaLines = [m.count, m.what, m.laugh];
+    const benLines = [m.best, m.oh];
     // Ben lowers his head to the book, then lifts it again
     const nod = ease(f, [m.cutD + 4, m.cutD + 14], [0, 0.6]) - ease(f, [m.oh.speechEnd + 2, m.oh.speechEnd + 10], [0, 0.6]);
 
@@ -196,7 +197,7 @@ const scene2 = defineScene({
           pose={adaWalking ? 'down' : found ? 'cheer' : noticed ? 'down' : f >= m.cutB ? 'think' : 'down'}
           expr={found ? 'laugh' : noticed ? 'surprised' : f >= m.cutB ? 'thinking' : 'sad'}
           lookX={noticed && !found ? 0.8 : 0}
-          talking={adaTalks}
+          talking={adaLines}
         />
         <Character
           look={BEN.look}
@@ -207,11 +208,19 @@ const scene2 = defineScene({
           prop="book"
           expr={found ? 'laugh' : f >= m.oh.speechEnd + 8 ? 'shy' : f >= m.cutD + 6 ? 'surprised' : 'sad'}
           lookY={nod}
-          talking={benTalks}
+          talking={benLines}
         />
       </Stage>
     );
   },
 });
 
-export const SCENES: SceneDef[] = [scene1, scene2];
+// 3 — the moral, on a card of its own (2D, in front of no picture)
+const scene3 = defineScene({
+  music: 'calm',
+  tail: 45,
+  script: (t) => ({moral: t.say('e1_s3_end_n', {gap: 18, caption: false})}),
+  Component: ({m}) => <MessageCard cue={m.moral} heading="Today's lesson" />,
+});
+
+export const SCENES: SceneDef[] = [scene1, scene2, scene3];

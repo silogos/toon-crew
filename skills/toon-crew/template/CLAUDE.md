@@ -103,6 +103,14 @@ Each job has a recipe in `skills/`. The Director can call one by name or simply 
 | `/screening` | Prepare a review: stills, what changed, what to look at |
 | `/render` | Final render of an approved episode |
 
+**Remotion's own guides.** `npm run remotion-guides` downloads four of Remotion's guides for agents into `skills/` (`remotion-markup`, `remotion-captions`, `remotion-docs`, `remotion-multimedia`; not committed). Read them when you write or debug Remotion code: an animation, a transition, audio, a 3D detail, measuring text, an API you are unsure of. They are written for any Remotion project, so where they differ from this file or a recipe, this file and the recipe win:
+
+- Preview with `npm run preview`, stills with `npm run still`, render with `npm run render`; never `npx remotion studio` or `npx remotion render`, and never create a new project or composition outside the recipes.
+- Text uses `FONT`; do not load other fonts. Timing comes from the timeline (`t.say`, cues), not from durations typed into the markup. The highlight in balloons and captions is the engine's; do not add another caption system.
+- `Interactive` wrappers and Studio-editability are not needed here. When a guide says to load another `remotion-*` skill that is not in `skills/` (`remotion-best-practices`, `remotion-interactivity`, `remotion-create`, `remotion-studio`, `remotion-render`, `remotion-upgrade`), skip that step: those jobs belong to this file and the recipes.
+- Nothing comes from a URL: no sound effects, music, images, video, fonts or models fetched from the web (some guides use `remotion.media` sounds or Google Fonts). Sound effects and music are synthesised in `series/music.mjs` or are files the Director brought, in `public/audio/`.
+- Never upgrade or add Remotion packages without the Director's okay; the studio's versions are pinned.
+
 ## Commands
 
 Commands that work on an episode take its **name** (`ep01`, `ep02`, …). Do not add per-episode scripts to `package.json`.
@@ -116,6 +124,7 @@ npm run studio                       # the same preview in the foreground, for a
 npm run check                        # TypeScript check + series content check; the only automatic checks
 npm run status                       # where the production stands: Status lines, lines recorded, what is rendered
 npm run doctor                       # what this computer and folder have, what is missing, and how to install it
+npm run remotion-guides              # download Remotion's own guides for agents into skills/ (once per folder)
 
 npm run still -- ep01 2 60           # scene 2, frame 60 → out/stills/ep01/s2-f60.png (scenes count from 1)
 npm run still -- ep01 2 0,60,120     # several frames of one scene in one go (the opening takes a list too)
@@ -150,7 +159,7 @@ npm run render -- opening            # the opening alone → out/opening.mp4
 
 ```
 series/
-  series.json        title, language, pace (step or fast), look (only 3d is built so far), size, fps, chosen opening, music by mood
+  series.json        title, language, pace (step or fast), look (only 3d is built so far), size, fps, chosen opening, music by mood, highlightWords
   story/             00-bible.md (premise, tone, house rules), lessons.md (what went wrong and how to avoid it), world.md (map explained), epNN-<title>.md, and opening.md once there is an opening
   cast/index.ts      the cast: appearance, bio, signature pose, voice code
   voices.json        each voice: description, sample sentence, seed
@@ -166,7 +175,7 @@ series/
   opening/           this series' openings (index.ts, and lines.json once an opening has spoken lines); empty until one is made
 agents/              subagents (.claude/agents links here): the two the studio comes with, and any specialist of this series
 skills/              recipes (.claude/skills links here)
-src/engine/          knows nothing about the look: timeline, episode assembly, audio, balloons and captions
+src/engine/          knows nothing about the look: timeline, episode assembly, audio, balloons and captions, the font
 src/styles/<look>/   stage, camera, light, characters, building blocks for one look
 scripts/             voices, voice check, music, still, render, preview, the content check, status, doctor, and VOICES-SETUP.md; lib/ is what they share
 public/audio/        every voice, music and effect file (file name = id)
@@ -187,7 +196,7 @@ The order matters, because **the length of each recorded line sets the timing of
    - `voice` is a code from `series/voices.json`. A cast member's `voice` field must name a code that exists there; the check fails otherwise.
    - `text` is what the balloon shows; `say` is how to pronounce it when that differs; `fx` is a delivery: `shout`, `laugh`, `cheer`, `whisper`, `echo`. It changes how the line is spoken; only `shout` also changes the balloon (red, larger).
    - `series/voices.json`: write each `description` in English whatever the series language (the voice engines understand it best) and the `sample` sentence in the series language.
-3. `npm run voices` records `public/audio/<id>.wav`, checks each take against the script, and writes its length to `src/audio-durations.json`. Both are committed.
+3. `npm run voices` records `public/audio/<id>.wav`, checks each take against the script, and writes its length to `src/audio-durations.json` and when each word is heard to `src/audio-words.json`. All are committed.
 4. A scene is written with `defineScene({music, script, Component})` (`src/engine/scene.tsx`). `script` receives a timeline: `t.say(id)` places a line after the previous one using its recorded length and returns a cue (`start`, `speechEnd`, `end`); `t.play(id, frame)` places a sound effect; `t.wait` and `t.until` leave pauses; `t.mood(name)` changes the music mood from that point on; `t.cut()` marks a camera cut and makes sure no balloon from the old shot lingers into the new one. Whatever `script` returns is handed to `Component` as `m`, and the picture uses those cues to drive mouths, balloons and action (in the 3D look a balloon is `<Speech cue at />`, which places the engine's `<Balloon>` for you). The scene's length follows from its script. A line with no recording counts as one second, so **record first, then time the scene**. Changing a line's text means recording it again.
 5. An episode is `defineEpisode({no, title, lines, scenes})` and is registered in `series/episodes/index.ts`. The engine puts the chosen opening in front, plays scenes in order, lays in each line's recording, shows narration as captions automatically, adds effects, and plays the music for each scene's mood (moods are listed in `series.json`), lowering it under speech.
 6. `npm run check` also checks the content: every line has a defined voice and a unique id, and it warns about lines not yet recorded and music not yet generated.
@@ -203,6 +212,15 @@ Outdoor scenes of a series that has one continuous world are all the **same worl
 A series whose bible says scenes can happen anywhere may use separate sets instead.
 
 What stands on the map stays as the map draws it. When a scene needs something that stands on the map to move or change, the scene draws its own version of that one place with `<World replace={{<placeId>: …}} />`: it stands at the place's position and facing for that scene only, and the map is untouched. Things that exist only in one scene are drawn by the scene itself, on top of the world. Music follows the scene's mood; when the mood should turn part-way through a scene, the script says so with `t.mood('<mood>')` at that point, or `t.mood(null)` for silence.
+
+### 2D pieces in any look
+
+Some things are better drawn flat than in the 3D world: the advice or moral at the end, a lesson, a quotation, a title between parts.
+
+- **`MessageCard`** (`src/engine/card.tsx`) is a full-frame card for one line: `<MessageCard cue={m.moral} heading="…" />` in a scene of its own. The line is read by its voice with each word lit as it is spoken; the heading (optional, in the series language) rises word by word and a wavy line draws itself under it; soft sparkles drift behind. `colors` changes the palette. For a narration line write `t.say(id, {caption: false})`, or the text also appears as a caption at the bottom.
+- **remotion-bits** (MIT, `remotion-bits` in package.json) is the toolbox for other flat pieces: `AnimatedText` (text in by word or letter), `TypeWriter`, `AnimatedCounter`, `Particles` with `Spawner` and `Behavior` (sparkles, snow, confetti, bubbles, over any picture), `GradientTransition`, `StaggeredMotion`. Everything in it moves by the frame number. Give its text `FONT`, keep its colours to the series' palette, and keep Arabic split by word, never by letter.
+- **`@remotion/paths`** draws and moves SVG lines: `evolvePath(progress, d)` makes a line draw itself (an underline, an arrow pointing at something, a route on a map, a shape being outlined), `interpolatePath` morphs one shape into another, `getPointAtLength` moves something along a path. Draw the shapes yourself in an `<svg>`; icons and pictures from the web are not used.
+- A full 2D look (`"look": "2d"`) is not built yet; when it is, it starts from these.
 
 ### Vertical video
 
@@ -225,7 +243,7 @@ The camera is not adapted; that is the storyboard's job. A `fov` is measured top
 - **`stage.tsx`** — `<Stage camera time overlay>` draws one picture. 3D things go in as children; balloons and labels go in `overlay`. The camera is a plan: a single shot `{from, to, fov}` or `still(shot)` holds still, `cuts([{at, shot}, …])` joins still shots with hard cuts, `move(a, b, [f0, f1])` travels between two shots. Which of these a series uses is a house rule in the bible. `time` is `day`, `dusk` or `night`; windows glow at dusk and night, lamps shine.
 - **`framing.ts`** — `frameShot(subjects, {toward, fov, margin, headroom, lift})` works out a shot that shows a group of characters whole, in landscape or vertical. Use it for two-shots and groups instead of guessing camera numbers; hand-written shots are still fine for a composed wide.
 - **Speech.** `<Speech cue={m.hello} at={aboveHead(position, build)} />` in the overlay puts the balloon over a character's head. The text comes from the cue's line.
-- **`look.ts` and `character.tsx`** — what a character can be and do. Builds `kid`, `adult`, `stout`; hair `none`, `short`, `spiky`, `bob`, `long`, `bun`, `curly`; tops `plain`, `stripe`, `collar`, `dress`; bottoms `shorts`, `pants`, `skirt`; any colours; `glasses`, `blush`. Twelve expressions, eleven poses (`point` is straight ahead, `pointUp` at something overhead), core props (`book`, `ball`, `stick`, `cup`, `basket`, `flower`). `<Character look position facing expr pose prop talking walking lookX lookY />` draws one. Each list in `look.ts` has a table of drawings in `character.tsx` typed over the list, so a new name without a drawing fails `npm run check`.
+- **`look.ts` and `character.tsx`** — what a character can be and do. Builds `kid`, `adult`, `stout`; hair `none`, `short`, `spiky`, `bob`, `long`, `bun`, `curly`; tops `plain`, `stripe`, `collar`, `dress`; bottoms `shorts`, `pants`, `skirt`; any colours; `glasses`, `blush`. Twelve expressions, eleven poses (`point` is straight ahead, `pointUp` at something overhead), core props (`book`, `ball`, `stick`, `cup`, `basket`, `flower`). `<Character look position facing expr pose prop talking walking lookX lookY />` draws one. Give `talking` the character's lines (`talking={[m.hello, m.again]}`) and the mouth opens and closes with the recording while each plays, shut in the pauses; `true` only flaps at a steady beat, for something with no recording. Each list in `look.ts` has a table of drawings in `character.tsx` typed over the list, so a new name without a drawing fails `npm run check`.
 - **Characters from `.glb` models (optional).** A cast member may carry `model: '<code>'`, a code from `series/models.json`: `{file, animationFiles?, height, clips: {idle, walk?, talk?, pose?}}`. The file lives under `public/` (by convention `public/models/`), is **never committed** and is downloaded by whoever uses it; `public/models/LICENSES.md` records where each model comes from and its licence. `<Character model=… />` then plays a clip by what the character does: `walking`, then a pose with its own clip, then `talking`, else `idle`. Models load in `Stage` before the picture is drawn, so draw characters inside a `Stage`. Not supported: expressions, mouth movement, props and `accessories` (a painted face has none); its review sheets are `poses` (the clip each pose plays) and `clips` (every clip the files have). Mixing code-built and model characters in one series usually looks uneven; make it a house rule either way. `npm run check` warns when a model file is missing or unlisted, and fails when a clip name does not exist in the files.
 - **Series-only clothing and objects** do not go into those lists. A cast member's look takes `accessories` (`{on: 'head' | 'body' | 'hand', node}`), and `prop` accepts the series' own 3D object as well as a core prop name. Keep such pieces in `series/cast/`.
 - **`blocks.tsx`** — building blocks for places: `Ground`, `Road`, `Patch`, `House`, `Shop`, `Tree`, `Bush`, `Rock`, `Fence`, `Lamp`, `Bench`, `Pond`. A block that only this series needs lives in `series/world/`.
@@ -237,3 +255,5 @@ The camera is not adapted; that is the storyboard's job. A `fov` is measured top
 - `out/`, `node_modules/`, the Python environment and raw voice takes are not committed. `public/audio/*.wav` and the voice reference clips are committed.
 - **Never remake a voice reference clip without the Director's okay.** It changes that character's voice in every episode.
 - All compositions use the size and frame rate in `series/series.json`.
+- Balloons and captions light up each word as it is spoken, from `src/audio-words.json` (or an estimate when a line's words were not heard one for one). `"highlightWords": false` in `series.json` turns it off; that is the Director's choice. Recordings brought in with `voices:import` get their word times from `npm run voices:check`.
+- All on-screen text uses `FONT` from `src/engine/font.ts` (Nunito, and Noto Sans Arabic for Arabic script, both shipped with the studio and loaded before a frame is drawn, so every machine renders the same letters). A balloon or caption whose words are mostly Arabic or Hebrew reads right to left by itself; do not split Arabic words into letters, which breaks how they join. Do not write another `fontFamily`; a weight other than 700 or 800 is not loaded and would be faked.

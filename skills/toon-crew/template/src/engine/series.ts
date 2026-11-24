@@ -15,6 +15,8 @@ const schema = z.object({
   voiceEngine: z.enum(['local', 'elevenlabs', 'edge']).optional(),
   /** how often the crew stops for the Director's okay: 'step' (after every stage, the default) or 'fast' (once on the whole plan, once on the finished picture) */
   pace: z.enum(['step', 'fast']).optional(),
+  /** light up each word in balloons and captions as it is spoken (default true); false shows the whole line plain */
+  highlightWords: z.boolean().optional(),
   look: z.enum(['2d', '2.5d', '3d']),
   width: z.number().int().positive(),
   height: z.number().int().positive(),

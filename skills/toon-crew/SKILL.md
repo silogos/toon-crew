@@ -96,7 +96,7 @@ Find out the computer first (`uname -sm`, or `echo %PROCESSOR_ARCHITECTURE%` on 
    - **Never type a password for the Director.** If the computer asks for one, tell them to type it in the terminal themselves and to say when it is done.
    - Run the doctor again. On Windows a freshly installed program may not be found until the terminal is reopened; say so if that happens.
 3. **Put the studio in the folder:** `node "${CLAUDE_SKILL_DIR}/scripts/setup-studio.mjs" .` (add `--dry-run` to see what it would do). The studio it makes is **empty**: no cast, no places, no episode. It never overwrites: if it lists files that are in the way, take that to the Director rather than moving anything yourself.
-4. Run `npm install` (needs the network; usually under a minute). If the folder is not inside a git repository, run `git init`; if it sits inside one, leave git alone.
+4. Run `npm install` (needs the network; usually under a minute), then `npm run remotion-guides`, which downloads Remotion's own guides for agents into `skills/` (a few hundred kilobytes of text; if it fails, go on: the studio works without them). If the folder is not inside a git repository, run `git init`; if it sits inside one, leave git alone.
 5. Run `npm run doctor`, then `npm run check`, then `npm run still -- map` and look at the picture yourself (`out/stills/map.png`): an empty ground with a placeholder title proves that drawing works on this computer. It is a test of the studio, not something to show as progress.
 6. Go straight on to section 4; the Director hears that the studio is ready in the one line that ends section 4, not in a message of its own.
 

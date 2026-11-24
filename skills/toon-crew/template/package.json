@@ -17,15 +17,23 @@
     "voices:import": "node scripts/import-audio.mjs",
     "voices:setup": "node scripts/setup-voices.mjs",
     "music": "node scripts/music.mjs",
-    "clear-sample": "node scripts/clear-sample.mjs"
+    "clear-sample": "node scripts/clear-sample.mjs",
+    "remotion-guides": "node scripts/remotion-guides.mjs"
   },
   "dependencies": {
+    "@fontsource/noto-sans-arabic": "5.3.0",
+    "@fontsource/nunito": "5.3.0",
     "@react-three/fiber": "9.8.2",
     "@remotion/cli": "4.0.545",
+    "@remotion/fonts": "4.0.545",
+    "@remotion/media-utils": "4.0.545",
+    "@remotion/paths": "4.0.545",
     "@remotion/three": "4.0.545",
+    "culori": "4.0.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "remotion": "4.0.545",
+    "remotion-bits": "0.2.1",
     "three": "0.187.0",
     "zod": "4.6.7"
   },
@@ -34,5 +42,10 @@
     "@types/three": "0.187.0",
     "typescript": "5.9.3",
     "vitest": "5.1.1"
+  },
+  "overrides": {
+    "remotion-bits": {
+      "three": "$three"
+    }
   }
 }

@@ -37,7 +37,7 @@ export const assemble = (scenes: SceneDef[], lines: Line[]) => {
             <Series.Sequence key={i} durationInFrames={s.duration}>
               <s.Component />
               <AbsoluteFill>
-                {s.cues.filter((c) => isNarration(c.id)).map((c) => (
+                {s.cues.filter((c) => isNarration(c.id) && c.caption !== false).map((c) => (
                   <Caption key={c.id} cue={c} />
                 ))}
               </AbsoluteFill>
