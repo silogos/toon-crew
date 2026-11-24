@@ -21,7 +21,7 @@ Everything is made by code on your own computer. No video generator, no stock as
 - **Two okays to a video.** Give the story and where you will post it. The crew comes back once with the whole plan and once with the finished picture. Say *"step by step"* to approve every stage instead.
 - **Landscape or vertical.** 16:9 for YouTube, or 9:16 for TikTok, Reels and Shorts, with speech balloons and captions sized for a phone.
 - **A crew, not a prompt.** Writer, Storyboard Artist, Character Designer, Art Director, Animator, Voice Director, Composer, Editor and Quality Control, each with a recipe to follow. Quality Control and the Voice Director run as separate subagents.
-- **It checks itself.** The crew renders stills of every scene and looks at them, and listens back to every recorded line, before showing you anything.
+- **It checks itself.** Quality Control reads every script, storyboard and set of lines before you see them, and every recorded line is listened back to. The picture gets one quick look (the whole episode on one board); you judge motion and detail in the preview.
 - **No programming needed.** "Give Tobi glasses." "Put a school at the east end of the road." "Scene 3 needs something tense."
 
 ## How it works

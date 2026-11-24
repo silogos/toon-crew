@@ -29,15 +29,24 @@ Run `npm run status` (each story file's Status line, lines recorded per episode,
 
 ## Review package after production
 
-1. Start with `npm run still -- <ep> board` and look at it: one picture shows whether every shot has its characters in frame and its balloons readable. Then hand the changed scenes to the `quality-control` subagent with what the storyboard says should be visible.
-2. Fix what it found, or list what you left and why.
-3. Show the Director, per scene: the stills, what changed since they last saw it (before and after for a fix), and anything QC flagged that needs their eye.
-4. Say what was **not** checked. Stills cannot show motion or sound; for those, give the scene link from `npm run preview -- <ep>`, say which scene number to pick under Props, and ask them to play it.
+1. Render `npm run still -- <ep> board` and look at it: one picture shows whether every shot has its characters in frame and its balloons readable. Take a closer still only of a shot that looks wrong. (Quality Control reviewed the script, storyboard and lines before production; it does not look at pictures.)
+2. Fix what you found, or list what you left and why.
+3. Show the Director: the board, what changed since they last saw it (before and after for a fix), and anything QC marked not verified that is still open.
+4. Say what was **not** checked: motion, sound and detail were not reviewed shot by shot. Give the scene link from `npm run preview -- <ep>`, say which scene number to pick under Props, and ask them to play it.
 5. End with the one decision you need: approve, or what to change.
+
+## When the Director asks for changes
+
+What they ask for at a screening is a change to work they have not approved yet. Apply it, then screen again; do not wait for a second okay to start.
+
+1. **Words** (a line said differently, a line added or cut): change the script in the story file and `lines.json`, hand `lines.json` to `quality-control` (stage: lines), record only the lines that changed, and let the scenes re-time from the new lengths. A change to the story itself (what happens, who is in it) goes back to the plan: show the new plan and wait for an okay before building.
+2. **Picture** (framing, a pose, a colour, a balloon): fix it in the scene. No QC.
+3. **A voice** (how a character sounds): that is a retake of every line of that character; say so and how long it takes before you start.
+4. Render a fresh board, look at it, and screen again: only what changed (before and after), the preview link from `npm run preview -- <ep>` with the scenes to replay, and what was not changed. Update the story file's Status line.
 
 ## The screening on the fast track
 
-On the fast track this is the first time the Director sees anything, so show more than the scenes: the cast line-up, the map, the episode board, and a still of every shot; then the preview link, the recordings of every new voice by name, what the crew chose on its own, and what was not checked. End with the one question: render it, or what to change. After the okay, render without asking again.
+On the fast track this is the first time the Director sees anything, so show more than the scenes: the cast line-up, the map and the episode board; then the preview link, the recordings of every new voice by name, what the crew chose on its own, and what was not checked. End with the one question: render it, or what to change. After the okay, render without asking again.
 
 ## Playing a scene
 

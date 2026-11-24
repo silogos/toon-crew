@@ -71,7 +71,9 @@ With the brief complete, write one message that holds everything the Director ha
 - **The first episode:** the story in a few lines; each character, with who they are and how they look; each place; every scene and every spoken line; each voice, described in a sentence. If the series has a formula, show which part of the episode is which beat.
 - **What will be installed and downloaded:** section 3, and the voice engine with its size, cost and what leaves the computer (see "Voices").
 
-Mark every choice of your own as yours and say once that any of it can be replaced. Ask no questions; end with the one request for an okay. That okay covers the proposal, the installs and the setup. Paid services always need their own explicit yes.
+Mark every choice of your own as yours and say once that any of it can be replaced. Ask no questions; end with the one request for an okay.
+
+**Before sending it, have the words reviewed.** The studio's Quality Control does not exist yet, so start it yourself: a subagent whose instructions are `${CLAUDE_SKILL_DIR}/template/agents/quality-control.md`, given the draft proposal and the Director's own messages word for word, and told that the studio does not exist yet. It reviews the text only (the Director's words kept, lines short enough for a balloon, a formula's beats, quotations marked not verified, the running time). Fix what it finds before sending. With no subagents, go through that file's checklist yourself. That okay covers the proposal, the installs and the setup. Paid services always need their own explicit yes.
 
 **Fast track (the default):** after the okay, work without stopping, in this order: set up the studio (section 3), make it their series (section 4), start setting up the voice engine at once because it takes minutes, then build the episode ("Fast track" in the studio's `CLAUDE.md`). The next stop is the screening.
 

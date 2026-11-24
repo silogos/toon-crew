@@ -32,6 +32,8 @@ Offer premises only when the Director asks you to choose: three one-line options
 
 Write scene by scene in the story file: where and when, what happens, and every line of dialogue and narration with who says it. When the series has a formula, label each part of the script with its beat. Keep each character's way of speaking as described in the bible. Read the dialogue as it will be heard: short lines, one thought per balloon. Estimate the running time and say so.
 
+Before showing it, hand the story file to the `quality-control` subagent (stage: script) and fix what it finds; with no subagents, run its checklist yourself. Show the Director anything it marked **not verified**.
+
 ## Stage 3 — Storyboard (Storyboard Artist)
 
 Add a shot table per scene: time of day, place, camera, who is in frame and what they do, expression changes, music mood, sound effects.
@@ -42,15 +44,17 @@ What stands on the map stays still unless the table says otherwise. When a shot 
 
 If the series is vertical (taller than wide), frame every shot for it: see "Vertical video" in `CLAUDE.md` (`frameShot` fits a group into a tall frame for you). Follow the camera rules in the bible; when a shot departs from them, write the reason in the table. Choose camera positions that are free of obstructions; check them with `npm run still -- view …` if unsure.
 
+Before showing it, hand the story file to `quality-control` again (stage: storyboard) and fix what it finds.
+
 ## Stage 4 — Production
 
 In this order, because recorded lengths set the timing:
 
-1. **Lines** (Writer): write `series/episodes/epNN/lines.json` from the approved script. Add the episode's title line for the opening narration if the series has one.
+1. **Lines** (Writer): write `series/episodes/epNN/lines.json` from the approved script. Add the episode's title line for the opening narration if the series has one. Hand it to `quality-control` (stage: lines) before recording: a wrong word found now costs nothing, found after recording it costs a retake.
 2. **Voices** (hand to the `voice-director` subagent; if this session has no subagents, run its commands yourself and say so in the report): record and check. Voices that are new in this episode must have their entry in `series/voices.json` first; the recording makes their reference clip. Read its report; bring any line it marked for the Director's ear to the Director.
 3. **Scenes** (Animator & Cinematographer): build each scene from the storyboard, timed by the cues. `scene-example.md`, next to this recipe, shows how a scene file is written: script, camera cuts, balloons, a change of music mood, and an object drawn by the scene. It is a pattern for the code only; take nothing of its content into the episode. Register the episode in `series/episodes/index.ts`.
-4. **QC** (hand to the `quality-control` subagent, or do its checks yourself if this session has no subagents): tell it which scenes exist and what the storyboard says. Fix what it finds, or report what you chose not to fix and why.
-5. **Screening** (follow `/screening`): show stills of every scene, and give the preview link from `npm run preview -- epNN` with the scene numbers to play.
+4. **Quick look** (Animator): `npm run check`, then `npm run still -- epNN board` and look at it for an empty frame, a missing character or a cut-off balloon. Take a closer still only of a shot that looks wrong, and fix it. There is no shot-by-shot review: the Director watches it in the preview.
+5. **Screening** (follow `/screening`): show the board, and give the preview link from `npm run preview -- epNN` with the scene numbers to play.
 
 If the script needs to change during production, stop and ask.
 

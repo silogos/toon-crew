@@ -26,7 +26,7 @@ Sebelum membuat apa pun, kru menanyakan empat hal: **ceritanya** (siapa tokohnya
 - **Anda tetap sutradara.** Tiap episode melewati ide → naskah → storyboard → produksi → render akhir, dan kru menunggu persetujuan Anda di tiap tahap.
 - **Dua kali oke sampai jadi video.** Kru berhenti sekali untuk seluruh rencana dan sekali untuk hasil gambarnya. Bilang *"langkah demi langkah"* kalau ingin menyetujui tiap tahap.
 - **Lebar atau tegak.** 16:9 untuk YouTube, atau 9:16 untuk TikTok, Reels, dan Shorts, dengan balon dialog dan teks yang ukurannya pas di layar ponsel.
-- **Memeriksa dirinya sendiri.** Kru merender gambar tiap adegan dan melihatnya, serta mendengarkan ulang tiap rekaman, sebelum menunjukkan apa pun kepada Anda.
+- **Memeriksa dirinya sendiri.** Quality Control membaca tiap naskah, storyboard, dan daftar dialog sebelum Anda melihatnya, dan tiap rekaman didengarkan ulang. Gambar cukup dilihat sekilas (seluruh episode dalam satu board); gerak dan detail Anda nilai sendiri di pratinjau.
 - **Tidak perlu bisa pemrograman.** "Kasih Bimo kacamata." "Taruh sekolah di ujung timur jalan." "Adegan 3 butuh musik yang tegang."
 
 ## Pasang

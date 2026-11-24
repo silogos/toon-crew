@@ -37,7 +37,7 @@ Ask only what the Director has not said, in one round:
 - **What must this person get right, or what is their job?** In the Director's words: the subject and what counts as a mistake, or the job and what a good result is.
 - **What do they check against?** A specialist verifies against something it can actually read: files the Director puts in `series/references/`, or pages on the web if this session can read the web. Ask which sources the Director trusts. If there is no source it can read, say plainly that the specialist can only flag doubts, not confirm anything.
 - **When are they consulted?** One or more stages: `brief`, `script`, `storyboard`, `production`, `render`.
-- **For one that does a job:** what exactly they produce, which files that means, and what they must never touch. Their result is still checked by Quality Control and approved by the Director like anyone's work.
+- **For one that does a job:** what exactly they produce, which files that means, and what they must never touch. Their result is reviewed like anyone's work: Quality Control reads it when it is writing (a script, lines), and the Director approves it.
 - **Can they stop the work?** If yes, a stage is not shown to the Director as ready while the specialist has an open objection; it is shown with the objection instead.
 
 Propose in a few lines: the job title, the kind, what they check or do, their sources or the files they write, the stages, and whether they can stop the work. **Wait for okay.**

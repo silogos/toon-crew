@@ -2,8 +2,8 @@
 //   npm run still -- ep01 2 60        scene 2, frame 60 → out/stills/ep01/s2-f60.png (scenes count from 1)
 //   npm run still -- ep01 2 0,60,120  several frames of one scene in one go
 //   npm run still -- ep01 2           frame 30
-//   npm run still -- ep01 board       the whole episode at a glance: 8 moments in one picture → out/stills/ep01/board.png
-//   npm run still -- ep01 board 12    the same with 12 moments
+//   npm run still -- ep01 board       the whole episode at a glance, one moment per shot (every scene start and spoken line) → out/stills/ep01/board.png
+//   npm run still -- ep01 board 12    12 moments spread evenly instead
 //   npm run still -- opening 120      the chosen opening → out/stills/opening-<name>-f120.png (frames may be a list too)
 //   npm run still -- opening <name> 120   a named opening version
 //   npm run still -- cast             every cast member → out/stills/cast.png
@@ -13,11 +13,14 @@
 //   npm run still -- view <viewpoint> <time>        → out/stills/world/<viewpoint>-<time>.png
 import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
 import {readSeries} from './lib/series.mjs';
-import {remotion, remotionCli} from './remotion.mjs';
+import {remotion} from './remotion.mjs';
 
 const DEFAULT_FRAME = '30';
 const FRAMES = /^\d+(,\d+)*$/;
+// more than this many moments make a board too small to read
+const MAX_MOMENTS = 40;
 
 const usage = (msg) => {
   if (msg) console.error(msg);
@@ -47,44 +50,59 @@ const run = (plan) => {
 };
 
 /**
- * The whole episode in one picture: `count` moments spread evenly from start to end, side by side.
- * One render for all of them, so it is much quicker than the same number of single stills.
+ * The whole episode in one picture. By default one moment per shot of the story: the start of every
+ * scene and every spoken line once its balloon is up, so each shot is seen at least once.
+ * With a number, that many moments spread evenly instead.
+ * The episode is bundled once and every moment is drawn small in the same browser.
  */
-const board = (ep, count) => {
-  const listed = spawnSync(process.execPath, [remotionCli(), 'compositions'], {encoding: 'utf8'});
-  const total = Number((listed.stdout ?? '').match(new RegExp(`^${ep}\\s+\\d+\\s+\\S+\\s+(\\d+)`, 'm'))?.[1]);
-  if (!total) {
-    console.error(`${listed.stdout ?? ''}${listed.stderr ?? ''}\nCould not find the length of "${ep}". Is the episode registered in series/episodes/index.ts?`);
-    process.exit(1);
-  }
-  const every = Math.max(1, Math.ceil(total / count));
-  const first = Math.min(total - 1, Math.floor(every / 2));
+const board = async (ep, count) => {
+  const {bundle} = await import('@remotion/bundler');
+  const {openBrowser, renderStill, selectComposition} = await import('@remotion/renderer');
+  const {findChrome} = await import('./lib/chrome.mjs');
+  // the same browser and renderer as remotion.config.ts
+  const browserExecutable = findChrome() ?? null;
+  const chromiumOptions = {gl: 'angle'};
+
+  const serveUrl = await bundle({entryPoint: path.resolve('src/index.ts')});
+  const browser = await openBrowser('chrome', {browserExecutable, chromiumOptions});
   const dir = `out/stills/${ep}/board`;
   const out = `out/stills/${ep}/board.png`;
   fs.rmSync(dir, {recursive: true, force: true});
-  let status = remotion(['render', ep, dir, '--sequence', `--every-nth-frame=${every}`, `--frames=${first}-${total - 1}`, '--image-format=jpeg', '--log=error']);
-  if (status !== 0) process.exit(status);
+  fs.mkdirSync(dir, {recursive: true});
+  let moments;
+  let total;
+  try {
+    const composition = await selectComposition({serveUrl, id: ep, inputProps: {}, puppeteerInstance: browser, browserExecutable, chromiumOptions, logLevel: 'error'}).catch(() => null);
+    if (!composition) throw new Error(`There is no episode "${ep}". Is it registered in series/episodes/index.ts?`);
+    total = composition.durationInFrames;
+    if (count) {
+      const every = Math.max(1, Math.ceil(total / count));
+      moments = Array.from({length: Math.ceil(total / every)}, (_, i) => Math.min(total - 1, Math.floor(every / 2) + i * every));
+    } else {
+      moments = (composition.defaultProps.moments ?? []).slice(0, MAX_MOMENTS);
+      if (!moments.length) moments = [0];
+    }
+    const scale = Math.min(1, (series.height > series.width ? 300 : 480) / composition.width);
+    for (const [i, frame] of moments.entries()) {
+      await renderStill({composition, serveUrl, frame, output: `${dir}/moment-${String(i).padStart(3, '0')}.jpeg`, imageFormat: 'jpeg', scale, puppeteerInstance: browser, browserExecutable, chromiumOptions, logLevel: 'error'});
+      process.stdout.write(`\rboard: ${i + 1}/${moments.length}`);
+    }
+    process.stdout.write('\n');
+  } finally {
+    await browser.close({silent: true});
+  }
 
-  // Remotion pads the numbers to the width of the largest, so give them one fixed name pattern in order
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => /^element-\d+\.jpeg$/.test(f))
-    .sort((x, y) => Number(x.match(/\d+/)[0]) - Number(y.match(/\d+/)[0]));
-  files.forEach((f, i) => fs.renameSync(`${dir}/${f}`, `${dir}/moment-${String(i).padStart(3, '0')}.jpeg`));
   const vertical = series.height > series.width;
-  const columns = Math.min(files.length, vertical ? 6 : 4);
-  const rows = Math.ceil(files.length / columns);
-  const cell = vertical ? 300 : 480;
-  const made = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-start_number', '0', '-i', `${dir}/moment-%03d.jpeg`, '-vf', `scale=${cell}:-2,tile=${columns}x${rows}:padding=6:color=white`, '-frames:v', '1', out], {stdio: 'inherit'});
+  const columns = Math.min(moments.length, vertical ? 6 : 4);
+  const rows = Math.ceil(moments.length / columns);
+  const made = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-start_number', '0', '-i', `${dir}/moment-%03d.jpeg`, '-vf', `tile=${columns}x${rows}:padding=6:color=white`, '-frames:v', '1', out], {stdio: 'inherit'});
   if (made.error || made.status !== 0) {
     console.error(`The pictures are in ${dir}, but they could not be joined into one: ffmpeg ${made.error ? 'was not found' : 'failed'}.`);
     process.exit(1);
   }
   fs.rmSync(dir, {recursive: true, force: true});
-  const moments = files.map((_, i) => first + i * every);
   console.log(`\nstill: ${out}`);
-  console.log(`${files.length} moments, left to right${rows > 1 ? ' and top to bottom' : ''}, at frames ${moments.join(', ')} of ${total} (${(total / series.fps).toFixed(1)} s).`);
-  process.exit(0);
+  console.log(`${moments.length} moments${count ? '' : ' (every scene start and every spoken line)'}, left to right${rows > 1 ? ' and top to bottom' : ''}, at frames ${moments.join(', ')} of ${total} (${(total / series.fps).toFixed(1)} s).`);
 };
 
 /** "0,60,120" → [0, 60, 120], without repeats. */
@@ -100,10 +118,16 @@ const series = readSeries();
 if (/^ep\d+$/.test(what)) {
   if (a === 'board') {
     if (b !== undefined && !/^\d+$/.test(b)) usage(`"${b}" is not a number of moments (for example: npm run still -- ${what} board 12).`);
-    board(what, Math.min(40, Math.max(2, Number(b ?? 8))));
+    board(what, b === undefined ? null : Math.min(MAX_MOMENTS, Math.max(2, Number(b))))
+      .then(() => process.exit(0))
+      .catch((err) => {
+        console.error(err.message ?? err);
+        process.exit(1);
+      });
+  } else {
+    if (!/^\d+$/.test(a ?? '')) usage(`Name the scene number, for example: npm run still -- ${what} 1`);
+    run(frames(b ?? DEFAULT_FRAME).map((frame) => ({composition: `${what}-scene`, out: `out/stills/${what}/s${a}-f${frame}.png`, props: {scene: Number(a)}, frame})));
   }
-  if (!/^\d+$/.test(a ?? '')) usage(`Name the scene number, for example: npm run still -- ${what} 1`);
-  run(frames(b ?? DEFAULT_FRAME).map((frame) => ({composition: `${what}-scene`, out: `out/stills/${what}/s${a}-f${frame}.png`, props: {scene: Number(a)}, frame})));
 } else if (what === 'opening') {
   const named = a && !FRAMES.test(a);
   const name = named ? a : series.opening;

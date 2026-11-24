@@ -30,14 +30,14 @@ The crew lives in three kinds of files.
 
 Two jobs run as **subagents** with their own context:
 
-- **Quality Control** renders stills of everything that changed, looks at each picture, compares it with the storyboard, and reports. It has no tools to edit files, so it cannot quietly fix what it finds.
+- **Quality Control** reads the script, the storyboard and the lines before the Director sees them, and checks them against the Director's words, the bible and the episode formula: lines too long for a balloon, a beat missing, a character out of voice, a quotation nobody verified, a line missing from `lines.json`. It reads only, never renders, and has no tools to edit files, so it cannot quietly fix what it finds. The picture gets one quick look from the crew (a board of the whole episode); the Director judges motion and detail in the preview.
 - **Voice Director** records lines, listens back to each one, and retakes the ones that drifted from the script. It may not change what a character says.
 
 The creative jobs stay in the main conversation, because they need back-and-forth with the Director.
 
 ### Why an independent checker matters
 
-The agent that builds a scene knows what it meant to build, and tends to see that in the picture. A checker that only knows the storyboard sees what is actually there. On the sample episode, Quality Control looked at 41 stills and found things the builder had passed over: speech balloons lingering a few frames into the next shot after a cut, a character's mouth disappearing behind his book at the punchline, and a framing that showed whole bodies where the storyboard asked for knees-up. The first of those became an engine feature (`t.cut()`), so it cannot happen again.
+The agent that builds a scene knows what it meant to build, and tends to see that in the picture. A checker that only knows the storyboard sees what is actually there. When Quality Control used to review pictures, it looked at 41 stills of the sample episode and found things the builder had passed over, such as speech balloons lingering into the next shot after a cut; that one became an engine feature (`t.cut()`), so it cannot happen again. Reviewing every shot took longer than the Director wanted to wait, so the checker now reads the writing, where a mistake is cheapest to fix: before anything is recorded or animated.
 
 ## The studio
 

@@ -81,7 +81,19 @@ export const assemble = (scenes: SceneDef[], lines: Line[]) => {
     </LinesProvider>
   );
 
-  return {Component, durationInFrames: total};
+  // what the board shows: the start of every scene, and every line once its balloon has popped in
+  const moments = [
+    ...new Set(
+      scenes.flatMap((s, i) => [
+        offsets[i] + Math.min(10, s.duration - 1),
+        ...s.cues.map((c) => offsets[i] + Math.min(c.start + 15, c.end - 1)),
+      ]),
+    ),
+  ]
+    .filter((f) => f >= 0 && f < total)
+    .sort((a, b) => a - b);
+
+  return {Component, durationInFrames: total, moments};
 };
 
 export type EpisodeDef = ReturnType<typeof defineEpisode>;

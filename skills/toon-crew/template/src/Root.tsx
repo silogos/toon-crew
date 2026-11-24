@@ -13,7 +13,7 @@ const size = {width, height, fps};
  * Compositions are built from the series, so adding an episode or an opening
  * never means editing this file.
  *
- *   ep01            the whole video: chosen opening + story
+ *   ep01            the whole video: chosen opening + story (its `moments` prop lists the frames the board shows)
  *   ep01-scene      one story scene with its sound (prop `scene`, from 1)
  *   opening-<name>  one opening version, introducing the first episode
  *   cast, sheet, map, view   review pictures supplied by the series' look
@@ -26,7 +26,13 @@ export const Root: React.FC = () => {
         const full = makeFull(ep, OPENINGS);
         return (
           <React.Fragment key={ep.id}>
-            <Composition id={ep.id} component={full.Component} durationInFrames={Math.max(1, full.durationInFrames)} {...size} />
+            <Composition
+              id={ep.id}
+              component={full.Component as React.FC<{moments: number[]}>}
+              defaultProps={{moments: full.moments}}
+              durationInFrames={Math.max(1, full.durationInFrames)}
+              {...size}
+            />
             <Composition
               id={`${ep.id}-scene`}
               component={ep.Scene}

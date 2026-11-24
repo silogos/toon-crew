@@ -49,7 +49,7 @@ The moral, on a card of its own.
 |---|---|---|---|
 | `e1_s3_end_n` | Narrator | Sometimes what you are looking for is right in your hands. | |
 
-**Running time:** about 70 spoken words; with pauses, roughly 40 seconds.
+**Running time:** 58 spoken words, about 25 seconds of speech; with the silent shots and the closing card, roughly 40 seconds.
 
 **Note for the Director:** `e1_s2_a3` is a laugh. Recorded laughter is the hardest thing for the voice engine to get right. If it does not sound natural, the fallback is a short line instead ("You had it all day!").
 

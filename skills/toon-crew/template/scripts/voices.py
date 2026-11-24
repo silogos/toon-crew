@@ -24,7 +24,7 @@ import numpy as np
 import soundfile as sf
 from mlx_audio.tts import load_model
 
-from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, TTS_MODEL, clean, listen, record_words, load_lines, seconds, series, voices
+from voicelib import AUDIO, DURATIONS, PASS_SCORE, RAW, REFS, TTS_MODEL, clean, hear, listen, record_words, save_words, similarity, load_lines, seconds, series, voices
 
 # How a line is delivered when it has an "fx". "echo" is an audio effect, added after recording.
 DELIVERY = {
@@ -90,7 +90,7 @@ def main():
         t = time.time()
         raw = RAW / f"{lid}.wav"
         heard_as = RAW / f"{lid}.cleaned.wav"
-        best = (-1.0, None, None, "")
+        best = (-1.0, None, None, "", None)
         takes = 0
         for take in range(MAX_TAKES):
             takes += 1
@@ -102,14 +102,17 @@ def main():
             # (An echo is added on purpose and would only confuse the listener, so that one is scored raw.)
             if fx == "echo":
                 score, heard = listen(raw, text, language)
+                words = None
             else:
                 clean(raw, heard_as, [])
-                score, heard = listen(heard_as, text, language)
+                # this is the finished file as it will be saved, so the same listening also times its words
+                heard, words = hear(heard_as, language)
+                score = similarity(text, heard)
             if score > best[0]:
-                best = (score, audio, rate, heard)
+                best = (score, audio, rate, heard, words)
             if score >= PASS_SCORE:
                 break
-        score, audio, rate, heard = best
+        score, audio, rate, heard, words = best
         sf.write(raw, audio, rate)
 
         dst = AUDIO / f"{lid}.wav"
@@ -122,8 +125,12 @@ def main():
               + ("" if score >= PASS_SCORE else f"  heard: '{heard}'"), flush=True)
         # save after every line so an interrupted run loses nothing
         DURATIONS.write_text(json.dumps(durations, indent=2) + "\n")
-        # after the length is saved: if this is interrupted, the scene is still timed to the new take
-        record_words(lid, dst, language)  # when each word is heard, for the highlight in balloons and captions
+        # after the length is saved: if this is interrupted, the scene is still timed to the new take.
+        # The word times come from scoring the take (same file); only an echo, scored raw, is listened to again.
+        if fx == "echo":
+            record_words(lid, dst, language)
+        else:
+            save_words(lid, words)
 
     print(f"done in {time.time() - t0:.0f}s: {len(lines)} line(s), {drifted} below {PASS_SCORE}")
 
