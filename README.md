@@ -68,7 +68,7 @@ Then type `/toon-crew` in an empty folder.
 
 </details>
 
-**Requirements:** Claude Code and an internet connection. Node.js 20+, Google Chrome and ffmpeg are installed by the crew for you, after asking once. No voice engine is needed until your first script is approved.
+**Requirements:** Claude Code and an internet connection. Node.js 20+ and Google Chrome are installed by the crew for you, after asking once (ffmpeg comes with Remotion). No voice engine is needed until your first script is approved.
 
 **Recording new voices** works three ways, chosen per series:
 

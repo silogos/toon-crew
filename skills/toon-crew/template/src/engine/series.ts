@@ -12,7 +12,8 @@ const schema = z.object({
   /** language the characters speak, as a code the voice check understands (en, id, es, …) */
   language: z.string().min(2),
   /** how voices are recorded: 'local' (open model on an Apple Silicon Mac, the default) 'elevenlabs' (any computer, needs an API key) or 'edge' (free online voices, unofficial, last resort) */
-  voiceEngine: z.enum(['local', 'elevenlabs', 'edge']).optional(),
+  // the name of an engine folder skills/voices-<name>/ (or one of its older names); checked by npm run check
+  voiceEngine: z.string().optional(),
   /** how often the crew stops for the Director's okay: 'step' (after every stage, the default) or 'fast' (once on the whole plan, once on the finished picture) */
   pace: z.enum(['step', 'fast']).optional(),
   /** light up each word in balloons and captions as it is spoken (default true); false shows the whole line plain */

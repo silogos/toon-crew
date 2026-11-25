@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {AUDIO_DIR, DURATIONS_FILE, readDurations, writeJson} from './lib/series.mjs';
+import {AUDIO_DIR, DURATIONS_FILE, readDurations, writeJson} from '../../scripts/lib/series.mjs';
 import * as kit from './music-kit.mjs';
 
 const only = process.argv.slice(2);

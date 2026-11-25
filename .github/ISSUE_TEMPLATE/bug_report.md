@@ -13,7 +13,7 @@ labels: bug
 **Your machine**
 - OS and chip (e.g. macOS, Apple Silicon):
 - Node version (`node --version`):
-- ffmpeg installed (`ffmpeg -version`):
+- Voice engine (`voiceEngine` in series.json), if the bug is about voices:
 
 **Error output**
 ```

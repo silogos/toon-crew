@@ -1,24 +1,23 @@
 // Brings recordings made elsewhere into the studio: cleans them and records their length,
 // exactly like the voice engines do. Works with any source (a voice actor, another tool,
-// the Director's own voice) and needs only ffmpeg.
+// the Director's own voice) and needs nothing but Remotion (its own ffmpeg, scripts/lib/ffmpeg.mjs).
 //
 //   npm run voices:import -- <line-id> <audio-file>     one line
 //   npm run voices:import -- <folder>                   every file named <line-id>.<wav|mp3|m4a|ogg|flac>
 //
 // The line id must exist in an episode's (or the opening's) lines.json.
-import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {AUDIO_DIR, DURATIONS_FILE, WORDS_FILE, lineFiles, readDurations, readJson, readJsonIf, writeJson} from './lib/series.mjs';
+import {cleanVoice, seconds} from './lib/ffmpeg.mjs';
+import {AUDIO_DIR, DURATIONS_FILE, TAKES_FILE, WORDS_FILE, lineFiles, readDurations, readJson, readJsonIf, writeJson} from './lib/series.mjs';
 
 const EXT = /\.(wav|mp3|m4a|ogg|flac|aac)$/i;
-const TRIM = 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
 
-/** Ids of every spoken line in the series, with the voice that speaks them. */
+/** Every line of the series by id. */
 export function knownLines(root = '.') {
   const ids = new Map();
-  for (const {file} of lineFiles(root)) for (const l of readJson(file)) ids.set(l.id, l.voice);
+  for (const {file} of lineFiles(root)) for (const l of readJson(file)) ids.set(l.id, l);
   return ids;
 }
 
@@ -38,29 +37,23 @@ export function plan(args, ids) {
   return pairs;
 }
 
-export const cleanArgs = (src, dst) => [
-  '-y', '-v', 'error', '-i', src, '-af', `${TRIM},loudnorm=I=-16:TP=-1.5:LRA=11`, '-ar', '48000', '-ac', '2', dst,
-];
-
-const seconds = (file) => {
-  const r = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file], {encoding: 'utf8'});
-  if (r.status !== 0) throw new Error('ffprobe failed: is ffmpeg installed?');
-  return Math.round(parseFloat(r.stdout.trim()) * 1000) / 1000;
-};
-
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    const pairs = plan(process.argv.slice(2), knownLines());
+    const lines = knownLines();
+    const pairs = plan(process.argv.slice(2), lines);
     fs.mkdirSync(AUDIO_DIR, {recursive: true});
     const durations = readDurations();
     const words = readJsonIf(WORDS_FILE, {});
+    const takes = readJsonIf(TAKES_FILE, {});
     for (const [id, src] of pairs) {
       const dst = path.join(AUDIO_DIR, `${id}.wav`);
-      const r = spawnSync('ffmpeg', cleanArgs(src, dst), {stdio: 'inherit'});
-      if (r.status !== 0) throw new Error(`ffmpeg could not read ${src}`);
+      cleanVoice(src, dst); // trim silence, level the loudness, 48 kHz stereo
       durations[id] = seconds(dst);
       console.log(`ok  ${id.padEnd(16)} ${durations[id].toFixed(2)}s`);
       writeJson(DURATIONS_FILE, durations); // after every line, so an interrupted run loses nothing
+      // `npm run voices` keeps a recording brought in here instead of recording the line over it
+      takes[id] = {text: lines.get(id).text, by: 'import'};
+      writeJson(TAKES_FILE, takes);
       // the word times of an earlier recording no longer fit; `npm run voices:check` hears the new ones
       if (id in words) {
         delete words[id];

@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {episodeNames, isRecorded, lineFiles, readDurations, readJson, readSeries, statusOf, voiceEngine} from './lib/series.mjs';
+import {findEngine} from '../skills/voices/engines.mjs';
 
 const STORY = 'series/story';
 const series = readSeries();
@@ -57,7 +58,8 @@ const report = {
   language: series.language,
   look: series.look,
   size: `${series.width}x${series.height} at ${series.fps} fps`,
-  voiceEngine: voiceEngine(series),
+  // the engine's own name (an older name such as "local" is shown as the engine it means)
+  voiceEngine: findEngine(voiceEngine(series))?.name ?? voiceEngine(series),
   pace: series.pace ?? 'step',
   preview: previewAlive ? previewState.url : null,
   crew: fs.existsSync('series/crew.json') ? readJson('series/crew.json') : [],
@@ -76,7 +78,7 @@ if (process.argv.includes('--json')) {
 
 const none = '(no Status line)';
 console.log(`${report.title}${report.sample ? '  — this is still the SAMPLE series' : ''}`);
-console.log(`${report.look} · ${report.size} · language ${report.language} · voices: ${report.voiceEngine} · opening: ${report.opening ?? 'none'}`);
+console.log(`${report.look} · ${report.size} · language ${report.language} · voices: ${report.voiceEngine ?? 'engine not chosen'} · opening: ${report.opening ?? 'none'}`);
 console.log(`pace: ${report.pace === 'fast' ? 'fast track (one okay on the plan, one on the finished picture)' : 'step by step (an okay after every stage)'}`);
 console.log(`preview: ${report.preview ? `running at ${report.preview}` : 'not running (npm run preview starts it and prints the links)'}`);
 if (report.crew.length) console.log(`extra crew: ${report.crew.map((c) => `${c.job} (${c.agent}; ${c.kind ?? 'checks'} at ${(c.stages ?? []).join(', ')}${c.blocks ? '; can stop the work' : ''})`).join(' · ')}`);

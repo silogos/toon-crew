@@ -1,5 +1,6 @@
 // A small synthesiser: everything a series needs to write its own music and
 // sound effects as WAV files, with no library and no outside audio.
+import {toWav as writeWav} from '../../scripts/lib/wav.mjs';
 export const SR = 44100;
 export const TAU = Math.PI * 2;
 
@@ -54,28 +55,4 @@ export const note = (name) => {
 };
 
 /** Encode a track as a 16-bit stereo WAV, normalised to `peak`. */
-export const toWav = (tr, peak = 0.9) => {
-  const n = tr.L.length;
-  let max = 0;
-  for (let i = 0; i < n; i++) max = Math.max(max, Math.abs(tr.L[i]), Math.abs(tr.R[i]));
-  const k = max > 0 ? peak / max : 1;
-  const buf = Buffer.alloc(44 + n * 4);
-  buf.write('RIFF', 0);
-  buf.writeUInt32LE(36 + n * 4, 4);
-  buf.write('WAVEfmt ', 8);
-  buf.writeUInt32LE(16, 16);
-  buf.writeUInt16LE(1, 20);
-  buf.writeUInt16LE(2, 22);
-  buf.writeUInt32LE(SR, 24);
-  buf.writeUInt32LE(SR * 4, 28);
-  buf.writeUInt16LE(4, 32);
-  buf.writeUInt16LE(16, 34);
-  buf.write('data', 36);
-  buf.writeUInt32LE(n * 4, 40);
-  const s16 = (v) => Math.round(Math.max(-1, Math.min(1, v * k)) * 32767);
-  for (let i = 0; i < n; i++) {
-    buf.writeInt16LE(s16(tr.L[i]), 44 + i * 4);
-    buf.writeInt16LE(s16(tr.R[i]), 46 + i * 4);
-  }
-  return buf;
-};
+export const toWav = (tr, peak = 0.9) => writeWav(tr, peak, SR);

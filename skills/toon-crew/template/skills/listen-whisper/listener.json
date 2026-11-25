@@ -1,0 +1,9 @@
+{
+  "name": "whisper",
+  "label": "Whisper",
+  "packages": {
+    "apple-silicon": ["mlx-whisper"],
+    "other": ["faster-whisper"]
+  },
+  "setupNote": "The first check downloads the listener: about 0.44 GB on an Apple Silicon Mac, about 0.5 GB elsewhere."
+}

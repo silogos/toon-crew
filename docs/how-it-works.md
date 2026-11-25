@@ -46,7 +46,7 @@ The agent that builds a scene knows what it meant to build, and tends to see tha
 The order matters, because **the length of each recorded line sets the timing of the animation**.
 
 1. The script is written for people in `series/story/`, then entered as data in `lines.json`: an id, a voice, the text.
-2. Each line is recorded by a local voice engine and listened back to by a speech recogniser; the best of a few takes is kept, and its length is written to a durations file.
+2. Each line is recorded by the series' voice engine and listened back to by a speech recogniser; a take with words missing is made once more, one that is only a little off is kept for the Director to hear, and its length is written to a durations file. A line can also say how it is spoken (`delivery`: "scared, whispering") or be a vocal sound instead of words (`sound`: a cough, a laugh). What a line was recorded from is kept, so recording an episode again only records the lines that changed.
 3. A scene lays itself out in time by *saying* its lines:
 
    ```tsx
@@ -74,7 +74,7 @@ Video is rendered with [Remotion](https://www.remotion.dev/), so a frame depends
 A series is recognisable because things stay the same. Three mechanisms do that:
 
 - **One cast list.** A character is defined once (build, hair, clothes, colours, signature pose, voice) and every scene draws from that definition.
-- **One voice per character.** A voice is a text description plus one reference clip generated from it. Every line the character ever speaks imitates that clip. The crew is forbidden to remake a reference clip without the Director's okay.
+- **One voice per character.** A voice is a text description plus one reference clip generated from it. Every line the character ever speaks imitates that clip. The crew is forbidden to remake a reference clip without the Director's okay. A voice can also be a real person's recording (local engine): the recording is the reference clip, copied as it is and never remade, with a short prompt clip and its words to keep the person's accent; such a voice takes no delivery instructions.
 - **One world.** Places live on a single map. A scene picks an origin ("the square") and writes local coordinates; the whole world is drawn around it, so what stands behind the shop is the same in every episode.
 
 ### The engine does not know the series
@@ -88,6 +88,8 @@ Where possible, a mistake stops `npm run check` instead of producing a subtly wr
 - A cast member with a voice that is not defined: type error.
 - A new pose, expression or prop without a drawing: type error.
 - A line with an unknown voice or a duplicate id: content check error.
+- Two characters that would get the same voice: content check error.
+- Text a voice reads badly (digits, symbols, emoji, a stage direction such as "(coughs)"), a `delivery` or a vocal sound the engine cannot carry out, a line changed since it was recorded: a warning that names it, before anything is recorded.
 - A line with no recording, or music that was never generated: a warning that names it.
 
 Two more commands answer questions the crew would otherwise guess at. `npm run status` reads the folder and reports where the production stands: each story file's Status line, lines recorded per episode, what is registered and rendered. `npm run doctor` reports what the computer and the folder are missing, with the command that installs it.
@@ -100,7 +102,7 @@ Two more commands answer questions the crew would otherwise guess at. `npm run s
 
 ## Limits today
 
-- Free local voices need an Apple Silicon Mac. Other computers use ElevenLabs, which needs an API key and sends the dialogue to ElevenLabs.
+- Free voices on this computer (VoxCPM2) need an Apple Silicon Mac. Other computers use ElevenLabs, which needs an API key and sends the dialogue to ElevenLabs.
 - Only the 3D look is built; 2D and 2.5D have a place in the structure but no code.
 - There are no indoor sets yet.
 - Vertical video adapts the text, not the camera: every shot is framed for the tall picture (`frameShot` does the arithmetic), and the map review picture is small in a tall frame.

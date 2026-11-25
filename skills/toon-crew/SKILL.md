@@ -85,16 +85,16 @@ Find out the computer first (`uname -sm`, or `echo %PROCESSOR_ARCHITECTURE%` on 
 
 | Engine | Use it when | Say plainly |
 |---|---|---|
-| **Free, on this computer** (`local`) | Apple Silicon Mac. The recommendation there. | Nothing leaves the computer; downloads a few gigabytes the first time. |
+| **Free, on this computer** (`voxcpm2`) | Apple Silicon Mac. The recommendation there. | Nothing leaves the computer; downloads a few gigabytes the first time. |
 | **ElevenLabs** (`elevenlabs`) | Any computer. The recommendation everywhere else. | A paid online service: needs the Director's own account and API key, uses their credits, and sends each line of dialogue to ElevenLabs. |
 | **Picture first, voices later** | The Director does not want to decide now. | Recordings made elsewhere can be brought in later. |
 | **edge-tts** (`edge`) | Last resort, only if the Director does not want to pay and has no Apple Silicon Mac. Never recommend it first, and never choose it for them. | Free and no account, but unofficial (it can stop working); the voice is picked from a fixed list; each line of dialogue is sent to Microsoft. |
 
 ## 3. Set up the studio
 
-1. **Check what the studio needs:** `node --version` (20 or newer). If Node.js is there, `node "${CLAUDE_SKILL_DIR}/template/scripts/doctor.mjs"` checks the rest (ffmpeg and Google Chrome) and names the command that installs each missing thing.
+1. **Check what the studio needs:** `node --version` (20 or newer). If Node.js is there, `node "${CLAUDE_SKILL_DIR}/template/scripts/doctor.mjs"` checks the rest (Google Chrome; ffmpeg comes with Remotion, nothing to install) and names the command that installs each missing thing.
 2. **Install what is missing yourself,** if the okay covered it; otherwise say in one sentence what is missing and ask once.
-   - Use the computer's own package manager: macOS `brew install node ffmpeg` and `brew install --cask google-chrome`; Windows `winget install OpenJS.NodeJS.LTS`, `Gyan.FFmpeg`, `Google.Chrome`; Linux `apt`, `dnf` or the equivalent. If macOS has no Homebrew, say what it is and offer to install it with its official installer.
+   - Use the computer's own package manager: macOS `brew install node` and `brew install --cask google-chrome`; Windows `winget install OpenJS.NodeJS.LTS` and `Google.Chrome`; Linux `apt`, `dnf` or the equivalent. If macOS has no Homebrew, say what it is and offer to install it with its official installer.
    - **Never type a password for the Director.** If the computer asks for one, tell them to type it in the terminal themselves and to say when it is done.
    - Run the doctor again. On Windows a freshly installed program may not be found until the terminal is reopened; say so if that happens.
 3. **Put the studio in the folder:** `node "${CLAUDE_SKILL_DIR}/scripts/setup-studio.mjs" .` (add `--dry-run` to see what it would do). The studio it makes is **empty**: no cast, no places, no episode. It never overwrites: if it lists files that are in the way, take that to the Director rather than moving anything yourself.
@@ -108,7 +108,7 @@ If a step fails, report the exact error and what you tried. Do not continue as i
 
 ## 4. Make it their series
 
-1. Write the brief's answers into `series/series.json`: `title`; `language` as a two-letter code (the voice check needs the code, not the name); `width` and `height`; the voice choice as `"voiceEngine"` (`"local"`, `"elevenlabs"` or `"edge"`; leave it out if voices come later); and `"pace"`: `"fast"`, or `"step"` if the Director asked for step by step.
+1. Write the brief's answers into `series/series.json`: `title`; `language` as a two-letter code (the voice check needs the code, not the name); `width` and `height`; the voice choice as `"voiceEngine"` (`"voxcpm2"`, `"elevenlabs"` or `"edge"`: the name of an engine folder `skills/voices-<name>/` in the studio; leave it out if voices come later); and `"pace"`: `"fast"`, or `"step"` if the Director asked for step by step.
 2. If the Director asked for a specialist, add it with the studio's `/new-agent` recipe before the first episode is written, so its checks apply from the start.
 3. Write `series/story/00-bible.md`: what the series is about, who it is for, tone, look, house rules, and the cast as it grows. If the Director gave a formula, write it under `## Episode formula`, beat by beat in their words; no formula given means no such heading.
 4. Every story file carries a Status line near the top (`**Status:** …`); `npm run status` reads it. Write `approved` with the date only for what the Director has seen and okayed, which after the proposal's okay includes the bible (and, on the fast track, the plan of the first episode); anything they have not seen is `proposed`.
@@ -117,6 +117,6 @@ If a step fails, report the exact error and what you tried. Do not continue as i
 
 ## What not to do
 
-- Do not set up a voice engine before an okay that covered it. Then run `npm run voices:setup`. For ElevenLabs, follow `scripts/VOICES-SETUP.md`: the Director pastes the API key into the `.env` file themselves.
+- Do not set up a voice engine before an okay that covered it. Then run `npm run voices:setup`. Then follow the studio's guide of that engine (`skills/voices-<engine>/SKILL.md`); for ElevenLabs, the Director pastes the API key into the `.env` file themselves.
 - Do not hide that edge-tts is unofficial, and do not choose it for the Director.
 - Do not edit anything inside this skill's own folder; the copy in the working folder is the one that belongs to the series.

@@ -5,7 +5,7 @@ description: Create or change background music, a jingle, or a sound effect for 
 
 # Music and sound (Composer)
 
-All music and effects are synthesised by the music script in `scripts/` and written to `public/audio/`; the file name is the id used in scenes. Nothing is downloaded. If the Director brings their own audio, confirm they have the right to use it, place it in `public/audio/`, and register its length the same way.
+All music and effects are synthesised by the studio's synthesiser in this folder (`music-kit.mjs`, run by `npm run music` through `music.mjs`) from the series' own `series/music.mjs`, and written to `public/audio/`; the file name is the id used in scenes. Nothing is downloaded. If the Director brings their own audio, confirm they have the right to use it, place it in `public/audio/`, and register its length the same way.
 
 ## What exists
 

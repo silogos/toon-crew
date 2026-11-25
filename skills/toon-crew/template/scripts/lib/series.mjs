@@ -7,6 +7,10 @@ export const AUDIO_DIR = 'public/audio';
 export const DURATIONS_FILE = 'src/audio-durations.json';
 /** When each word of a recorded line is heard (written by the voice scripts and voices:check). */
 export const WORDS_FILE = 'src/audio-words.json';
+/** What each line was recorded from (text, how it was said, which voice), so unchanged lines are not recorded again. */
+export const TAKES_FILE = 'src/audio-takes.json';
+/** The series' pronunciation dictionary: {"word as written": "how it is said"}. */
+export const PRONUNCIATION_FILE = 'series/pronunciation.json';
 
 export const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
@@ -28,8 +32,9 @@ export const readSeries = (root = '.') => {
   return readJson(file);
 };
 
-/** How this series records voices: 'local', 'elevenlabs' or 'edge'. */
-export const voiceEngine = (series) => series.voiceEngine ?? 'local';
+/** The name of the series' voice engine as written in series.json, or null while the Director has not chosen one
+ * (there is no default). skills/voices/engines.mjs turns it into the engine. */
+export const voiceEngine = (series) => series.voiceEngine ?? null;
 
 /** Names of the episode folders (ep01, ep02, …), in order. */
 export const episodeNames = (root = '.') => {

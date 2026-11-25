@@ -43,7 +43,7 @@ Toon Crew adalah plugin Claude Code. Di Claude Code:
 
 Lalu buka folder kosong dan ketik `/toon-crew:toon-crew`, atau langsung bilang apa yang ingin Anda buat.
 
-**Yang dibutuhkan:** Claude Code dan koneksi internet. Node.js 20+, Google Chrome, dan ffmpeg dipasangkan oleh kru setelah bertanya satu kali.
+**Yang dibutuhkan:** Claude Code dan koneksi internet. Node.js 20+ dan Google Chrome dipasangkan oleh kru setelah bertanya satu kali (ffmpeg sudah ikut Remotion).
 
 ## Suara
 

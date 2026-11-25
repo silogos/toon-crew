@@ -3,7 +3,7 @@
 //   npm run clear-sample -- --keep   start from the sample: keep everything, only stop calling it the sample
 import fs from 'node:fs';
 import path from 'node:path';
-import {AUDIO_DIR, DURATIONS_FILE, WORDS_FILE, episodeNames, lineFiles, readDurations, readJson, readJsonIf, readSeries, writeJson} from './lib/series.mjs';
+import {AUDIO_DIR, DURATIONS_FILE, PRONUNCIATION_FILE, TAKES_FILE, WORDS_FILE, episodeNames, lineFiles, readDurations, readJson, readJsonIf, readSeries, writeJson} from './lib/series.mjs';
 
 const SERIES_FILE = 'series/series.json';
 const series = readSeries();
@@ -46,6 +46,8 @@ const lineIds = new Set(lineFiles().flatMap(({file}) => readJson(file).map((l) =
 for (const id of lineIds) rm(path.join(AUDIO_DIR, `${id}.wav`));
 writeJson(DURATIONS_FILE, Object.fromEntries(Object.entries(readDurations()).filter(([id]) => !lineIds.has(id))));
 writeJson(WORDS_FILE, Object.fromEntries(Object.entries(readJsonIf(WORDS_FILE, {})).filter(([id]) => !lineIds.has(id))));
+rm(TAKES_FILE);
+rm(PRONUNCIATION_FILE);
 
 rm('series/voice-refs');
 rm('series/story');

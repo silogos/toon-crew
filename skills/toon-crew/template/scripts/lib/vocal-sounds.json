@@ -1,0 +1,47 @@
+{
+ "cough": {
+  "kind": "unspoken"
+ },
+ "clearThroat": {
+  "kind": "unspoken"
+ },
+ "sneeze": {
+  "kind": "unspoken"
+ },
+ "snore": {
+  "kind": "unspoken"
+ },
+ "gulp": {
+  "kind": "unspoken"
+ },
+ "hiccup": {
+  "kind": "unspoken"
+ },
+ "gasp": {
+  "kind": "spoken"
+ },
+ "sigh": {
+  "kind": "spoken"
+ },
+ "yawn": {
+  "kind": "spoken"
+ },
+ "giggle": {
+  "kind": "spoken"
+ },
+ "laugh": {
+  "kind": "spoken"
+ },
+ "sob": {
+  "kind": "spoken"
+ },
+ "scream": {
+  "kind": "spoken"
+ },
+ "hum": {
+  "kind": "spoken"
+ },
+ "groan": {
+  "kind": "spoken"
+ }
+}
