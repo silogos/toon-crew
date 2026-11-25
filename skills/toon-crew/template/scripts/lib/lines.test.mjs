@@ -3,6 +3,7 @@ import {
   VOCAL_SOUNDS,
   applyPronunciation,
   deliveryProblems,
+  pronunciationProblems,
   readAloudProblems,
   recordedVoiceProblems,
   soundChoiceProblems,
@@ -12,8 +13,10 @@ import {
 } from './lines.mjs';
 import {SOUNDS} from '../../skills/voices/vocal-synth.mjs';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import {abilitiesOf, findEngine, listEngines} from '../../skills/voices/engines.mjs';
+import {abilitiesOf, engineChoices, findEngine, listEngines, speaksLanguage} from '../../skills/voices/engines.mjs';
+import {enginePronunciationFiles, readPronunciation} from './series.mjs';
 
 const VOX = findEngine('voxcpm2');
 const EL = findEngine('elevenlabs');
@@ -57,6 +60,46 @@ describe('pronunciation dictionary', () => {
   it('gives the voice "say" when there is one', () => {
     expect(spokenText(line('Ucup!', {say: 'Uuucup!'}), dict)).toBe('Uuucup!');
     expect(spokenText(line('Ucup!'), dict)).toBe('U-cup!');
+  });
+  it("puts the engine's own dictionary on top of the series' one, for that engine only", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pron-'));
+    fs.mkdirSync(path.join(root, 'series'));
+    fs.writeFileSync(path.join(root, 'series/pronunciation.json'), JSON.stringify({Ucup: 'U-cup', AI: 'A I'}));
+    fs.writeFileSync(path.join(root, 'series/pronunciation.voxcpm2.json'), JSON.stringify({Ucup: 'U-chup'}));
+    fs.writeFileSync(path.join(root, 'series/pronunciation.edge.json'), JSON.stringify({AI: 'ei ai'}));
+    expect(readPronunciation('voxcpm2', root)).toEqual({Ucup: 'U-chup', AI: 'A I'});
+    expect(readPronunciation('elevenlabs', root)).toEqual({Ucup: 'U-cup', AI: 'A I'});
+    expect(readPronunciation(null, root)).toEqual({Ucup: 'U-cup', AI: 'A I'});
+    expect(enginePronunciationFiles(root).map((f) => f.engine)).toEqual(['edge', 'voxcpm2']);
+    fs.rmSync(root, {recursive: true});
+  });
+  it('names the file a dictionary problem is in', () => {
+    expect(pronunciationProblems({Ucup: ''}, 'series/pronunciation.voxcpm2.json')[0]).toMatch(/^series\/pronunciation\.voxcpm2\.json: "Ucup"/);
+    expect(pronunciationProblems([])[0]).toMatch(/^series\/pronunciation\.json must be an object/);
+  });
+});
+
+describe('languages each engine speaks', () => {
+  it('answers from the list in engine.json, for the model in use', () => {
+    expect(speaksLanguage(VOX, 'id', null)).toBe(true);
+    expect(speaksLanguage(VOX, 'id-ID', null)).toBe(true);
+    expect(speaksLanguage(VOX, 'jv', null)).toBe(false);
+    expect(speaksLanguage(EL, 'jv', 'eleven_v3')).toBe(true);
+    expect(speaksLanguage(EL, 'yue', 'eleven_v3')).toBe(true);
+  });
+  it('does not guess when an engine or model lists no languages', () => {
+    expect(speaksLanguage(EDGE, 'id', null)).toBeNull();
+    expect(speaksLanguage(EL, 'id', 'eleven_multilingual_v2')).toBeNull();
+    expect(speaksLanguage(VOX, undefined, null)).toBeNull();
+  });
+  it('lists language codes only', () => {
+    for (const e of listEngines())
+      for (const [model, a] of Object.entries(e.abilities))
+        for (const code of a.languages ?? []) expect(code, `${e.name} ${model}`).toMatch(/^[a-z]{2,3}$/);
+  });
+  it('says so in the choice of engines', () => {
+    expect(engineChoices('jv')).toMatch(/"voxcpm2": [^\n]*does not list "jv"/);
+    expect(engineChoices('id')).not.toMatch(/does not list/);
   });
 });
 

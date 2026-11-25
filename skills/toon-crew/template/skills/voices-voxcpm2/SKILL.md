@@ -19,7 +19,7 @@ This guide is only for a series with `"voiceEngine": "voxcpm2"` (older series sa
   - Both go into the Hugging Face cache, `~/.cache/huggingface/hub/`. That cache is shared by every series on the Mac and is never committed.
 - **Memory:** a recording session peaks at about 5 to 6 GB. The voice model takes 3.2 GB, plus about 1.7 GB while it makes a line, and the listener adds about 1.3 GB. The scripts hand freed memory back at once (`lean_mlx()`). Say this before a long session on a Mac with 8 GB.
 - **Speed:** a line takes about 10 to 20 seconds, including the listening check.
-- **Languages:** about 30, including English and Indonesian. There is no language setting: it works the language out from the text. See the quirks below.
+- **Languages:** 30, including English and Indonesian, listed as `languages` in `engine.json` (from the model card). There is no language setting: it works the language out from the text, and how well it speaks one depends on how much of it the model was trained on. See the quirks below.
 
 ## Set it up
 
@@ -98,7 +98,8 @@ Beyond plain speech, what this engine can do comes from listening tests (`abilit
 ## Known quirks
 
 - **Indonesian "c" read as "k".** With no language setting, the engine read Indonesian "c" the English way. In one series, "Ucup" came out as "Ukup" and "Uma cari" as "makari", in every designed voice. Asking for Indonesian in the description or the sample did not help.
-  - Fix a name that recurs in `series/pronunciation.json`, for example `"u-chup"`. Fix a single line with `say`.
+  - Fix a name that recurs in `series/pronunciation.voxcpm2.json`, for example `{"Ucup": "U-chup"}`: it is this engine's quirk, so it goes in this engine's own dictionary, which is used on top of `series/pronunciation.json` and is left behind if the series changes engine. Fix a single line with `say`.
+  - Respell only the words you have heard come out wrong, never every "c": the spelling that works depends on the word, so listen to each fix.
   - It is not yet tested whether recorded voices with an Indonesian prompt do the same.
   - The same may happen with other letters that English reads differently. Listen for it on the first test panel of a non-English series.
 - **The listener is told the series language.** A take heard in the wrong language scores badly even when it is right, so `language` in `series.json` must be correct.

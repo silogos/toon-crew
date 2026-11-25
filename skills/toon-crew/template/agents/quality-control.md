@@ -33,7 +33,7 @@ The only commands you run are `npm run check` (a few seconds: every line has a d
 
 **The writing**
 - Lines that are too long for a balloon: more than about 12 words, or more than one thought. Name them.
-- Lines that would be hard to say aloud or easy to mishear; a name or word the voice engine may mispronounce with no `say` given and not in `series/pronunciation.json` (check `lessons.md`).
+- Lines that would be hard to say aloud or easy to mishear; a name or word the voice engine may mispronounce with no `say` given and not in `series/pronunciation.json` or the engine's `series/pronunciation.<engine>.json` (check `lessons.md`).
 - **Not written for the ear:** a voice reads every character aloud. Digits, symbols, emoji, a web address, an abbreviation in capitals, or a stage direction in brackets or asterisks (`(coughs)`, `*sigh*`) in `text` with no `say`. The fix for a stage direction is a line of its own with `sound`, or leaving it to the picture.
 - Language: not the series language, typos, grammar, a mix of formal and informal that the bible does not ask for.
 - The story: the point is not made, a setup with no payoff, a joke that is explained away, an ending that does not land.

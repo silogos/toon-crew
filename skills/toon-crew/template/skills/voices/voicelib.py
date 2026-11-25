@@ -28,7 +28,7 @@ RAW = ROOT / "out" / ".raw_voices"      # raw takes; not committed
 DURATIONS = ROOT / "src" / "audio-durations.json"
 WORDS = ROOT / "src" / "audio-words.json"        # when each word of a recorded line is heard, for highlighting
 TAKES = ROOT / "src" / "audio-takes.json"        # what each line was recorded from, so an unchanged line is not recorded again
-PRONUNCIATION = SERIES / "pronunciation.json"    # {"word as written": "how it is said"}, for every line without "say"
+PRONUNCIATION = SERIES / "pronunciation.json"    # {"word as written": "how it is said"}, for every line without "say"; an engine's own is pronunciation.<engine>.json
 TEST_DIR = ROOT / "out" / "voice-test"           # the test panel (npm run voices -- --test)
 ENGINES = ROOT / "skills"                         # one folder per voice engine: skills/voices-<name>/engine.json
 # every vocal sound a line can be ("sound": "cough") and whether a voice is heard in it; shared with npm run check
@@ -286,7 +286,13 @@ def sound_method(sound: str, voice: str | None = None) -> str:
 
 
 def pronunciation() -> dict:
-    return json.loads(PRONUNCIATION.read_text()) if PRONUNCIATION.exists() else {}
+    """The series' dictionary, with the engine's own (series/pronunciation.<engine>.json) on top: an entry there wins
+    for that engine only and is left behind when the series changes engine (same as readPronunciation in scripts/lib/series.mjs)."""
+    table = json.loads(PRONUNCIATION.read_text()) if PRONUNCIATION.exists() else {}
+    if not series().get("voiceEngine"):  # voices:check works on brought-in recordings before an engine is chosen
+        return table
+    own = SERIES / f"pronunciation.{engine()}.json"
+    return {**table, **json.loads(own.read_text())} if own.exists() else table
 
 
 def apply_pronunciation(text: str, table: dict) -> str:

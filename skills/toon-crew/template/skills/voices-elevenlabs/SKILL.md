@@ -57,6 +57,8 @@ It depends on the model, set as `ELEVENLABS_MODEL` in `.env`. The default is `el
 | `delivery` and `fx` | Sent as audio tags (`[scared]`, `[whispers]`) | Ignored: lines are spoken plainly |
 | Every vocal sound (`sound`) | Its audio tag alone (`[coughs]`) | Coughs and other unvoiced sounds are synthesised; laughs and other voiced sounds are brought in |
 
+The languages `eleven_v3` speaks are listed as `languages` in `engine.json` (from ElevenLabs' own list); `npm run check` warns when the series language is not among them. Other models list none here, so check ElevenLabs' language page before choosing one. A model `engine.json` does not name (ElevenLabs has released newer ones) is treated as "other models" until it has been tested and added.
+
 Voice design and `eleven_v3` may need a paid plan. If ElevenLabs refuses, the error says so.
 
 ## Credits

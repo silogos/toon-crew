@@ -29,7 +29,8 @@
       "spoken": "voice",
       "unspoken": "synth",
       "asks": true,
-      "recordings": true
+      "recordings": true,
+      "languages": ["zh", "en", "ar", "my", "da", "nl", "fi", "fr", "de", "el", "he", "hi", "id", "it", "ja", "km", "ko", "lo", "ms", "no", "pl", "pt", "ru", "es", "sw", "sv", "tl", "th", "tr", "vi"]
     }
   },
   "sounds": {

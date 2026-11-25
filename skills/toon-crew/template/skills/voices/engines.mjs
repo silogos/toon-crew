@@ -34,10 +34,24 @@ export const engineModel = (engine, root = '.') => {
   return m ? m[1] : engine.model.default;
 };
 
-/** What the engine can do beyond plain speech, for the model in use: {label, delivery, spoken, unspoken, asks, recordings}. */
+/** What the engine can do beyond plain speech, for the model in use: {label, delivery, spoken, unspoken, asks, recordings},
+ * and "languages" (the codes it speaks) when its engine.json lists them. */
 export const abilitiesOf = (engine, model = engineModel(engine)) => {
   if (!engine) return null;
   return {label: engine.label, ...(engine.abilities[model] ?? engine.abilities['*'])};
+};
+
+/** "id-ID" → "id": the part of a language code the engines list. */
+const baseLanguage = (code) => String(code ?? '').toLowerCase().split(/[-_]/)[0];
+
+/**
+ * Whether the engine's model speaks a language (a code such as "id" or "en"): true or false when its engine.json
+ * lists "languages" for that model, null when it does not (the engine's guide says how to find out).
+ */
+export const speaksLanguage = (engine, language, model = engineModel(engine)) => {
+  const list = abilitiesOf(engine, model)?.languages;
+  if (!Array.isArray(list) || !language) return null;
+  return list.includes(baseLanguage(language)) || list.includes(String(language).toLowerCase());
 };
 
 /** The names in engine.json "secrets" that .env does not hold yet. Never reads or returns a value. */
@@ -61,12 +75,16 @@ export const listenerPackages = (listener = findListener()) =>
 /** Whether this computer can run the engine ("apple-silicon" is the only platform rule so far). */
 export const runsHere = (engine) => engine?.platform !== 'apple-silicon' || (process.platform === 'darwin' && process.arch === 'arm64');
 
-/** The engines as a choice for the Director: each name, what it is, and when it is recommended. */
-export const engineChoices = () => listEngines().map((e) => `\n  "${e.name}": ${e.summary} ${e.recommend}`).join('');
+/** The engines as a choice for the Director: each name, what it is, and when it is recommended; with the series'
+ * language, also the engines whose list of languages leaves it out. */
+export const engineChoices = (language) =>
+  listEngines()
+    .map((e) => `\n  "${e.name}": ${e.summary} ${e.recommend}${speaksLanguage(e, language) === false ? ` It does not list "${language}" among the languages it speaks.` : ''}`)
+    .join('');
 
 /** What to say when a voice engine is needed and none has been chosen. */
-export const noEngineMessage = () =>
-  `No voice engine chosen yet. It is the Director's choice, written as "voiceEngine" in series/series.json:${engineChoices()}\n` +
+export const noEngineMessage = (language) =>
+  `No voice engine chosen yet. It is the Director's choice, written as "voiceEngine" in series/series.json:${engineChoices(language)}\n` +
   'Each engine has its guide in skills/voices-<name>/SKILL.md; skills/voices/VOICES-SETUP.md compares them.';
 
 /** What to say for a name that is not an engine of this studio. */
