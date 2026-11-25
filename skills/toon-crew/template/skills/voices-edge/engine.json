@@ -1,0 +1,33 @@
+{
+  "name": "edge",
+  "aliases": [],
+  "label": "edge-tts",
+  "summary": "Free with no account, but unofficial, so it can stop working. Voices are picked from a fixed list, and each line is sent to Microsoft.",
+  "recommend": "A last resort: only when there is no Apple Silicon Mac and paying is not wanted.",
+  "platform": null,
+  "python": {
+    "from": "3.10"
+  },
+  "packages": [
+    "edge-tts==7.3.1"
+  ],
+  "secrets": [],
+  "setupNote": "",
+  "needs": "edge-tts needs Python 3.10 or newer.",
+  "voices": {
+    "made": "catalogue",
+    "field": "edge",
+    "list": "npm run voices -- --list"
+  },
+  "abilities": {
+    "*": {
+      "label": "edge-tts",
+      "delivery": "none",
+      "spoken": "import",
+      "unspoken": "synth",
+      "asks": false,
+      "recordings": false
+    }
+  },
+  "sounds": {}
+}

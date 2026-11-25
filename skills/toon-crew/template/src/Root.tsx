@@ -2,6 +2,7 @@ import React from 'react';
 import {Composition} from 'remotion';
 import {EPISODES} from '../series/episodes';
 import {OPENINGS} from '../series/opening';
+import {BOARD_DEFAULTS, Board, boardSize} from './engine/board';
 import {assemble, makeFull, openingInfo} from './engine/episode';
 import {SERIES} from './engine/series';
 import {REVIEW} from './styles';
@@ -17,6 +18,7 @@ const size = {width, height, fps};
  *   ep01-scene      one story scene with its sound (prop `scene`, from 1)
  *   opening-<name>  one opening version, introducing the first episode
  *   cast, sheet, map, view   review pictures supplied by the series' look
+ *   board-sheet     the episode board: rendered pictures joined into one (used by npm run still -- <ep> board)
  */
 export const Root: React.FC = () => {
   const first = EPISODES[0];
@@ -50,6 +52,15 @@ export const Root: React.FC = () => {
           const one = assemble([make(openingInfo(first))], [...OPENINGS.lines, ...first.lines]);
           return <Composition key={name} id={`opening-${name}`} component={one.Component} durationInFrames={one.durationInFrames} {...size} />;
         })}
+      <Composition
+        id="board-sheet"
+        component={Board}
+        defaultProps={BOARD_DEFAULTS}
+        durationInFrames={1}
+        fps={fps}
+        {...boardSize(BOARD_DEFAULTS)}
+        calculateMetadata={({props}) => boardSize(props)}
+      />
       {REVIEW.map((r) => (
         <Composition key={r.id} id={r.id} component={r.component} schema={r.schema} defaultProps={r.defaultProps} durationInFrames={1} {...size} />
       ))}

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This folder is the studio of one animated series. Pictures are drawn by code (Remotion + React), voices come from a local voice engine or ElevenLabs (the Director's choice, `voiceEngine` in `series/series.json`), music is synthesised. Nothing is imported from outside unless the Director brings it.
+This folder is the studio of one animated series. Pictures are drawn by code (Remotion + React), voices come from the voice engine the Director chose (`voiceEngine` in `series/series.json`: VoxCPM2 on this computer, ElevenLabs, or edge-tts), music is synthesised. Nothing is imported from outside unless the Director brings it.
 
 ## Director and crew
 
@@ -98,7 +98,9 @@ Each job has a recipe in `skills/`. The Director can call one by name or simply 
 | `/new-episode` | Start an episode and carry it through all five stages |
 | `/opening` | Make or change the series opening |
 | `/voices` | Define a character's voice, record lines, fix pronunciation |
-| `/music` | Background music, jingles, sound effects |
+| `/voices-voxcpm2`, `/voices-elevenlabs`, `/voices-edge` | The voice engines. Each folder holds one engine's guide (setup, how its voices are made, what it can do, its quirks), its `engine.json` and its recorder. Read the one of this series (`voiceEngine`; `"local"` is VoxCPM2's older name) before any voice work; leave the others alone |
+| `/music` | Background music, jingles, sound effects; its folder also holds the studio's synthesiser (`music-kit.mjs`) |
+| `/listen-whisper` | The listener that hears each take (Whisper): what it is used for, its models and where it goes wrong. Read it when a take's score or its word highlight looks wrong |
 | `/new-agent` | Add a specialist to the crew of this series: someone who checks or advises on something it must get right, or who owns one job |
 | `/screening` | Prepare a review: stills, what changed, what to look at |
 | `/render` | Final render of an approved episode |
@@ -136,11 +138,13 @@ npm run still -- sheet <id> clips               # a character drawn from a .glb 
 npm run still -- map                 # the world from above, with labels
 npm run still -- view <viewpoint> <time>        # a set from one review viewpoint
 
-# Voices need the voice engine, set up once per folder: scripts/VOICES-SETUP.md
-npm run voices -- ep01               # every line in series/episodes/ep01/lines.json
-npm run voices -- ep01 <line-id>     # only those lines
+# Voices need the voice engine, set up once per folder: skills/voices/VOICES-SETUP.md
+npm run voices -- ep01               # the lines of ep01 that are new or changed (unchanged ones are kept)
+npm run voices -- ep01 <line-id>     # only those lines, recorded again even if unchanged
+npm run voices -- ep01 --force       # every line again (recordings brought in with voices:import are still kept)
+npm run voices -- --test [VOICE …] [sound …]   # the test panel into out/voice-test/: each voice plain, with two deliveries, and every vocal sound
 npm run voices -- --ref <VOICE>      # (re)make ONE character's reference clip — Director's okay required
-npm run voices:check -- ep01         # listen back and flag lines that drifted from the script
+npm run voices:check -- ep01         # listen back: ok, LISTEN (a little off, for the Director's ear) or RETAKE (words missing)
 npm run voices:setup                 # set up the voice engine of this series, once
 npm run voices:import -- <folder>    # bring in recordings made elsewhere (files named <line-id>.wav/.mp3)
 npm run music                        # all music and sound effects
@@ -162,22 +166,25 @@ series/
   series.json        title, language, pace (step or fast), look (only 3d is built so far), size, fps, chosen opening, music by mood, highlightWords
   story/             00-bible.md (premise, tone, house rules), lessons.md (what went wrong and how to avoid it), world.md (map explained), epNN-<title>.md, and opening.md once there is an opening
   cast/index.ts      the cast: appearance, bio, signature pose, voice code
-  voices.json        each voice: description, sample sentence, seed
+  voices.json        each voice: description, sample sentence, seed (and "pitch" in Hz, optional, for its synthesised sounds); or "source": "recording" for a real person's voice, with an optional "prompt" clip and its words
+  pronunciation.json (optional) words the voice gets wrong, and how they are said: {"Siobhan": "Shiv-awn"}
   crew.json          extra crew of this series: which specialist is consulted at which stage (empty when there is none)
   references/        (optional) sources the Director provides for a specialist to check against
   models.json        (optional) .glb models for cast members: file, height, which animation plays when
   voice-ids.json     (ElevenLabs only) the voice id made for each voice; committed, never remade without the Director
   voice-refs/        one reference clip per voice (this IS the character's voice)
-  music.mjs          this series' music and sound effects, written with the synth kit in scripts/
+  music.mjs          this series' music and sound effects, written with the synthesiser in skills/music/
   world/map.tsx      the map: places, roads, scenery, review viewpoints; plus blocks only this series needs
   episodes/epNN/     lines.json and the scenes
   episodes/index.ts  the one place episodes are registered
   opening/           this series' openings (index.ts, and lines.json once an opening has spoken lines); empty until one is made
 agents/              subagents (.claude/agents links here): the two the studio comes with, and any specialist of this series
-skills/              recipes (.claude/skills links here)
+skills/              recipes (.claude/skills links here), and every tool the studio uses besides Remotion, each with its guide:
+                     voices/ (the voice kit every engine shares: recording loop, voice check, setup, the synthesiser of coughs and sneezes),
+                     voices-<name>/ (one voice engine: guide, engine.json, recorder), listen-whisper/ (the listener), music/ (the synthesiser)
 src/engine/          knows nothing about the look: timeline, episode assembly, audio, balloons and captions, the font
 src/styles/<look>/   stage, camera, light, characters, building blocks for one look
-scripts/             voices, voice check, music, still, render, preview, the content check, status, doctor, and VOICES-SETUP.md; lib/ is what they share
+scripts/             the studio's own work and Remotion: still, render, preview, the content check, status, doctor, bringing in recordings, .glb models; lib/ is what they share (ffmpeg.mjs: the ffmpeg that comes with Remotion, so nothing else is installed for it)
 public/audio/        every voice, music and effect file (file name = id)
 out/                 renders and stills (not committed)
 ```
@@ -191,15 +198,18 @@ Anything used by more than one episode (a set, a prop, a character) goes in `ser
 The order matters, because **the length of each recorded line sets the timing of the animation**.
 
 1. `series/story/<episode>.md` — script and storyboard for people to read. This is the creative source of truth.
-2. `series/episodes/<ep>/lines.json` — one entry per line: `{id, voice, text, say?, fx?}`.
+2. `series/episodes/<ep>/lines.json` — one entry per line: `{id, voice, text, say?, fx?, delivery?, sound?}`.
    - `id` follows `e<ep>_s<scene>_<voice><n>`, for example `e1_s2_a3`. An id whose very last characters are `_n` (`e1_s1_n`, `e1_s3_end_n`) is **narration**, shown as a caption instead of a balloon; `e1_s1_n1` is not.
    - `voice` is a code from `series/voices.json`. A cast member's `voice` field must name a code that exists there; the check fails otherwise.
    - `text` is what the balloon shows; `say` is how to pronounce it when that differs; `fx` is a delivery: `shout`, `laugh`, `cheer`, `whisper`, `echo`. It changes how the line is spoken; only `shout` also changes the balloon (red, larger).
+   - `delivery` is how the line is said, in a few English words (`"scared, urgent"`, `"sleepy"`, `"proud but trying not to show it"`), taken from the storyboard's expression for that moment. The voice stays the character's; only the way of speaking changes. It needs an engine that takes it (`npm run check` says when it is ignored).
+   - `sound` makes the line a vocal sound instead of words: `cough`, `clearThroat`, `sneeze`, `snore`, `gulp`, `hiccup`, `gasp`, `sigh`, `yawn`, `giggle`, `laugh`, `sob`, `scream`, `hum`, `groan`. Its `text` is how the balloon writes it ("Achoo!"). A sound the engine cannot make in the character's voice is synthesised by the studio (a cough, a sneeze) or brought in with `voices:import` (a laugh on edge-tts); `npm run check` says which, before recording.
+   - **Write for the ear.** A voice reads every character of `text` (or `say`) aloud: write numbers as words ("five", not "5"), no symbols or emoji, no stage directions in brackets or asterisks (`(coughs)` is read out; make it a line with `sound`, or leave it to the picture), and abbreviations as they are spoken. Names and words the engine gets wrong in every episode go in `series/pronunciation.json` (`{"Siobhan": "Shiv-awn"}`), used for every line without `say`. `npm run check` warns about each of these.
    - `series/voices.json`: write each `description` in English whatever the series language (the voice engines understand it best) and the `sample` sentence in the series language.
-3. `npm run voices` records `public/audio/<id>.wav`, checks each take against the script, and writes its length to `src/audio-durations.json` and when each word is heard to `src/audio-words.json`. All are committed.
+3. `npm run voices` records `public/audio/<id>.wav`, checks each take against the script, and writes its length to `src/audio-durations.json`, when each word is heard to `src/audio-words.json`, and what it was recorded from to `src/audio-takes.json`. All are committed. A line whose text, `say`, `fx`, `delivery`, `sound`, pronunciation or voice has not changed is not recorded again, so an approved take is never replaced by accident; a recording brought in with `voices:import` is kept until its line is named.
 4. A scene is written with `defineScene({music, script, Component})` (`src/engine/scene.tsx`). `script` receives a timeline: `t.say(id)` places a line after the previous one using its recorded length and returns a cue (`start`, `speechEnd`, `end`); `t.play(id, frame)` places a sound effect; `t.wait` and `t.until` leave pauses; `t.mood(name)` changes the music mood from that point on; `t.cut()` marks a camera cut and makes sure no balloon from the old shot lingers into the new one. Whatever `script` returns is handed to `Component` as `m`, and the picture uses those cues to drive mouths, balloons and action (in the 3D look a balloon is `<Speech cue at />`, which places the engine's `<Balloon>` for you). The scene's length follows from its script. A line with no recording counts as one second, so **record first, then time the scene**. Changing a line's text means recording it again.
 5. An episode is `defineEpisode({no, title, lines, scenes})` and is registered in `series/episodes/index.ts`. The engine puts the chosen opening in front, plays scenes in order, lays in each line's recording, shows narration as captions automatically, adds effects, and plays the music for each scene's mood (moods are listed in `series.json`), lowering it under speech.
-6. `npm run check` also checks the content: every line has a defined voice and a unique id, and it warns about lines not yet recorded and music not yet generated.
+6. `npm run check` also checks the content: every line has a defined voice and a unique id, every character has a voice of its own (two characters with the same description and seed, or the same catalogue voice, fail), and it warns about lines not yet recorded or changed since they were recorded, text a voice reads badly, a `delivery` or `sound` the engine cannot carry out, and music not yet generated.
 
 ### Determinism
 
@@ -254,6 +264,8 @@ The camera is not adapted; that is the storyboard's job. A `fov` is measured top
 
 - `out/`, `node_modules/`, the Python environment and raw voice takes are not committed. `public/audio/*.wav` and the voice reference clips are committed.
 - **Never remake a voice reference clip without the Director's okay.** It changes that character's voice in every episode.
+- **A voice can be a real person's recording** (`"source": "recording"` in `voices.json`, on an engine that can copy one: VoxCPM2 today): copied as it is and never generated or remade. `/voices-voxcpm2` says how to set one up and what it cannot do.
+- **The minimum of every voice engine** is speech in the character's voice: each character keeps one voice for the whole series and no two characters share one. Everything beyond that (`delivery`, vocal sounds, `fx`) depends on the engine, as listed in the engine's `engine.json` from listening tests. When an engine cannot make something, the studio says so before recording and uses its fallback; it never pretends. After a new engine or a new voice, record the test panel (`npm run voices -- --test <VOICE>`) and let the Director listen; a sound they find poor is set per series in `series.json` `"vocalSounds"` (`{"laugh": "import"}`: `voice`, `synth` or `import`).
 - All compositions use the size and frame rate in `series/series.json`.
 - Balloons and captions light up each word as it is spoken, from `src/audio-words.json` (or an estimate when a line's words were not heard one for one). `"highlightWords": false` in `series.json` turns it off; that is the Director's choice. Recordings brought in with `voices:import` get their word times from `npm run voices:check`.
 - All on-screen text uses `FONT` from `src/engine/font.ts` (Nunito, and Noto Sans Arabic for Arabic script, both shipped with the studio and loaded before a frame is drawn, so every machine renders the same letters). A balloon or caption whose words are mostly Arabic or Hebrew reads right to left by itself; do not split Arabic words into letters, which breaks how they join. Do not write another `fontFamily`; a weight other than 700 or 800 is not loaded and would be faked.

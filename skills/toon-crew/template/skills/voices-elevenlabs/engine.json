@@ -1,0 +1,63 @@
+{
+  "name": "elevenlabs",
+  "aliases": [],
+  "label": "ElevenLabs",
+  "summary": "A paid online service, on any computer: it uses the Director's credits and sends each line to ElevenLabs.",
+  "recommend": "Recommended on any other computer.",
+  "platform": null,
+  "python": {
+    "from": "3.10"
+  },
+  "packages": [],
+  "secrets": [
+    "ELEVENLABS_API_KEY"
+  ],
+  "setupNote": "",
+  "needs": "ElevenLabs needs Python 3.10 or newer and an ElevenLabs API key in the .env file.",
+  "voices": {
+    "made": "designed",
+    "ids": {
+      "file": "series/voice-ids.json",
+      "field": "voice_id"
+    }
+  },
+  "model": {
+    "env": "ELEVENLABS_MODEL",
+    "default": "eleven_v3"
+  },
+  "abilities": {
+    "eleven_v3": {
+      "label": "ElevenLabs eleven_v3",
+      "delivery": "tag",
+      "spoken": "voice",
+      "unspoken": "voice",
+      "asks": true,
+      "recordings": false
+    },
+    "*": {
+      "label": "ElevenLabs (a model other than eleven_v3)",
+      "delivery": "none",
+      "spoken": "import",
+      "unspoken": "synth",
+      "asks": false,
+      "recordings": false
+    }
+  },
+  "sounds": {
+    "cough": "[coughs]",
+    "clearThroat": "[clears throat]",
+    "sneeze": "[sneezes]",
+    "snore": "[snores]",
+    "gulp": "[gulps]",
+    "hiccup": "[hiccups]",
+    "gasp": "[gasps]",
+    "sigh": "[sighs]",
+    "yawn": "[yawns]",
+    "giggle": "[giggles]",
+    "laugh": "[laughs]",
+    "sob": "[sobs]",
+    "scream": "[screams]",
+    "hum": "[hums]",
+    "groan": "[groans]"
+  }
+}

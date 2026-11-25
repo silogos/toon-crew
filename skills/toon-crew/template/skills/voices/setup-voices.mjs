@@ -4,16 +4,17 @@
 //   npm run voices:setup               do it
 //   npm run voices:setup -- --dry-run  only say what would be done
 //
-// It never prints the API key; it only says whether one is present.
+// What the engine needs (Python, packages, platform, secrets) is in its engine.json (skills/voices-<name>/), and what
+// the listener needs in its listener.json (skills/listen-<name>/). ffmpeg comes with Remotion.
+// It never prints a key; it only says whether one is present.
 import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
-import {readSeries, voiceEngine} from './lib/series.mjs';
-import {VENV, engineSpec, hasElevenLabsKey, venvPython} from './lib/voice-env.mjs';
+import {readSeries, voiceEngine} from '../../scripts/lib/series.mjs';
+import {VENV, acceptsPython, engineSpec, pythonLabel, venvPython} from './voice-env.mjs';
+import {findListener, listEngines, listenerPackages, missingSecrets, runsHere} from './engines.mjs';
 
 const dry = process.argv.includes('--dry-run');
-const engine = voiceEngine(readSeries());
-const spec = engineSpec(engine);
+const spec = engineSpec(voiceEngine(readSeries()));
 
 const fail = (msg) => {
   console.error(msg);
@@ -25,12 +26,13 @@ const pythonVersion = (cmd, pre = []) => {
   const r = spawnSync(cmd, [...pre, '-c', 'import sys;print("%d.%d"%sys.version_info[:2])'], {encoding: 'utf8'});
   return r.status === 0 ? r.stdout.trim() : null;
 };
-const accepts = (version) => Boolean(version) && spec.python(...version.split('.').map(Number));
+const accepts = (version) => acceptsPython(spec, version);
 
-if (engine === 'local' && !(process.platform === 'darwin' && os.arch() === 'arm64')) {
+if (!runsHere(spec)) {
+  const others = listEngines().filter((e) => e.name !== spec.name && runsHere(e)).map((e) => e.name);
   fail(
-    'The free local voices need an Apple Silicon Mac, and this computer is not one.\n' +
-      'Switch this series to ElevenLabs ("voiceEngine": "elevenlabs" in series/series.json), or carry on with pictures only.',
+    `${spec.label} needs an Apple Silicon Mac, and this computer is not one.\n` +
+      `Choose another engine with the Director (${others.join(', ')}; skills/voices/VOICES-SETUP.md compares them), or carry on with pictures only.`,
   );
 }
 
@@ -53,28 +55,33 @@ const python = venvPython();
 const found = candidates.map(([cmd, pre]) => ({cmd, pre, version: pythonVersion(cmd, pre)})).find((c) => accepts(c.version));
 if (!found && !fs.existsSync(python)) {
   fail(
-    `No Python ${spec.pythonLabel} was found (looked on the PATH, in Homebrew and in uv).\n` +
+    `No Python ${pythonLabel(spec)} was found (looked on the PATH, in Homebrew and in uv).\n` +
       'Install it (macOS: brew install python@3.12 · Windows: winget install Python.Python.3.12 · Linux: your package manager), then run this again.',
   );
 }
 
 const steps = [];
 if (!fs.existsSync(python)) steps.push([found.cmd, [...found.pre, '-m', 'venv', VENV]]);
-steps.push([python, ['-m', 'pip', 'install', ...spec.packages]]);
+const listener = findListener();
+const packages = [...spec.packages, ...listenerPackages(listener)];
+if (packages.length) steps.push([python, ['-m', 'pip', 'install', ...packages]]);
 
-console.log(`Voice engine: ${engine}. Python ${found?.version ?? 'from the existing environment'}. Installing: ${spec.packages.join(', ')}.`);
-if (engine === 'local') console.log('The first recording will download two voice models, a few gigabytes in total.');
+console.log(`Voice engine: ${spec.name}. Listener: ${listener?.label ?? 'none (takes are kept unchecked)'}. Python ${found?.version ?? 'from the existing environment'}. Installing: ${packages.join(', ') || 'nothing'}.`);
+if (spec.setupNote) console.log(spec.setupNote);
+if (listener?.setupNote) console.log(listener.setupNote);
 for (const [cmd, args] of steps) {
   if (dry) console.log(`would run: ${cmd} ${args.join(' ')}`);
   else if (spawnSync(cmd, args, {stdio: 'inherit'}).status !== 0) fail(`That step failed: ${cmd} ${args.join(' ')}`);
 }
 
-if (engine === 'elevenlabs') {
-  if (!fs.existsSync('.env') && !dry) fs.copyFileSync('.env.example', '.env');
-  console.log(
-    hasElevenLabsKey()
-      ? 'ElevenLabs API key: found in .env.'
-      : 'ElevenLabs API key: NOT set yet. Open the file named .env in this folder, paste the key after ELEVENLABS_API_KEY=, save, and tell the crew.',
-  );
+if (spec.secrets?.length) {
+  if (!fs.existsSync('.env') && fs.existsSync('.env.example') && !dry) fs.copyFileSync('.env.example', '.env');
+  for (const secret of spec.secrets) {
+    console.log(
+      missingSecrets(spec).includes(secret)
+        ? `${secret}: NOT set yet. Open the file named .env in this folder, paste it after ${secret}=, save, and tell the crew.`
+        : `${secret}: found in .env.`,
+    );
+  }
 }
 console.log(dry ? 'Dry run: nothing was changed.' : 'Voice engine ready.');

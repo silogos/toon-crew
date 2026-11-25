@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {describe, expect, it} from 'vitest';
-import {cleanArgs, plan} from './import-audio.mjs';
+import {plan} from './import-audio.mjs';
+import {soundBounds} from './lib/ffmpeg.mjs';
 
 const ids = new Map([['e1_a', 'A'], ['e1_b', 'B']]);
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'import-'));
@@ -35,12 +36,15 @@ describe('import-audio plan', () => {
   });
 });
 
-describe('import-audio ffmpeg arguments', () => {
-  it('trims silence, normalises loudness and writes 48 kHz stereo', () => {
-    const a = cleanArgs('in.mp3', 'out.wav').join(' ');
-    expect(a).toContain('silenceremove');
-    expect(a).toContain('loudnorm');
-    expect(a).toContain('-ar 48000 -ac 2');
+describe('trimming silence', () => {
+  it('finds where the sound starts and ends, at -45 dB', () => {
+    const quiet = 50; // about -56 dB
+    const loud = 8000;
+    const s = new Int16Array([quiet, -quiet, 0, 0, loud, -loud, 0, 0, loud, quiet, 0, 0].flatMap((v) => [v, v]));
+    expect(soundBounds(s, 2)).toEqual([4, 9]);
+  });
+  it('keeps everything when nothing is loud', () => {
+    expect(soundBounds(new Int16Array(8), 2)).toEqual([0, 4]);
   });
 });
 

@@ -4,14 +4,13 @@ This page takes you from nothing to your first finished episode. You do not need
 
 ## Before you start
 
-Only **Claude Code** (the desktop app or the terminal version) and an internet connection. Everything else the studio needs (Node.js, ffmpeg, Google Chrome, Python for voices) is installed **by the crew, after asking you once**. You never have to hunt for downloads. The computer may ask for its password during an install; type it yourself, the crew never will.
+Only **Claude Code** (the desktop app or the terminal version) and an internet connection. Everything else the studio needs (Node.js, Google Chrome, Python for voices) is installed **by the crew, after asking you once**. You never have to hunt for downloads. The computer may ask for its password during an install; type it yourself, the crew never will.
 
 For reference, this is what the crew installs:
 
 | Program | Used for |
 |---|---|
 | Node.js 20+ | Running the studio |
-| ffmpeg | Cleaning audio and making the video |
 | Google Chrome | Drawing the 3D frames reliably |
 | Python | Only for voices on new dialogue |
 
@@ -84,6 +83,7 @@ Use the command or just say it in your own words.
 | `/new-character` | Add or redesign a character, an expression, a pose or a prop; also a character drawn from a 3D model file you downloaded |
 | `/new-place` | Add or change a place on the map |
 | `/voices` | Give a character a voice, record lines, fix a mispronunciation |
+| `/voices-voxcpm2`, `/voices-elevenlabs`, `/voices-edge` | The crew's guide to the voice engine your series uses; the crew reads it, you never need to call it |
 | `/music` | Background music, a jingle, a sound effect |
 | `/opening` | Make or change the title sequence |
 | `/screening` | See the current state: a scene, the cast, a character sheet, the map |

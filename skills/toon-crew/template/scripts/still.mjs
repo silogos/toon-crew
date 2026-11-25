@@ -71,6 +71,8 @@ const board = async (ep, count) => {
   fs.mkdirSync(dir, {recursive: true});
   let moments;
   let total;
+  let columns;
+  let rows;
   try {
     const composition = await selectComposition({serveUrl, id: ep, inputProps: {}, puppeteerInstance: browser, browserExecutable, chromiumOptions, logLevel: 'error'}).catch(() => null);
     if (!composition) throw new Error(`There is no episode "${ep}". Is it registered in series/episodes/index.ts?`);
@@ -88,18 +90,19 @@ const board = async (ep, count) => {
       process.stdout.write(`\rboard: ${i + 1}/${moments.length}`);
     }
     process.stdout.write('\n');
+
+    // join them into one picture with the studio's own board composition (src/engine/board.tsx)
+    const vertical = series.height > series.width;
+    columns = Math.min(moments.length, vertical ? 6 : 4);
+    rows = Math.ceil(moments.length / columns);
+    const images = moments.map((_, i) => `data:image/jpeg;base64,${fs.readFileSync(`${dir}/moment-${String(i).padStart(3, '0')}.jpeg`).toString('base64')}`);
+    const inputProps = {images, columns, cellWidth: Math.round(composition.width * scale), cellHeight: Math.round(composition.height * scale), padding: 6};
+    const sheet = await selectComposition({serveUrl, id: 'board-sheet', inputProps, puppeteerInstance: browser, browserExecutable, chromiumOptions, logLevel: 'error'});
+    await renderStill({composition: sheet, serveUrl, frame: 0, inputProps, output: out, imageFormat: 'png', puppeteerInstance: browser, browserExecutable, chromiumOptions, logLevel: 'error'});
   } finally {
     await browser.close({silent: true});
   }
 
-  const vertical = series.height > series.width;
-  const columns = Math.min(moments.length, vertical ? 6 : 4);
-  const rows = Math.ceil(moments.length / columns);
-  const made = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-start_number', '0', '-i', `${dir}/moment-%03d.jpeg`, '-vf', `tile=${columns}x${rows}:padding=6:color=white`, '-frames:v', '1', out], {stdio: 'inherit'});
-  if (made.error || made.status !== 0) {
-    console.error(`The pictures are in ${dir}, but they could not be joined into one: ffmpeg ${made.error ? 'was not found' : 'failed'}.`);
-    process.exit(1);
-  }
   fs.rmSync(dir, {recursive: true, force: true});
   console.log(`\nstill: ${out}`);
   console.log(`${moments.length} moments${count ? '' : ' (every scene start and every spoken line)'}, left to right${rows > 1 ? ' and top to bottom' : ''}, at frames ${moments.join(', ')} of ${total} (${(total / series.fps).toFixed(1)} s).`);

@@ -12,6 +12,10 @@ export type Line = {
   say?: string;
   /** delivery: shout, laugh, cheer, whisper, echo */
   fx?: string;
+  /** how it is said, in a few English words ("scared, urgent"); the voice keeps who it is */
+  delivery?: string;
+  /** a vocal sound instead of words (cough, sneeze, gasp, sigh, …: scripts/lib/vocal-sounds.json); `text` is how it is written on screen */
+  sound?: string;
 };
 
 export const isNarration = (id: string) => id.endsWith('_n');

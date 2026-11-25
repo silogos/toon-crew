@@ -21,7 +21,7 @@ Your job is to read the crew's writing with fresh eyes. You **do not change any 
 
 **Before the studio exists** (the first proposal of a series, before setup): the brief gives you the draft text and the Director's messages instead of files. Review that text against the Director's words with the same checklist, skip every file and command, and say in "Not checked" that nothing was read from a studio.
 
-The only commands you run are `npm run check` (a few seconds: every line has a defined voice and a unique id) and `npm run status` (which lines are recorded, what each Status line says). Never run `npm run still`, `render` or `preview`.
+The only commands you run are `npm run check` (a few seconds: every line has a defined voice and a unique id, and it warns about text a voice reads badly and about what the voice engine cannot do) and `npm run status` (which lines are recorded, what each Status line says). Never run `npm run still`, `render` or `preview`.
 
 ## What to look for
 
@@ -33,7 +33,8 @@ The only commands you run are `npm run check` (a few seconds: every line has a d
 
 **The writing**
 - Lines that are too long for a balloon: more than about 12 words, or more than one thought. Name them.
-- Lines that would be hard to say aloud or easy to mishear; a name or word the voice engine may mispronounce with no `say` given (check `lessons.md`).
+- Lines that would be hard to say aloud or easy to mishear; a name or word the voice engine may mispronounce with no `say` given and not in `series/pronunciation.json` (check `lessons.md`).
+- **Not written for the ear:** a voice reads every character aloud. Digits, symbols, emoji, a web address, an abbreviation in capitals, or a stage direction in brackets or asterisks (`(coughs)`, `*sigh*`) in `text` with no `say`. The fix for a stage direction is a line of its own with `sound`, or leaving it to the picture.
 - Language: not the series language, typos, grammar, a mix of formal and informal that the bible does not ask for.
 - The story: the point is not made, a setup with no payoff, a joke that is explained away, an ending that does not land.
 - Running time: count the spoken words (about 2.5 per second in most languages, plus pauses) and compare with the length in the brief.
@@ -50,6 +51,8 @@ The only commands you run are `npm run check` (a few seconds: every line has a d
 **lines.json** (when it exists)
 - Every line of the script is there, in order, with the same words; nothing extra.
 - `voice` is the right character's code; `id` follows `e<ep>_s<scene>_<voice><n>` with the scene it is in, narration ends in `_n`; `fx` is one of `shout`, `laugh`, `cheer`, `whisper`, `echo`.
+- A cough, sneeze, laugh, sigh or gasp the script asks for is a line of its own with `sound` (and `text` as the balloon writes it), not words in another line. `delivery`, where given, matches the expression the storyboard has for that moment, in a few plain English words; a line whose mood changes sharply from the one before and has none is worth naming.
+- Every warning of `npm run check` about a line (read-aloud, `delivery`, a `sound` the engine cannot make) is in your findings, with the fix.
 - A narration line meant for a `MessageCard` is not also left to show as a caption (the scene must say `caption: false`; mention it so production knows).
 
 ## Report

@@ -65,12 +65,15 @@ export const Balloon: React.FC<{
   if (f < cue.start || f >= cue.end) return null;
 
   const shout = line.fx === 'shout';
+  // a vocal sound (a cough, a sigh) is lettered like a sound effect, not spoken words
+  const sound = Boolean(line.sound);
   // the pop-in may overshoot a little, but never so far that a balloon near an edge leaves the frame
   const pop = Math.min(1.05, spring({frame: f - cue.start, fps, config: {damping: 11, stiffness: 170}}));
   const fade = interpolate(f, [cue.end - 8, cue.end], [1, 0], clamp);
   const tailPct = tail === 'center' ? 50 : tail === 'left' ? 12 : 88;
-  const ink = shout ? '#c62828' : '#222';
-  const jitter = shout ? Math.sin(f * 1.3) * 2 * k : 0;
+  const ink = shout ? '#c62828' : sound ? '#7a4b00' : '#222';
+  const jitter = shout || sound ? Math.sin(f * 1.3) * 2 * k : 0;
+  const tilt = sound ? -4 : 0;
   const fontSize = (shout ? 50 : 40) * k;
   // never wider than the frame, never over an edge; the tail stays on the speaker
   const {left, bodyW, maxW, tailX, lines} = placeBalloon({x, width, k, tailPct, text: line.text, fontSize, maxWidth});
@@ -82,7 +85,7 @@ export const Balloon: React.FC<{
         left,
         top: y,
         minWidth: bodyW,
-        transform: `translate(0, -100%) translate(${jitter}px, ${-30 * k}px) scale(${pop})`,
+        transform: `translate(0, -100%) translate(${jitter}px, ${-30 * k}px) scale(${pop}) rotate(${tilt}deg)`,
         transformOrigin: `${tailX}px 100%`,
         opacity: fade,
       }}
@@ -90,8 +93,8 @@ export const Balloon: React.FC<{
       <div
         dir={textDirection(line.text)}
         style={{
-          background: 'white',
-          border: `${6 * k}px solid ${ink}`,
+          background: sound ? '#fff4cc' : 'white',
+          border: `${6 * k}px ${sound ? 'dashed' : 'solid'} ${ink}`,
           borderRadius: 36 * k,
           padding: `${22 * k}px ${34 * k}px`,
           fontSize,
@@ -110,7 +113,7 @@ export const Balloon: React.FC<{
           boxShadow: `0 ${8 * k}px 0 rgba(0,0,0,0.18)`,
         }}
       >
-        <Spoken cue={cue} text={line.text} mark="#ffe066" />
+        {sound ? line.text : <Spoken cue={cue} text={line.text} mark="#ffe066" />}
       </div>
       <div
         style={{
@@ -160,7 +163,7 @@ export const Caption: React.FC<{cue: Cue}> = ({cue}) => {
         textAlign: 'center',
       }}
     >
-      <Spoken cue={cue} text={line.text} mark="#ffd43b" ink="#2b1d0e" />
+      {line.sound ? line.text : <Spoken cue={cue} text={line.text} mark="#ffd43b" ink="#2b1d0e" />}
     </div>
   );
 };

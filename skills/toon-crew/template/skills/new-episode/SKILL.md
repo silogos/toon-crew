@@ -30,7 +30,7 @@ Offer premises only when the Director asks you to choose: three one-line options
 
 ## Stage 2 — Script (Writer)
 
-Write scene by scene in the story file: where and when, what happens, and every line of dialogue and narration with who says it. When the series has a formula, label each part of the script with its beat. Keep each character's way of speaking as described in the bible. Read the dialogue as it will be heard: short lines, one thought per balloon. Estimate the running time and say so.
+Write scene by scene in the story file: where and when, what happens, and every line of dialogue and narration with who says it. When the series has a formula, label each part of the script with its beat. Keep each character's way of speaking as described in the bible. Read the dialogue as it will be heard: short lines, one thought per balloon. Write it for the ear, because a voice reads every character: numbers in words, no symbols or emoji, abbreviations as they are said. A cough, a laugh, a gasp the scene needs is a line of its own, not "(coughs)" inside another line. Estimate the running time and say so.
 
 Before showing it, hand the story file to the `quality-control` subagent (stage: script) and fix what it finds; with no subagents, run its checklist yourself. Show the Director anything it marked **not verified**.
 
@@ -50,7 +50,7 @@ Before showing it, hand the story file to `quality-control` again (stage: storyb
 
 In this order, because recorded lengths set the timing:
 
-1. **Lines** (Writer): write `series/episodes/epNN/lines.json` from the approved script. Add the episode's title line for the opening narration if the series has one. Hand it to `quality-control` (stage: lines) before recording: a wrong word found now costs nothing, found after recording it costs a retake.
+1. **Lines** (Writer): write `series/episodes/epNN/lines.json` from the approved script. Give a line a `delivery` where the storyboard's expression asks for more than a plain reading (`"scared, whispering"`), and make each vocal sound a line with `sound` (`{"id": …, "voice": "B", "text": "Achoo!", "sound": "sneeze"}`). Run `npm run check` and fix its warnings about lines before QC reads them. Add the episode's title line for the opening narration if the series has one. Hand it to `quality-control` (stage: lines) before recording: a wrong word found now costs nothing, found after recording it costs a retake.
 2. **Voices** (hand to the `voice-director` subagent; if this session has no subagents, run its commands yourself and say so in the report): record and check. Voices that are new in this episode must have their entry in `series/voices.json` first; the recording makes their reference clip. Read its report; bring any line it marked for the Director's ear to the Director.
 3. **Scenes** (Animator & Cinematographer): build each scene from the storyboard, timed by the cues. `scene-example.md`, next to this recipe, shows how a scene file is written: script, camera cuts, balloons, a change of music mood, and an object drawn by the scene. It is a pattern for the code only; take nothing of its content into the episode. Register the episode in `series/episodes/index.ts`.
 4. **Quick look** (Animator): `npm run check`, then `npm run still -- epNN board` and look at it for an empty frame, a missing character or a cut-off balloon. Take a closer still only of a shot that looks wrong, and fix it. There is no shot-by-shot review: the Director watches it in the preview.

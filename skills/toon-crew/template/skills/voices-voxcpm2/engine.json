@@ -1,0 +1,52 @@
+{
+  "name": "voxcpm2",
+  "aliases": [
+    "local"
+  ],
+  "label": "VoxCPM2 (on this computer)",
+  "summary": "Free and on this computer: nothing leaves it. Voices are designed from a description or copied from a real person's recording.",
+  "recommend": "Recommended on an Apple Silicon Mac.",
+  "platform": "apple-silicon",
+  "python": {
+    "from": "3.12",
+    "to": "3.12"
+  },
+  "packages": [
+    "mlx-audio",
+    "soundfile",
+    "numpy"
+  ],
+  "secrets": [],
+  "setupNote": "The first recording downloads the voice model (about 3.2 GB) into the Hugging Face cache.",
+  "needs": "VoxCPM2 needs an Apple Silicon Mac and Python 3.12.",
+  "voices": {
+    "made": "designed"
+  },
+  "abilities": {
+    "*": {
+      "label": "VoxCPM2",
+      "delivery": "instruct",
+      "spoken": "voice",
+      "unspoken": "synth",
+      "asks": true,
+      "recordings": true
+    }
+  },
+  "sounds": {
+    "cough": "coughing, a short dry cough, no words",
+    "clearThroat": "clearing the throat, no words",
+    "sneeze": "sneezing, no words",
+    "snore": "snoring in sleep, no words",
+    "gulp": "a nervous gulp, no words",
+    "hiccup": "a hiccup, no words",
+    "gasp": "a sharp surprised gasp, no words",
+    "sigh": "a long tired sigh, no words",
+    "yawn": "a big sleepy yawn, no words",
+    "giggle": "giggling softly, no words",
+    "laugh": "laughing out loud, no words",
+    "sob": "sobbing, crying, no words",
+    "scream": "a short frightened scream, no words",
+    "hum": "humming a little tune, no words",
+    "groan": "a tired groan, no words"
+  }
+}

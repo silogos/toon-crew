@@ -5,21 +5,15 @@
 // Uses nothing from node_modules, so it also runs before `npm install`
 // (and straight from the skill's template folder, before a studio exists).
 // It never prints the API key; it only says whether one is present.
-import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import {findChrome} from './lib/chrome.mjs';
 import {guidesInstalled} from './remotion-guides.mjs';
 import {readJsonIf, voiceEngine} from './lib/series.mjs';
-import {ENGINES, hasElevenLabsKey, venvPython} from './lib/voice-env.mjs';
+import {venvPython} from '../skills/voices/voice-env.mjs';
+import {findEngine, listEngines, missingSecrets, runsHere} from '../skills/voices/engines.mjs';
 
 const NODE_MIN = 20;
-
-/** First line a program prints for `--version`-like arguments, or null when it cannot be started. */
-const version = (cmd, args = ['-version']) => {
-  const r = spawnSync(cmd, args, {encoding: 'utf8'});
-  return r.status === 0 ? (r.stdout || r.stderr).split('\n')[0].trim() : null;
-};
 
 const checks = [];
 /** level: 'required' stops the studio, 'recommended' and 'voices' are only reported. */
@@ -31,11 +25,7 @@ const install = (mac, win, linux) => (process.platform === 'darwin' ? mac : proc
 const nodeMajor = Number(process.versions.node.split('.')[0]);
 add('required', 'Node.js', nodeMajor >= NODE_MIN, `${process.versions.node} (needs ${NODE_MIN} or newer)`, install('brew install node', 'winget install OpenJS.NodeJS.LTS', 'install Node.js 20+ with your package manager'));
 
-const ffmpegFix = install('brew install ffmpeg', 'winget install Gyan.FFmpeg', 'install ffmpeg with your package manager');
-for (const tool of ['ffmpeg', 'ffprobe']) {
-  const v = version(tool);
-  add('required', tool, v, v ?? 'not found', ffmpegFix);
-}
+// ffmpeg is not checked: the studio uses the one that comes with Remotion (scripts/lib/ffmpeg.mjs)
 
 const chrome = findChrome();
 add(
@@ -54,21 +44,20 @@ if (series) {
   const guides = guidesInstalled();
   add('recommended', 'Remotion guides', guides, guides ? 'installed in skills/' : 'not downloaded: the crew writes Remotion code without them', 'npm run remotion-guides');
 
-  const engine = voiceEngine(series);
-  const spec = ENGINES[engine];
-  if (!spec) {
-    add('voices', 'Voice engine', false, `"${engine}" is not an engine the studio knows`, `set "voiceEngine" to one of: ${Object.keys(ENGINES).join(', ')}`);
+  const name = voiceEngine(series);
+  const engine = findEngine(name);
+  if (!name) {
+    add('voices', 'Voice engine', false, 'not chosen yet: only needed to record new lines', `the Director chooses one of: ${listEngines().map((e) => e.name).join(', ')} (skills/voices/VOICES-SETUP.md); write it as "voiceEngine" in series/series.json`);
+  } else if (!engine) {
+    add('voices', 'Voice engine', false, `"${name}" is not an engine the studio knows`, `set "voiceEngine" to one of: ${listEngines().map((e) => e.name).join(', ')}`);
+  } else if (!runsHere(engine)) {
+    add('voices', 'Voice engine', false, `${engine.label} needs an Apple Silicon Mac, and this computer is not one`, 'choose another engine with the Director (skills/voices/VOICES-SETUP.md), or bring recordings in with npm run voices:import');
   } else {
-    const appleSilicon = process.platform === 'darwin' && os.arch() === 'arm64';
-    if (engine === 'local' && !appleSilicon) {
-      add('voices', 'Voice engine', false, 'local voices need an Apple Silicon Mac, and this computer is not one', 'switch the series to "voiceEngine": "elevenlabs", or bring recordings in with npm run voices:import');
-    } else {
-      const ready = fs.existsSync(venvPython());
-      add('voices', `Voice engine (${engine})`, ready, ready ? 'set up' : 'not set up yet: only needed to record new lines', 'npm run voices:setup');
-    }
-    if (engine === 'elevenlabs') {
-      const key = hasElevenLabsKey();
-      add('voices', 'ElevenLabs API key', key, key ? 'present in .env' : 'not in .env yet', 'the Director pastes it after ELEVENLABS_API_KEY= in the .env file');
+    const ready = fs.existsSync(venvPython());
+    add('voices', `Voice engine (${engine.name})`, ready, ready ? 'set up' : 'not set up yet: only needed to record new lines', 'npm run voices:setup');
+    for (const secret of engine.secrets ?? []) {
+      const missing = missingSecrets(engine).includes(secret);
+      add('voices', secret, !missing, missing ? 'not in .env yet' : 'present in .env', `the Director pastes it after ${secret}= in the .env file`);
     }
   }
 }
