@@ -3,9 +3,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {VOCAL_SOUNDS, deliveryProblems, fromRecording, pronunciationProblems, readAloudProblems, recordedVoiceProblems, soundChoiceProblems, soundMethod, spokenText, voiceIdentityProblems} from './lib/lines.mjs';
-import {AUDIO_DIR, PRONUNCIATION_FILE, TAKES_FILE, isRecorded, lineFiles, readDurations, readJson, readJsonIf, readSeries, voiceEngine} from './lib/series.mjs';
+import {AUDIO_DIR, PRONUNCIATION_FILE, TAKES_FILE, enginePronunciationFile, enginePronunciationFiles, isRecorded, lineFiles, readDurations, readJson, readJsonIf, readPronunciation, readSeries, voiceEngine} from './lib/series.mjs';
 import {checkModels} from './models-check.mjs';
-import {abilitiesOf, findEngine, noEngineMessage, unknownEngineMessage} from '../skills/voices/engines.mjs';
+import {abilitiesOf, findEngine, listEngines, noEngineMessage, speaksLanguage, unknownEngineMessage} from '../skills/voices/engines.mjs';
 
 const errors = [];
 const warnings = [];
@@ -17,12 +17,21 @@ const takes = readJsonIf(TAKES_FILE, {});
 const engineName = voiceEngine(series);
 const engine = findEngine(engineName);
 if (engineName && !engine) errors.push(unknownEngineMessage(engineName));
-if (!engineName && Object.keys(voices).length) warnings.push(`series.json: ${noEngineMessage()}`);
+if (!engineName && Object.keys(voices).length) warnings.push(`series.json: ${noEngineMessage(series.language)}`);
 // what the series' engine can do beyond plain speech (null while none is chosen: nothing is checked against it)
 const ability = abilitiesOf(engine);
 const engineLabel = ability?.label ?? engineName;
-const pronunciation = readJsonIf(PRONUNCIATION_FILE, {});
-errors.push(...pronunciationProblems(pronunciation));
+if (engine && speaksLanguage(engine, series.language) === false)
+  warnings.push(`series.json: ${engineLabel} does not list "${series.language}" among the languages it speaks (skills/voices-${engine.name}/engine.json); hear the test panel before recording, or choose another engine with the Director`);
+// the series' dictionary for every engine, and each engine's own on top (only the series' engine's is used)
+errors.push(...pronunciationProblems(readJsonIf(PRONUNCIATION_FILE, {})));
+for (const {engine: name, file} of enginePronunciationFiles()) {
+  errors.push(...pronunciationProblems(readJsonIf(file, {}), file));
+  const owner = findEngine(name);
+  if (!owner) warnings.push(`${file}: "${name}" is not a voice engine of this studio (${listEngines().map((e) => e.name).join(', ')}), so this dictionary is never used`);
+  else if (owner.name !== name) warnings.push(`${file}: "${name}" is an older name; rename it ${enginePronunciationFile(owner.name)} or it is not used`);
+}
+const pronunciation = readPronunciation(engine?.name);
 errors.push(...soundChoiceProblems(series.vocalSounds, ability));
 
 for (const [code, v] of Object.entries(voices)) {

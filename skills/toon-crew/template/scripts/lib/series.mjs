@@ -9,13 +9,34 @@ export const DURATIONS_FILE = 'src/audio-durations.json';
 export const WORDS_FILE = 'src/audio-words.json';
 /** What each line was recorded from (text, how it was said, which voice), so unchanged lines are not recorded again. */
 export const TAKES_FILE = 'src/audio-takes.json';
-/** The series' pronunciation dictionary: {"word as written": "how it is said"}. */
+/** The series' pronunciation dictionary: {"word as written": "how it is said"}, for every voice engine. */
 export const PRONUNCIATION_FILE = 'series/pronunciation.json';
+/** One engine's own pronunciation dictionary, for words only that engine gets wrong (series/pronunciation.<engine>.json). */
+export const enginePronunciationFile = (engine) => `series/pronunciation.${engine}.json`;
+/** Every engine dictionary in the series, as {engine, file}. */
+export const enginePronunciationFiles = (root = '.') => {
+  const dir = path.join(root, 'series');
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .map((f) => /^pronunciation\.([\w-]+)\.json$/.exec(f))
+    .filter(Boolean)
+    .map((m) => ({engine: m[1], file: `series/${m[0]}`}));
+};
 
 export const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 /** A JSON file, or `fallback` when it does not exist. */
 export const readJsonIf = (file, fallback) => (fs.existsSync(file) ? readJson(file) : fallback);
+
+/**
+ * The pronunciation dictionary the voice is given: the series' own, with the engine's own (named by its engine.json
+ * "name") on top, so an engine entry wins for that engine and is left behind when the series changes engine.
+ */
+export const readPronunciation = (engine, root = '.') => ({
+  ...readJsonIf(path.join(root, PRONUNCIATION_FILE), {}),
+  ...(engine ? readJsonIf(path.join(root, enginePronunciationFile(engine)), {}) : {}),
+});
 
 export const writeJson = (file, data) => {
   fs.mkdirSync(path.dirname(file), {recursive: true});

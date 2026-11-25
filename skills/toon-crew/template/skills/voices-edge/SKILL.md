@@ -25,7 +25,7 @@ edge-tts is Microsoft's online voices, reached through an unofficial package. It
 
 A voice is chosen from a catalogue, not designed.
 
-1. Run `npm run voices -- --list` to print the catalogue for the series language.
+1. Run `npm run voices -- --list` to print the catalogue for the series language. If it prints no voice, edge-tts does not speak that language; `engine.json` lists no languages because the catalogue is the list.
 2. Propose one voice per character to the Director, by gender and how old it sounds.
 3. After their okay, write it into `series/voices.json` as `"edge": {"voice": "<name>"}`.
 

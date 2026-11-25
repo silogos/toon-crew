@@ -48,7 +48,8 @@ export const unspokenSounds = () => Object.keys(VOCAL_SOUNDS).filter((k) => VOCA
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * The text with the series' pronunciation dictionary applied (series/pronunciation.json: {"Siobhan": "Shiv-awn"}).
+ * The text with the pronunciation dictionary applied ({"Siobhan": "Shiv-awn"}: series/pronunciation.json, with the
+ * engine's own series/pronunciation.<engine>.json on top; see readPronunciation in series.mjs).
  * Whole words only, case as written, longest first, in one pass (a replacement is never replaced again).
  */
 export const applyPronunciation = (text, dict = {}) => {
@@ -61,12 +62,12 @@ export const applyPronunciation = (text, dict = {}) => {
 /** What the voice is given to say: "say" when the line has one, else the text through the pronunciation dictionary. */
 export const spokenText = (line, dict = {}) => line.say ?? applyPronunciation(line.text ?? '', dict);
 
-/** Problems with series/pronunciation.json itself. */
-export const pronunciationProblems = (dict) => {
-  if (typeof dict !== 'object' || dict === null || Array.isArray(dict)) return ['series/pronunciation.json must be an object such as {"Siobhan": "Shiv-awn"}'];
+/** Problems with a pronunciation dictionary file itself (series/pronunciation.json or series/pronunciation.<engine>.json). */
+export const pronunciationProblems = (dict, file = 'series/pronunciation.json') => {
+  if (typeof dict !== 'object' || dict === null || Array.isArray(dict)) return [`${file} must be an object such as {"Siobhan": "Shiv-awn"}`];
   return Object.entries(dict)
     .filter(([k, v]) => !k.trim() || typeof v !== 'string' || !v.trim())
-    .map(([k]) => `series/pronunciation.json: "${k}" needs a word and how it is said, both non-empty`);
+    .map(([k]) => `${file}: "${k}" needs a word and how it is said, both non-empty`);
 };
 
 /**
