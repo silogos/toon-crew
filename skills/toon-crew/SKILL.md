@@ -47,7 +47,7 @@ Nothing is proposed, installed or built until the brief is complete. The brief h
 | **Specialists:** someone on the crew who checks something this series must get right, or who owns one job of it | Not asked | There are none. Do not think any up. Offer one, in one line of the proposal and not as a question, only when the Director's own words call for it (the studio's `/new-agent` recipe says exactly when) |
 | **Length** | Not asked | About 30 seconds |
 | **Language the characters speak** | Not asked | What the Director asked for; otherwise their own language (principle 6) |
-| **Pace** | Not asked | Fast track. Step by step only when the Director asks for it |
+| **Pace** | Not asked | Step by step: the Director okays the idea, the script, the storyboard and the preview, and only then is the video rendered. Fast track only when the Director asks for it ("fast track", "just finish it", as few stops as possible) |
 
 How to take it:
 
@@ -61,23 +61,23 @@ How to take it:
 - If all four were settled by the first message and all of it can be made, send no brief message: go to the proposal.
 - Only when the Director asks you to choose the story do you offer stories, as three one-line options, never as a finished proposal.
 
-So a first video has two stops when the first message settles the four items (the proposal, then the screening), and three when the brief has to be asked for.
+So a first video, step by step, stops at the proposal (the series and the idea of the first episode), the script, the storyboard and the screening, and is rendered after the last okay; one stop more when the brief has to be asked for. On the fast track it stops twice: the proposal, then the screening.
 
 ### The proposal
 
 With the brief complete, write one message that holds everything the Director has to approve:
 
 - **The series:** title, what it is about in one sentence, who it is for, length, shape of the picture, language, look, and the house rules (how the camera behaves, whether everything happens in one continuous world).
-- **The first episode:** the story in a few lines; each character, with who they are and how they look; each place; every scene and every spoken line; each voice, described in a sentence. If the series has a formula, show which part of the episode is which beat.
+- **The idea of the first episode** (its brief, stage 1 of `/new-episode`): the point of the story in one sentence and the story in a few lines; each character, with who they are and how they look; each place; each voice, described in a sentence; the length. If the series has a formula, one line per beat. On the fast track, add every scene and every spoken line, so the proposal is the whole plan.
 - **What will be installed and downloaded:** section 3, and the voice engine with its size, cost and what leaves the computer (see "Voices").
 
 Mark every choice of your own as yours and say once that any of it can be replaced. Ask no questions; end with the one request for an okay.
 
-**Before sending it, have the words reviewed.** The studio's Quality Control does not exist yet, so start it yourself: a subagent whose instructions are `${CLAUDE_SKILL_DIR}/template/agents/quality-control.md`, given the draft proposal and the Director's own messages word for word, and told that the studio does not exist yet. It reviews the text only (the Director's words kept, lines short enough for a balloon, a formula's beats, quotations marked not verified, the running time). Fix what it finds before sending. With no subagents, go through that file's checklist yourself. That okay covers the proposal, the installs and the setup. Paid services always need their own explicit yes.
+**Before sending it, have the words reviewed.** The studio's Quality Control does not exist yet, so start it yourself: a subagent whose instructions are `${CLAUDE_SKILL_DIR}/template/agents/quality-control.md`, given the draft proposal and the Director's own messages word for word, and told that the studio does not exist yet. It reviews the text only (the Director's words kept, a formula's beats, quotations marked not verified, the running time, and on the fast track lines short enough for a balloon). Fix what it finds before sending. With no subagents, go through that file's checklist yourself. That okay covers the proposal, the installs and the setup. Paid services always need their own explicit yes.
 
-**Fast track (the default):** after the okay, work without stopping, in this order: set up the studio (section 3), make it their series (section 4), start setting up the voice engine at once because it takes minutes, then build the episode ("Fast track" in the studio's `CLAUDE.md`). The next stop is the screening.
+**Step by step (the default):** the okay covers the series and the idea of the first episode. Set up the studio (section 3), make it their series (section 4), start setting up the voice engine if the okay covered it, because it takes minutes, then go on with the first episode at its script (stage 2 of the studio's `/new-episode`). From there the crew stops after every stage: the script, the storyboard, and the screening of the finished picture in the preview; the video is rendered only after the screening's okay.
 
-**Step by step (when the Director asks for it):** the proposal covers only the series, not the episode. After the okay, set up the studio and make it their series, then follow the stages in the studio's `CLAUDE.md`, stopping after each.
+**Fast track (when the Director asks for it):** after the okay, work without stopping, in this order: set up the studio (section 3), make it their series (section 4), start setting up the voice engine at once because it takes minutes, then build the episode ("Fast track" in the studio's `CLAUDE.md`). The next stop is the screening.
 
 ### Voices
 
@@ -108,10 +108,10 @@ If a step fails, report the exact error and what you tried. Do not continue as i
 
 ## 4. Make it their series
 
-1. Write the brief's answers into `series/series.json`: `title`; `language` as a two-letter code (the voice check needs the code, not the name); `width` and `height`; the voice choice as `"voiceEngine"` (`"voxcpm2"`, `"elevenlabs"` or `"edge"`: the name of an engine folder `skills/voices-<name>/` in the studio; leave it out if voices come later); and `"pace"`: `"fast"`, or `"step"` if the Director asked for step by step.
+1. Write the brief's answers into `series/series.json`: `title`; `language` as a two-letter code (the voice check needs the code, not the name); `width` and `height`; the voice choice as `"voiceEngine"` (`"voxcpm2"`, `"elevenlabs"` or `"edge"`: the name of an engine folder `skills/voices-<name>/` in the studio; leave it out if voices come later); and `"pace"`: `"step"`, or `"fast"` if the Director asked for the fast track.
 2. If the Director asked for a specialist, add it with the studio's `/new-agent` recipe before the first episode is written, so its checks apply from the start.
 3. Write `series/story/00-bible.md`: what the series is about, who it is for, tone, look, house rules, and the cast as it grows. If the Director gave a formula, write it under `## Episode formula`, beat by beat in their words; no formula given means no such heading.
-4. Every story file carries a Status line near the top (`**Status:** …`); `npm run status` reads it. Write `approved` with the date only for what the Director has seen and okayed, which after the proposal's okay includes the bible (and, on the fast track, the plan of the first episode); anything they have not seen is `proposed`.
+4. Every story file carries a Status line near the top (`**Status:** …`); `npm run status` reads it. Write `approved` with the date only for what the Director has seen and okayed, which after the proposal's okay includes the bible and the brief of the first episode (on the fast track, its whole plan); anything they have not seen is `proposed`.
 5. Run `npm run check`, then `npm run status`, to confirm the folder says what you intended.
 6. Tell the Director in one line that the studio is ready and what happens next. From here on, follow the studio's `CLAUDE.md`.
 

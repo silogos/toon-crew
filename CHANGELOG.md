@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Step by step is the default.** A new series now stops for the Director's okay at every stage: the idea (in the first episode, together with the proposal of the series), the script, the storyboard and the preview; the video is rendered only after the last okay. The fast track (one okay on the plan, one on the finished picture) is used only when the Director asks for it. The README shows the flow of an episode and where the Director reviews.
+
 ## 0.2.0 — 2026-11-26
 
 - **Coughs, sneezes and laughs that sound like it.** A line can be a vocal sound instead of words: `"sound": "cough"` (also `clearThroat`, `sneeze`, `snore`, `gulp`, `hiccup`, `gasp`, `sigh`, `yawn`, `giggle`, `laugh`, `sob`, `scream`, `hum`, `groan`), with `text` as the balloon writes it ("Achoo!"). The balloon of a sound is drawn differently (dashed, tilted, no highlight). Each engine makes it the way it can: ElevenLabs `eleven_v3` with its audio tags; VoxCPM2 asks the voice for a laugh or a sigh, but a cough asked of it came out as words, so the sounds without a voice in them are synthesised by the studio (`scripts/vocal-synth.mjs`, at the pitch heard in the character's reference clip); edge-tts gets the synthesised ones and a recording through `voices:import` for the rest. What each engine can do is in its `engine.json`, shared by its recorder and the check, and a series can choose otherwise per sound after listening (`"vocalSounds"` in `series.json`).

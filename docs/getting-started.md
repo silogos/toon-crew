@@ -38,16 +38,9 @@ Write what you want in your first message, in your own language:
 
 Before it makes anything, the crew asks about four things: **the story** (who is in it and what happens), **where you will post it** (TikTok, Reels and Shorts are vertical; YouTube is landscape), **what the characters are like**, and **what the setting is like**. Whatever your first message already says is not asked again. For characters and setting, "you choose" is a full answer, and only then does the crew propose them. Scenes and dialogue are always written by the crew for you to approve; you never have to write a script. Length (about 30 seconds) and language (yours) have defaults.
 
-Then it works on the **fast track**: one proposal with the whole plan (story, characters, place, every line, voices) for you to okay, and one screening of the finished picture before the final video. It never invents the story for you.
+Then it works **step by step**: one proposal with the series and the idea of the first episode (story, characters, place, voices) for you to okay, then the script, then the storyboard, then a screening of the finished picture in the preview. Only after that last okay is the final video made. It never invents the story for you.
 
-Prefer to approve every stage? Say *"step by step"*. The crew then holds a longer **first meeting** and asks, in one round, with a recommendation for each question:
-
-1. What the show is (a working title and one sentence)
-2. Who watches it
-3. How long each episode is, and landscape (YouTube) or vertical (TikTok, Reels, Shorts)
-4. The language the characters speak
-5. The look (only 3D is built today)
-6. The house rules of your show: does the camera stay still, is everything in one place
+In a hurry? Say *"fast track"*. The crew then puts the idea, the script and the storyboard into one plan with one okay, and stops a second time only at the screening.
 
 After your okay it sets up the studio in the folder and checks that everything works. The studio starts **empty**: no characters, no places, no episode. Everything in your series comes from you, or from proposals you approved. If you would like to see a finished example first, ask to see the sample series; the crew sets it up in a separate folder.
 
@@ -57,7 +50,7 @@ Say what you want. For example:
 
 > *"New episode: Ada loses her kite and Ben helps her find it. About 40 seconds."*
 
-Every episode goes through five stages, and the crew **stops and waits for your okay** after each (on the fast track the first three arrive together):
+Every episode goes through five stages, and the crew **stops and waits for your okay** after each (on the fast track, if you asked for it, the first three arrive together):
 
 | Stage | You see | You decide |
 |---|---|---|
