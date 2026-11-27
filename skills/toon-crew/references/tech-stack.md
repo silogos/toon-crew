@@ -22,7 +22,7 @@ Remotion is free for individuals and small teams and needs a company licence abo
 |---|---|---|---|---|
 | **2D** | Flat shapes, paper-cutout feel | SVG in React, moved with Remotion `interpolate` / `spring` | Lottie or Rive when the Director brings finished animations | not built yet |
 | **2.5D** | Flat layers at different depths that slide past each other | SVG/HTML layers with CSS 3D transforms | Flat planes in three.js | not built yet |
-| **3D** | Solid characters and sets, real camera angles and light | three.js through `@react-three/fiber` and `@remotion/three`; every model built from basic shapes | glTF models when the Director brings assets | **built** |
+| **3D** | Solid characters and sets, real camera angles and light | three.js through `@react-three/fiber` and `@remotion/three`; every model built from basic shapes; the crew's guide is `skills/threejs` | glTF models when the Director brings assets | **built** |
 
 How to recommend:
 - Characters who walk around a place, shots from several angles, day and night: **3D**.
