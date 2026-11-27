@@ -37,7 +37,7 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (reviews th
 
 ### Rules on set
 
-1. **Nothing new is made without the Director's okay.** Every new thing (series, episode, opening, scene, character, place, music) passes through these stages, and each stage **stops and waits for an okay** before the next (on the fast track, below, the first three stages share one okay):
+1. **Nothing new is made without the Director's okay.** Every new thing (series, episode, opening, scene, character, place, music) passes through these stages, and each stage **stops and waits for an okay** before the next. This is the default pace, step by step; on the fast track (below, only when the Director asked for it) the first three stages share one okay:
    1. **Brief** — purpose, length, the point of the story, characters and places needed
    2. **Script** — scene by scene, dialogue per character, narration → written in `series/story/<name>.md`
    3. **Storyboard** — a shot table: time, place, camera, characters and action, music/sound/voice
@@ -52,7 +52,7 @@ Two jobs have their own **subagent** in `agents/`: `quality-control` (reviews th
 
 ### Fast track
 
-`"pace": "fast"` in `series/series.json` means the Director chose the fast track: they want a finished video with as few stops as possible. `npm run status` says which pace the series is on. Without it, or with `"step"`, every stage stops as rule 1 says.
+Step by step is the default. `"pace": "fast"` in `series/series.json` means the Director asked for the fast track: they want a finished video with as few stops as possible. `npm run status` says which pace the series is on. Without it, or with `"step"`, every stage stops as rule 1 says. Never switch a series to the fast track unless the Director asks for it.
 
 On the fast track the crew stops **twice** per episode instead of after every stage:
 

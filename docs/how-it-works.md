@@ -16,7 +16,7 @@ brief ─▶ script ─▶ storyboard ─▶ production ─▶ final render
 
 Changing your mind is cheap early and expensive late, so the stages are ordered to put the cheap decisions first. A line of dialogue costs nothing to change in the script; after production it means a new recording and a re-timed scene.
 
-Not every Director wants five stops for a thirty-second video. On the **fast track** (`"pace": "fast"` in `series.json`) the first three stages arrive as one plan with one okay, and the second okay comes at the finished picture. The stages are all still done and written down; only the number of stops changes. Anything that installs software, costs money, sends the Director's words to an outside service, or changes work approved earlier still asks on its own.
+Step by step is the default. Not every Director wants five stops for a thirty-second video, so a Director can ask for the **fast track** (`"pace": "fast"` in `series.json`): the first three stages arrive as one plan with one okay, and the second okay comes at the finished picture. The stages are all still done and written down; only the number of stops changes. Anything that installs software, costs money, sends the Director's words to an outside service, or changes work approved earlier still asks on its own.
 
 ## The crew
 

@@ -18,7 +18,7 @@ Everything is made by code on your own computer. No video generator, no stock as
 
 - **A series, not a clip.** A persistent cast, one world with a map, and a fixed voice per character. Episode 5 looks and sounds like episode 1.
 - **You stay the Director.** Every episode goes brief → script → storyboard → production → final render, and the crew stops for your okay at each stage.
-- **Two okays to a video.** Give the story and where you will post it. The crew comes back once with the whole plan and once with the finished picture. Say *"step by step"* to approve every stage instead.
+- **A fast track when you want it.** Say *"fast track"* and the crew comes back only twice: once with the whole plan and once with the finished picture.
 - **Landscape or vertical.** 16:9 for YouTube, or 9:16 for TikTok, Reels and Shorts, with speech balloons and captions sized for a phone.
 - **A crew, not a prompt.** Writer, Storyboard Artist, Character Designer, Art Director, Animator, Voice Director, Composer, Editor and Quality Control, each with a recipe to follow. Quality Control and the Voice Director run as separate subagents.
 - **It checks itself.** Quality Control reads every script, storyboard and set of lines before you see them, and every recorded line is listened back to. The picture gets one quick look (the whole episode on one board); you judge motion and detail in the preview.
@@ -32,6 +32,32 @@ your idea ─▶ script ─▶ voices ─▶ timing ─▶ animation ─▶ vide
 ```
 
 The length of each recorded line sets the timing of the animation, so a scene is always in sync with its dialogue. Pictures are React components rendered frame by frame with Remotion; 3D uses three.js with every model built from basic shapes.
+
+## Making an episode
+
+Every episode goes through the same five stages. You review each one before the next begins, and the video is rendered only after you have okayed the preview.
+
+```mermaid
+flowchart LR
+  A["1 · Idea"] -- your okay --> B["2 · Script"]
+  B -- your okay --> C["3 · Storyboard"]
+  C -- your okay --> D["4 · Production"]
+  D --> E["Preview"]
+  E -- your okay --> F["5 · Final render"]
+```
+
+| Stage | What the crew makes | Checked before you see it | What you review |
+|---|---|---|---|
+| **1. Idea** | The point of the story, who is in it, where it happens, the length, and anything new to build (a character, a place, music) | | Is this the right idea? |
+| **2. Script** | Every scene, every line of dialogue and narration, the running time | Quality Control | Is the story right? Do the characters sound like themselves? |
+| **3. Storyboard** | A table of shots: place, time of day, camera, who does what, music and sound | Quality Control | Is this how you want it filmed? |
+| **4. Production → preview** | The lines recorded, the scenes animated in time with their recordings, one picture of the whole episode, and a preview link | Quality Control reads the lines before recording; every take is listened back to; the crew looks at the whole episode | Play it in the preview: does it look and sound right? |
+| **5. Final render** | The video file, and a cover picture, title, caption and tags if you want them | | |
+
+- In the first episode of a new series, the idea comes in the same proposal as the series itself (title, look, voices, what will be installed).
+- A change you ask for is made and shown again before the next stage. If the story has to change during production, the crew stops and asks.
+- New characters and places are shown to you for their own okay. Anything that installs software, costs money or sends your words to an outside service is always asked separately.
+- **In a hurry?** Say *"fast track"*: the idea, script and storyboard arrive as one plan with one okay, and the next stop is the preview.
 
 ## Install
 
