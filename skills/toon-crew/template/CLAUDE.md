@@ -101,6 +101,7 @@ Each job has a recipe in `skills/`. The Director can call one by name or simply 
 | `/voices-voxcpm2`, `/voices-elevenlabs`, `/voices-edge` | The voice engines. Each folder holds one engine's guide (setup, how its voices are made, what it can do, its quirks), its `engine.json` and its recorder. Read the one of this series (`voiceEngine`; `"local"` is VoxCPM2's older name) before any voice work; leave the others alone |
 | `/music` | Background music, jingles, sound effects; its folder also holds the studio's synthesiser (`music-kit.mjs`) |
 | `/listen-whisper` | The listener that hears each take (Whisper): what it is used for, its models and where it goes wrong. Read it when a take's score or its word highlight looks wrong |
+| `/threejs` | How the 3D look uses three.js here: why every movement comes from the frame number, loading `.glb` files, and the three.js API that changed between releases. Read it before writing or changing 3D code, and when a picture differs between preview and render or a model will not load |
 | `/new-agent` | Add a specialist to the crew of this series: someone who checks or advises on something it must get right, or who owns one job |
 | `/screening` | Prepare a review: stills, what changed, what to look at |
 | `/render` | Final render of an approved episode |
@@ -182,7 +183,8 @@ series/
 agents/              subagents (.claude/agents links here): the two the studio comes with, and any specialist of this series
 skills/              recipes (.claude/skills links here), and every tool the studio uses besides Remotion, each with its guide:
                      voices/ (the voice kit every engine shares: recording loop, voice check, setup, the synthesiser of coughs and sneezes),
-                     voices-<name>/ (one voice engine: guide, engine.json, recorder), listen-whisper/ (the listener), music/ (the synthesiser)
+                     voices-<name>/ (one voice engine: guide, engine.json, recorder), listen-whisper/ (the listener), music/ (the synthesiser),
+                     threejs/ (how the 3D look uses three.js)
 src/engine/          knows nothing about the look: timeline, episode assembly, audio, balloons and captions, the font
 src/styles/<look>/   stage, camera, light, characters, building blocks for one look
 scripts/             the studio's own work and Remotion: still, render, preview, the content check, status, doctor, bringing in recordings, .glb models; lib/ is what they share (ffmpeg.mjs: the ffmpeg that comes with Remotion, so nothing else is installed for it)
@@ -214,7 +216,7 @@ The order matters, because **the length of each recorded line sets the timing of
 
 ### Determinism
 
-Every movement is a function of the current frame. No real time, no unseeded randomness, no per-frame callbacks from the 3D library. The camera is set during render so the recorded frame is correct.
+Every movement is a function of the current frame. No real time, no unseeded randomness, no per-frame callbacks from the 3D library. The camera is set during render so the recorded frame is correct. Most three.js examples are written for real time (`useFrame`, a clock, `mixer.update(delta)`); `/threejs` says what each becomes here.
 
 ### World
 
@@ -249,6 +251,8 @@ The camera is not adapted; that is the storyboard's job. A `fov` is measured top
 `series/cast/index.ts` is the single list of cast members (`CAST`): each has an `id`, `name`, `role`, `bio`, a `look`, a `signature` (the pose, expression and prop that sum them up), `main`, and `voice`. `voice` must be a code from `series/voices.json` or `null`; a code that does not exist fails `npm run check`. Line-ups and openings take their characters from the cast members marked `main`.
 
 ### The 3D look (`src/styles/3d/`)
+
+Before writing or changing anything here, read `/threejs`.
 
 - **Units and directions.** One unit is one metre, the ground is y = 0, +x is east and +z is south. `facing` is in degrees: 0 faces south (toward a camera looking north), 90 east, 180 north, -90 west.
 - **`stage.tsx`** — `<Stage camera time overlay>` draws one picture. 3D things go in as children; balloons and labels go in `overlay`. The camera is a plan: a single shot `{from, to, fov}` or `still(shot)` holds still, `cuts([{at, shot}, …])` joins still shots with hard cuts, `move(a, b, [f0, f1])` travels between two shots. Which of these a series uses is a house rule in the bible. `time` is `day`, `dusk` or `night`; windows glow at dusk and night, lamps shine.

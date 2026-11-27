@@ -25,7 +25,7 @@ Propose a position and a one-paragraph description of how it looks. Point out an
 ## 2. Put it on the map
 
 1. Add the place to the map data in `series/world/` **and** describe it in `series/story/world.md`. Positions live in the data only; never write coordinates for a place inside a scene.
-2. Build the place from the look's building blocks in `src/styles/<look>/`. A block that only this series needs stays in `series/world/`.
+2. Build the place from the look's building blocks in `src/styles/<look>/`. A block that only this series needs stays in `series/world/`. Before writing a new block, a light or anything that moves (a door, water, a sign in the wind), read `/threejs`.
 3. Add at least one review viewpoint for it.
 4. `npm run check`.
 

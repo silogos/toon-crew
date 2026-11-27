@@ -149,7 +149,7 @@ export const Stage: React.FC<{
   return (
     <AbsoluteFill style={{background: l.sky}}>
       {modelsReady && (
-        <ThreeCanvas width={width} height={height} shadows camera={{fov: shot.fov, position: shot.from, near: 0.1, far: 400}}>
+        <ThreeCanvas width={width} height={height} shadows="percentage" camera={{fov: shot.fov, position: shot.from, near: 0.1, far: 400}}>
           <Rig shot={shot} />
           <color attach="background" args={[l.sky]} />
           {fog && <fog attach="fog" args={[l.sky, l.fog[0], l.fog[1]]} />}
