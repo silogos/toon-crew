@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — 2026-11-28
 
 - **Step by step is the default.** A new series now stops for the Director's okay at every stage: the idea (in the first episode, together with the proposal of the series), the script, the storyboard and the preview; the video is rendered only after the last okay. The fast track (one okay on the plan, one on the finished picture) is used only when the Director asks for it. The README shows the flow of an episode and where the Director reviews.
 - **A guide to three.js for the crew (`/threejs`).** Most three.js help is written for games that run in real time (`useFrame`, a clock, `mixer.update(delta)`), and code copied from it renders differently each time and jumps or flickers, because the render tabs share the frames among them; usually this shows only in the final render. The guide says what each of those becomes when every movement comes from the frame number, how `.glb` files are loaded here (and what to do when one is compressed), and lists the three.js names that changed between releases, checked against three 0.187. The API notes are adapted from the "Common Mistakes" lists of [threejs-skills](https://github.com/cloudai-x/threejs-skills) by CloudAI-X (MIT; licence in `skills/threejs/CREDITS.md`). `/new-character`, `/new-place` and `/new-episode` send the crew to it before writing 3D code.
